@@ -1,0 +1,20 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+venv/
+.venv/
+env/
+
+# Stage outputs. Keep .json (small, consolidated) if you want them versioned;
+# the .jsonl resume logs and Lean build artefacts should stay out of git.
+results/*.jsonl
+results/*.partial.jsonl
+figs/*.png
+
+# Lean build artefacts. lean_workspace/ is what lean_interact provisions when
+# there is no local mathlib4 checkout; it is gigabytes of oleans.
+mathlib4/
+mathlib4_build.tar.gz
+lean_workspace/
+.lake/
+.elan/

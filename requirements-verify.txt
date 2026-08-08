@@ -1,0 +1,3 @@
+# Stage 2 (verify) only. CPU is fine; a GPU is wasted here.
+# Assumes elan + a built mathlib4 checkout already exist (scripts/setup_lean.sh).
+lean-interact>=0.3

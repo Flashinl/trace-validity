@@ -1,0 +1,11 @@
+# Core -- needed by every stage. Safe to install on a CPU runtime.
+datasets>=2.19
+pandas>=2.0
+matplotlib>=3.7
+
+# Stage 1 (generate) also needs the GPU stack: see requirements-gpu.txt
+# Stage 2 (verify) also needs Lean bindings:  see requirements-verify.txt
+#
+# They are split because the two stages run on different runtimes. Installing
+# the GPU stack on the CPU box that runs Lean wastes several minutes and a few
+# GB of a Colab disk for nothing.
