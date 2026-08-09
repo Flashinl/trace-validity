@@ -65,6 +65,31 @@ def load_questions(n: int = C.N_QUESTIONS) -> List[Dict[str, Any]]:
     return rows
 
 
+# --- decode guard ------------------------------------------------------------
+
+# Byte-level BPE surface markers: 'Ġ' (U+0120) stands for a space and 'Ċ'
+# (U+010A) for a newline. They appear when token strings are joined directly
+# -- convert_ids_to_tokens() + "".join() -- instead of being decoded. The
+# result looks plausible and has zero real whitespace, so it sails through
+# generation and only detonates in Lean.
+BPE_MARKERS = ("Ġ", "Ċ")  # 'Ġ', 'Ċ'
+
+
+def assert_decoded(texts: List[str]) -> List[str]:
+    """Fail loudly if a completion is raw token surface rather than text."""
+    for i, text in enumerate(texts):
+        hits = [m for m in BPE_MARKERS if m in text]
+        if hits:
+            raise RuntimeError(
+                f"completion {i} contains byte-level BPE markers {hits!r} -- it is "
+                f"raw token surface, not decoded text. Generation must use "
+                f"tokenizer.decode(..., skip_special_tokens=True) (or vLLM's "
+                f"output.text), never convert_ids_to_tokens() + ''.join().\n"
+                f"  offending prefix: {text[:120]!r}"
+            )
+    return texts
+
+
 # --- model -------------------------------------------------------------------
 
 
@@ -109,9 +134,11 @@ def sample_completions(
     with torch.no_grad():
         out = model.generate(**inputs, **kwargs)
 
-    return [
+    texts = [
         tokenizer.decode(seq[prompt_len:], skip_special_tokens=True) for seq in out
     ]
+    # Never let undecoded token surface reach disk again.
+    return assert_decoded(texts)
 
 
 # --- stage entrypoint --------------------------------------------------------
@@ -128,7 +155,21 @@ def run(
 
     questions = load_questions(n_questions)
     done = C.read_jsonl(jsonl_path)
-    done_idx = {r["idx"] for r in done}
+
+    # A record written before the decode guard existed may hold raw token
+    # surface. Treat those as NOT done so they regenerate -- otherwise the
+    # resume logic quietly preserves exactly the output we are trying to fix.
+    # consolidate() is last-write-wins per idx, so the fresh record supersedes
+    # the poisoned one without editing the append-only log.
+    poisoned = {
+        r["idx"] for r in done
+        if any(m in c for c in r.get("completions", []) for m in BPE_MARKERS)
+    }
+    done_idx = {r["idx"] for r in done} - poisoned
+    if poisoned:
+        print(f"[generate] {len(poisoned)} record(s) contain byte-level BPE "
+              f"markers and will be regenerated: {sorted(poisoned)}")
+
     todo = [q for q in questions if q["idx"] not in done_idx]
 
     print(f"[generate] temp={C.fmt_temp(temp)} "
