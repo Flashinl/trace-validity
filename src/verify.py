@@ -173,7 +173,11 @@ class LeanChecker:
         else:
             # Falls back to letting lean_interact provision Mathlib itself. This
             # is slow on a cold machine -- prefer the prebuilt checkout.
-            project = TempRequireProject(require="mathlib")
+            # lean_version is a required keyword here (unlike LocalProject,
+            # which reads it from the checkout), so it comes from the pin.
+            project = TempRequireProject(
+                lean_version=C.LEAN_VERSION, require="mathlib"
+            )
             print("[verify] no local Mathlib checkout; provisioning a temp project")
 
         self.config = LeanREPLConfig(project=project)

@@ -45,6 +45,11 @@ TOP_P = 0.95
 # verify actually ran against.
 MATHLIB_TAG = "v4.19.0"
 MATHLIB_REPO = "https://github.com/leanprover-community/mathlib4.git"
+# Toolchain that goes with MATHLIB_TAG. Only used by the no-local-checkout
+# fallback, where lean_interact requires it explicitly; the normal path reads
+# the version out of the checkout's own lean-toolchain instead. Move it with
+# MATHLIB_TAG.
+LEAN_VERSION = "v4.19.0"
 MATHLIB_DIR = os.environ.get("MATHLIB_DIR", "mathlib4")
 
 # `BASE_IMPORTS` above is also what stage 2 runs once to build the environment
