@@ -111,6 +111,15 @@ Construction, in order:
   instead of 500.
 * `device_map="auto"`. Do **not** call `torch.set_default_device("cuda")` — it
   makes tokenizer ops build tensors on the GPU and breaks them.
+* **This tokenizer's byte decoder is broken.** Plain
+  `tokenizer.decode(..., skip_special_tokens=True)` returns byte-level BPE
+  surface — `Ġ` for space, `Ċ` for newline — with zero real whitespace. So the
+  order is **decode → `repair_bpe` → `assert_decoded`**. The repair no-ops when
+  the markers are absent, so it stays correct if a future tokenizer decodes
+  properly; the assertion after it refuses to write anything still carrying
+  markers, because that text looks plausible and only detonates in Lean.
+  Records already on disk holding markers are treated as *not done* and
+  regenerate, so the resume logic cannot preserve the very output being fixed.
 
 Output: `results/traj_temp{T}.jsonl` (append-as-you-go) → `results/traj_temp{T}.json`.
 
@@ -153,7 +162,10 @@ Per completion, before it reaches Lean:
 
 1. repair byte-level BPE artefacts if present (`Ġ`/`Ċ` — the inverse of GPT-2's
    `bytes_to_unicode`; skipped entirely when those characters are absent,
-   because the mapping is lossy for genuine unicode like `ℝ` and `∀`),
+   because the mapping is lossy for genuine unicode like `ℝ` and `∀`). Stage 1
+   now repairs before writing, so this is a no-op for fresh files and matters
+   only for results generated before that fix — one implementation, in
+   `src/config.py`, shared by both stages,
 2. cut at the closing ```` ``` ````,
 3. drop a dangling unclosed `/-` comment,
 4. graft the tactic block onto the **dataset's** statement:

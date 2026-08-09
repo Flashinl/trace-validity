@@ -101,6 +101,58 @@ def results_json_path(temp: float) -> str:
     return os.path.join(RESULTS_DIR, f"results_temp{fmt_temp(temp)}.json")
 
 
+# --- byte-level BPE repair ---------------------------------------------------
+#
+# Lives here because BOTH stages need it: generation repairs before writing,
+# and verification repairs again when reading older files that were written
+# before the fix.
+
+
+def _bytes_to_unicode() -> Dict[int, str]:
+    """GPT-2's byte<->unicode table (the same one the tokenizer uses)."""
+    bs = (
+        list(range(ord("!"), ord("~") + 1))
+        + list(range(ord("¡"), ord("¬") + 1))
+        + list(range(ord("®"), ord("ÿ") + 1))
+    )
+    cs = bs[:]
+    n = 0
+    for b in range(2 ** 8):
+        if b not in bs:
+            bs.append(b)
+            cs.append(2 ** 8 + n)
+            n += 1
+    return dict(zip(bs, (chr(c) for c in cs)))
+
+
+_BYTE_DECODER = {v: k for k, v in _bytes_to_unicode().items()}
+
+
+def repair_bpe(text: str) -> str:
+    """Undo byte-level BPE surface form.
+
+    This tokenizer's byte decoder is broken: plain
+    `tokenizer.decode(..., skip_special_tokens=True)` returns token surface
+    ('Ġ' for space, 'Ċ' for newline) with zero real whitespace. Confirmed
+    independently outside this repo, so the repair runs on the generation side
+    rather than being treated as a defensive nicety.
+
+    Those two characters are the tell; without them the text is passed through
+    untouched, because the mapping is lossy for genuine unicode (Lean source is
+    full of ℝ, ∀, ≤). That no-op path is what makes this safe to keep once a
+    future tokenizer version decodes correctly.
+    """
+    if "Ġ" not in text and "Ċ" not in text:
+        return text
+    buf = bytearray()
+    for ch in text:
+        if ch in _BYTE_DECODER:
+            buf.append(_BYTE_DECODER[ch])
+        else:
+            buf.extend(ch.encode("utf-8"))
+    return buf.decode("utf-8", errors="replace")
+
+
 # --- jsonl helpers -----------------------------------------------------------
 #
 # Both stages use the same resume protocol: append one JSON object per unit of

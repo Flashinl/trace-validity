@@ -11,6 +11,7 @@ import time
 from typing import Any, Dict, List
 
 from . import config as C
+from .config import repair_bpe
 
 
 # --- prompt construction -----------------------------------------------------
@@ -68,23 +69,25 @@ def load_questions(n: int = C.N_QUESTIONS) -> List[Dict[str, Any]]:
 # --- decode guard ------------------------------------------------------------
 
 # Byte-level BPE surface markers: 'Ġ' (U+0120) stands for a space and 'Ċ'
-# (U+010A) for a newline. They appear when token strings are joined directly
-# -- convert_ids_to_tokens() + "".join() -- instead of being decoded. The
-# result looks plausible and has zero real whitespace, so it sails through
-# generation and only detonates in Lean.
+# (U+010A) for a newline. This tokenizer's byte decoder is broken and emits
+# them straight out of decode(), so the text arrives with zero real whitespace.
+# It looks plausible enough to sail through generation and only detonates in
+# Lean, which is why repair_bpe runs first and this check runs after it.
 BPE_MARKERS = ("Ġ", "Ċ")  # 'Ġ', 'Ċ'
 
 
 def assert_decoded(texts: List[str]) -> List[str]:
-    """Fail loudly if a completion is raw token surface rather than text."""
+    """Fail loudly if a completion is still raw token surface after repair."""
     for i, text in enumerate(texts):
         hits = [m for m in BPE_MARKERS if m in text]
         if hits:
             raise RuntimeError(
-                f"completion {i} contains byte-level BPE markers {hits!r} -- it is "
-                f"raw token surface, not decoded text. Generation must use "
-                f"tokenizer.decode(..., skip_special_tokens=True) (or vLLM's "
-                f"output.text), never convert_ids_to_tokens() + ''.join().\n"
+                f"completion {i} still contains byte-level BPE markers {hits!r} "
+                f"after repair_bpe -- it is raw token surface, not text. Refusing "
+                f"to write it. Check that generation runs "
+                f"repair_bpe(tokenizer.decode(..., skip_special_tokens=True)), or "
+                f"vLLM's output.text, and that repair_bpe still covers this "
+                f"tokenizer's surface form.\n"
                 f"  offending prefix: {text[:120]!r}"
             )
     return texts
@@ -134,10 +137,15 @@ def sample_completions(
     with torch.no_grad():
         out = model.generate(**inputs, **kwargs)
 
+    # decode -> repair -> assert. This tokenizer's byte decoder is broken:
+    # decode() returns token surface with zero real whitespace, so repair_bpe
+    # is load-bearing here, not defensive. It no-ops when the markers are
+    # absent, so this stays correct once a future tokenizer decodes properly.
     texts = [
-        tokenizer.decode(seq[prompt_len:], skip_special_tokens=True) for seq in out
+        repair_bpe(tokenizer.decode(seq[prompt_len:], skip_special_tokens=True))
+        for seq in out
     ]
-    # Never let undecoded token surface reach disk again.
+    # If the repair itself failed, stop rather than write garbage to disk.
     return assert_decoded(texts)
 
 

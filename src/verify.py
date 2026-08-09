@@ -18,48 +18,9 @@ import time
 from typing import Any, Dict, List, Optional, Tuple
 
 from . import config as C
-
-
-# --- byte-level BPE repair ---------------------------------------------------
-
-
-def _bytes_to_unicode() -> Dict[int, str]:
-    """GPT-2's byte<->unicode table (the same one the tokenizer uses)."""
-    bs = (
-        list(range(ord("!"), ord("~") + 1))
-        + list(range(ord("¡"), ord("¬") + 1))
-        + list(range(ord("®"), ord("ÿ") + 1))
-    )
-    cs = bs[:]
-    n = 0
-    for b in range(2 ** 8):
-        if b not in bs:
-            bs.append(b)
-            cs.append(2 ** 8 + n)
-            n += 1
-    return dict(zip(bs, (chr(c) for c in cs)))
-
-
-_BYTE_DECODER = {v: k for k, v in _bytes_to_unicode().items()}
-
-
-def repair_bpe(text: str) -> str:
-    """Undo byte-level BPE surface form if the decoder left it in.
-
-    Some decode paths hand back the raw token surface ('Ġ' for space, 'Ċ' for
-    newline) instead of real text. Those two characters are the tell; without
-    them the text is passed through untouched, because the mapping is lossy for
-    genuine unicode (Lean source is full of ℝ, ∀, ≤).
-    """
-    if "Ġ" not in text and "Ċ" not in text:
-        return text
-    buf = bytearray()
-    for ch in text:
-        if ch in _BYTE_DECODER:
-            buf.append(_BYTE_DECODER[ch])
-        else:
-            buf.extend(ch.encode("utf-8"))
-    return buf.decode("utf-8", errors="replace")
+# Generation repairs before writing, so this is a no-op for fresh files. It
+# still matters for results generated before that fix landed.
+from .config import repair_bpe
 
 
 # --- completion -> proof body ------------------------------------------------
