@@ -1,9 +1,0 @@
-# Stage 1 (generate) only. Requires a GPU runtime.
-# Colab already ships a working torch build -- do not pin/reinstall it there.
-torch>=2.1
-transformers>=4.40
-accelerate>=0.30
-# Generation itself goes through transformers (see src/generate.py). vllm is
-# installed on the GPU runtime only, and only if you want to swap in a faster
-# batched sampler; it is never needed on the verify runtime.
-vllm>=0.4

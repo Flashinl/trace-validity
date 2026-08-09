@@ -1,7 +1,0 @@
-# setup_lean.sh is authored on Windows but executed on a Colab Linux box.
-# Checked out with CRLF it fails there with `$'\r': command not found`.
-*.sh text eol=lf
-
-# Notebooks are JSON; keep the diff readable and the line endings stable.
-*.ipynb text eol=lf
-*.py text eol=lf

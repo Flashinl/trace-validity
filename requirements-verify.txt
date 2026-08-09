@@ -1,6 +1,0 @@
-# Stage 2 (verify) only. CPU is fine; a GPU is wasted here.
-# Assumes elan + a built mathlib4 checkout already exist (scripts/setup_lean.sh).
-# Pinned to the 0.11 line: verified against 0.11.5. This is a 0.x package whose
-# project API moves between minors -- TempRequireProject gained a required
-# lean_version kwarg, for instance -- so a floating lower bound is a trap.
-lean-interact>=0.11,<0.12

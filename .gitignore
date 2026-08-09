@@ -1,20 +1,9 @@
 __pycache__/
 *.pyc
+*.pyo
 .ipynb_checkpoints/
-venv/
-.venv/
-env/
-
-# Stage outputs. The consolidated results/*.json, results/*.csv and figs/*.png
-# ARE the deliverable and stay tracked; only the per-question .jsonl resume
-# logs are noise.
-results/*.jsonl
-results/*.partial.jsonl
-
-# Lean build artefacts. lean_workspace/ is what lean_interact provisions when
-# there is no local mathlib4 checkout; it is gigabytes of oleans.
-mathlib4/
-mathlib4_build.tar.gz
-lean_workspace/
+lean_project/
+results/*.json
+results/*.png
 .lake/
-.elan/
+*.olean
