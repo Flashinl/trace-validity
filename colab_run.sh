@@ -9,6 +9,10 @@ echo "=== Cloning repo and setting up ==="
 pip install -r requirements.txt
 bash setup_lean.sh
 
+# setup_lean.sh sources elan env only inside its own shell — re-source it here
+# so `lake` / `lean` / `elan` are on PATH for the python3 subprocess below.
+. "$HOME/.elan/env" 2>/dev/null || export PATH="$HOME/.elan/bin:$PATH"
+
 echo "=== Running experiment ==="
 # Single temperature
 # python3 trace_valid.py --temp 0
