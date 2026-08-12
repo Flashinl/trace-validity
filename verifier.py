@@ -12,7 +12,12 @@ from config import LEAN_TOOLCHAIN, LEAN_PROJECT_DIR
 
 
 def setup_lean_project(project_dir=LEAN_PROJECT_DIR):
-    if os.path.exists(os.path.join(project_dir, "lakefile.lean")):
+    # Lake v5+ writes lakefile.toml; older Lake writes lakefile.lean. Accept
+    # either so we don't try to "re-init" a project that already exists in
+    # either format (which makes `lake new` fail with "package already
+    # initialized").
+    if (os.path.exists(os.path.join(project_dir, "lakefile.lean"))
+            or os.path.exists(os.path.join(project_dir, "lakefile.toml"))):
         return project_dir
 
     os.makedirs(project_dir, exist_ok=True)
