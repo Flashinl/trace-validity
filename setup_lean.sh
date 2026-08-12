@@ -29,6 +29,7 @@ cd lean_project
 
 echo "=== Building Mathlib (this may take a while) ==="
 lake build
+echo "lake version: $(lake --version)"
 
 echo "=== Lean setup complete ==="
 lean --version

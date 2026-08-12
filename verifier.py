@@ -1,6 +1,10 @@
 import os
 import subprocess
 
+elan_bin = os.path.expanduser("~/.elan/bin")
+if elan_bin not in os.environ.get("PATH", "").split(os.pathsep):
+    os.environ["PATH"] = elan_bin + os.pathsep + os.environ.get("PATH", "")
+
 from lean_interact import LeanREPLConfig, LeanServer, FileCommand
 from lean_interact.project import LocalProject
 
