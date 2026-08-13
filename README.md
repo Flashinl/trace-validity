@@ -34,13 +34,63 @@ cd math-trace-validity
 pip install -r requirements.txt
 ```
 
-### 3. Install Lean4 and build Mathlib
+### 3. Install Lean4 and fetch Mathlib
 
 ```bash
 bash setup_lean.sh
 ```
 
-This installs `elan` (Lean version manager), the Lean4 toolchain, and builds a `lake` math project with Mathlib. Takes a while on first run.
+Installs `elan` (Lean version manager), the pinned Lean toolchain, and fetches
+Mathlib **from the prebuilt cache**. Mathlib is never compiled from source.
+
+#### Version pinning — do not bump these independently
+
+| Component | Pin | Where |
+|---|---|---|
+| Lean toolchain | `leanprover/lean4:v4.32.0` | `config.LEAN_VERSION`, `lean_project/lean-toolchain` |
+| Mathlib | tag `v4.32.0` | `lean_project/lakefile.toml` |
+| REPL | `augustepoiroux/repl` @ `v1.3.18` | resolved by `lean_interact` |
+
+`lean_interact` selects its REPL by checking out a tag named
+`{repl_rev}_lean-toolchain-{lean_version}`. That rev publishes 94 such tags,
+topping out at `v4.32.0` — **there is no `v4.32.2` tag**. A project on Mathlib
+`v4.32.2` (whose `lean-toolchain` is `v4.32.2`) therefore runs against a
+mismatched REPL and produces `unexpected token` / `unknown constant`. Because
+mathlib4 tag `vX.Y.Z` always declares `leanprover/lean4:vX.Y.Z`, naming the
+Mathlib tag after the Lean version is what keeps all three aligned.
+
+Also set a default toolchain, or `lake` fails outside the project directory
+(`no default toolchain configured`):
+
+```bash
+elan default leanprover/lean4:v4.32.0
+```
+
+The project's own `lean-toolchain` still overrides this inside `lean_project/`.
+
+#### Windows: add Defender exclusions first
+
+Mathlib is ~8,600 `.olean` files. With Defender real-time protection scanning
+each read, loading it measured **7 KB/s at 0% CPU** and never completed. With
+exclusions it loads in ~182s. In an **Administrator** PowerShell:
+
+```powershell
+Add-MpPreference -ExclusionPath "<repo>\lean_project"
+Add-MpPreference -ExclusionPath "$env:USERPROFILE\.elan"
+Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\Programs\Python\Python313\Lib\site-packages\lean_interact"
+```
+
+This is the single highest-impact setup step on Windows. Linux needs none of it.
+
+### 4. Verify the install
+
+```bash
+python tests/test_verifier.py
+```
+
+Runs 35 hand-labelled Lean snippets and prints a confusion matrix. If Lean is
+healthy this completes in seconds of verification time (after a one-time
+Mathlib load) and agreement should be at or near 100%.
 
 ## Usage
 

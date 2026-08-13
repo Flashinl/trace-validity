@@ -200,6 +200,29 @@ add("timeout_01", "timeout", "timeout",
     "behaving, not about Lean semantics. UNCONFIRMED until observed.",
     confidence="low")
 
+# ------------------------------------------------- prose / parse failures ---
+# The taxonomy has a `parse_failure` outcome; these make sure something can
+# actually reach it rather than it being a dead branch.
+add("parse_01", "parse_failure", "empty_code",
+    "The sixth root of 1061520150601 is 101, since 101^6 expands to exactly "
+    "that value.\n",
+    "Pure natural-language prose, no Lean at all. This is what issue #2 was "
+    "feeding the prover. Must never be `valid`; the verifier reports "
+    "empty_code (no declaration). verify_traces reports parse_failure when "
+    "fence extraction produced nothing at all.")
+
+add("parse_02", "parse_failure", "empty_code",
+    "```lean4\n-- the model opened a fence and then said nothing\n```\n",
+    "Fenced block containing only a comment. No declaration, so nothing was "
+    "proved.")
+
+add("parse_03", "parse_failure", "compile_error",
+    HEADER + "theorem p03 (n : Nat) : n + 0 = n := by\n  simp\n```\nSome trailing "
+    "prose the model kept writing after closing the fence.\n",
+    "Stray closing fence plus prose leaked into the code. Lean must reject it "
+    "rather than silently ignoring the tail.",
+    confidence="medium")
+
 if __name__ == "__main__":
     out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "control_set.jsonl")
     with open(out, "w", encoding="utf-8") as f:

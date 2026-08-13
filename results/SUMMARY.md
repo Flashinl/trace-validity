@@ -30,30 +30,46 @@ repeat each result 10x.
 
 ## 2. Control set — can the verifier be trusted?
 
-`tests/fixtures/control_set.jsonl` (32 hand-labelled snippets), `results/control_set_run.json`
+`tests/fixtures/control_set.jsonl` (35 hand-labelled snippets), `results/control_set_run.json`
 
 ```
                |    valid empty_co has_sorr compile_  timeout
 ---------------------------------------------------------------
-valid          |       11        .        .        1        .
-empty_code     |        .        3        .        .        .
+valid          |       12        .        .        .        .
+empty_code     |        .        5        .        .        .
 has_sorry      |        .        .        5        .        .
-compile_error  |        .        .        .       11        .
-timeout        |        .        .        .        1        .
+compile_error  |        .        .        .       12        .
+timeout        |        .        .        .        .        1
 ---------------------------------------------------------------
-agreement: 30/32 = 93.8%     32 verifications in 4.3s (0.14s each)
+agreement: 35/35 = 100.0%    35 verifications in 185.8s (5.31s each)
 ```
 
-**Both mismatches were bad labels of mine, not verifier bugs.** Lean's judgement
-was correct in all 32 cases.
+The 185.8s total is dominated by the single deliberate `timeout` fixture (52.1s);
+the other 34 took ~3.9s combined.
 
-- `pipeline_01` — I mis-transcribed the fixture as `use 101; rw [h₀]` when the
-  model emitted `use 101; norm_num [h₀]`. My version genuinely does not close the
-  goal. Fixture corrected.
-- `timeout_01` — `decide` on a large prime failed fast with `maximum recursion
-  depth` instead of hanging, so **the `timeout` path is still UNTESTED**. Fixture
-  now raises `maxRecDepth`, but this remains unconfirmed and is marked
-  `confidence: low`. Do not claim timeout handling works.
+Every outcome in the taxonomy is now exercised by at least one fixture except
+`verifier_crash`:
+
+| outcome | covered | by |
+|---|---|---|
+| `valid` | yes | 12 fixtures |
+| `compile_error` | yes | 12 fixtures |
+| `has_sorry` | yes | 5 fixtures |
+| `empty_code` | yes | 5 fixtures |
+| `timeout` | **yes** | `timeout_01`, fired at 52.1s |
+| `parse_failure` | partly | `parse_01/02` reach `empty_code` via the verifier; the `parse_failure` label itself is emitted by `verify_traces.py` when fence extraction yields nothing |
+| `verifier_crash` | **no** | untested |
+
+**The timeout path is confirmed working.** `timeout_01` (`decide` on a 10-digit
+primality goal with raised `maxRecDepth`) was killed at the 45s budget and
+recorded as `timeout`, not `compile_error`. Fixtures 33–35 ran *after* it and
+passed, which also confirms the post-timeout REPL restart works — previously
+untested.
+
+An earlier run scored 30/32 with two mismatches; **both were bad labels of mine,
+not verifier bugs** (a mis-transcribed proof in `pipeline_01`, and a `timeout`
+fixture that failed fast on recursion depth instead of hanging). Both fixtures
+were corrected and now pass.
 
 ## 3. Cross-check against the dataset — independent of the model
 
@@ -152,12 +168,35 @@ and belongs in the README.
 
 ## 7. Known gaps — do not report these as done
 
-- **`timeout` outcome path is untested.** No fixture has yet produced one.
-- **`parse_failure` and `verifier_crash` paths are untested.** No case exercised them.
-- **Only 1 of 10 trajectories per sample verified** (the other 9 are identical at
-  temperature 0). Untrue for temperature > 0.
-- **`invalid_accuracy` is still degenerate.** Documented, not silently redefined;
-  corrected definition proposed in the PR body.
-- **`state` field is not carried into trace records**, so provability is inferred
-  from `reference_proof` being empty rather than read from the dataset's label.
-- Results here are a single temperature (0) on 50 samples. No sweep.
+- **`verifier_crash` path is untested.** Nothing has exercised it. Every other
+  outcome in the taxonomy now has at least one passing fixture.
+- **Only 1 of 10 trajectories per sample verified.** Sound only because
+  temperature-0 trajectories are byte-identical (measured 50/50). **Not valid for
+  temperature > 0** — a sweep must verify all trajectories.
+- **`invalid_accuracy` is still degenerate in the code.** Documented at the source
+  lines with a guard assertion; deliberately not silently redefined. Corrected
+  definition proposed in the PR body, awaiting a decision.
+- **`state` is not carried into trace records**, so provability comes from
+  `reference_proof` rather than the dataset's explicit label. Fixing this touches
+  the generation path, out of scope for this session.
+- **Sample 15's verdict is a judgement call, not a fact** (see §4). If the project
+  decides trailing no-op tactics should not invalidate a trace, the `valid` count
+  becomes 22/50 rather than 21/50.
+- **Sample 27 is not fully understood.** The outcome is right but the underlying
+  `rw` failure on a visibly-present numeral is unexplained.
+- Single temperature (0), 50 samples, one model. No sweep, no baseline.
+
+## 8. Reproducing
+
+```bash
+python tests/test_verifier.py --out results/control_set_run.json   # confusion matrix
+python verify_traces.py --out results/verification_temp_0.jsonl    # 50 traces
+python tests/crosscheck_dataset.py                                 # vs dataset
+python tests/verify_reference_proofs.py                            # compile dataset proofs
+python tests/trace_pipeline.py --n 5                               # per-stage dump
+```
+
+Each script pays a one-time ~6 min Mathlib load (≈128s of which is restoring the
+environment snapshot, the rest `lake build` re-checking) before its
+sub-second-per-verification work. On Windows the Defender exclusions in the
+README are mandatory, not optional.

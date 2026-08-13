@@ -11,11 +11,17 @@ import argparse
 import json
 import os
 import sys
+
+# Lean output contains math symbols (turnstile, blackboard bold). The Windows
+# console defaults to cp1252 and raises UnicodeEncodeError on them.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 import time
 from collections import Counter
 
 from config import RESULTS_DIR, VERIFY_TIMEOUT_SECONDS
-from verifier import LeanVerifier, OUTCOMES
+from verifier import LeanVerifier, OUTCOMES, PARSE_FAILURE, has_declaration
 
 DEFAULT_TRACES = [
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "traces", "temp_0.jsonl"),
@@ -101,8 +107,21 @@ def main():
     with open(out, "a", encoding="utf-8") as fh:
         for i, r in enumerate(todo, 1):
             # `full_code` is the fence-extracted file (header + theorem + proof).
-            code = r.get("full_code") or r.get("parsed_code") or ""
-            res = v.verify(code, timeout=args.timeout)
+            # If fence extraction failed we fall back to the parser, but if that
+            # also yields nothing usable the failure happened BEFORE Lean ever
+            # saw the code — that is `parse_failure`, not `compile_error`.
+            full = r.get("full_code")
+            code = full or r.get("parsed_code") or ""
+            if not full and not has_declaration(code or ""):
+                res = {
+                    "outcome": PARSE_FAILURE, "valid": False,
+                    "errors": ["fence extraction produced no code and the parser "
+                               "fallback contains no declaration"],
+                    "warnings": [], "num_errors": 0, "num_sorries": 0,
+                    "seconds": 0.0, "mode": "none",
+                }
+            else:
+                res = v.verify(code, timeout=args.timeout)
             counts[res["outcome"]] += 1
 
             rec = {
