@@ -9,11 +9,13 @@ declares leanprover/lean4:vX.Y.Z), and lean_interact's REPL publishes a matching
 Mathlib v4.32.2 against a REPL with no v4.32.2 tag -> "unexpected token" /
 "unknown constant".
 
-Speed (issue #5 / step 5). Importing Mathlib costs ~30s. We import it ONCE into
-a base environment and run each snippet against that env, so per-verification
-cost is just elaborating the declaration. Snippets whose imports differ from the
-base fall back to a "fresh" run so that missing-import failures are still real
-failures rather than being masked by the shared environment.
+Speed (issue #5 / step 5). Importing Mathlib is the dominant cost by orders of
+magnitude -- measured at >300s on this Windows box, versus seconds to elaborate
+a single theorem. We import it ONCE into a base environment, snapshot that
+environment to disk so later processes restore it instead of re-importing, and
+run each snippet against it. Snippets whose imports differ from the base fall
+back to a "fresh" run so that missing-import failures are still real failures
+rather than being masked by the shared environment.
 
 `sorry` detection. The REPL returns a structured `sorries` list. We use that,
 NOT a regex over the source: `\\bsorry\\b` matches the word inside comments and
@@ -30,6 +32,8 @@ from config import (
     LEAN_PROJECT_DIR,
     MATHLIB_REV,
     VERIFY_TIMEOUT_SECONDS,
+    BASE_ENV_TIMEOUT_SECONDS,
+    ENV_PICKLE_PATH,
 )
 
 # The outcome taxonomy. Never collapse these into a bare boolean (issue #5).
@@ -142,16 +146,52 @@ class LeanVerifier:
         config = LeanREPLConfig(project=project, verbose=verbose)
         self.server = LeanServer(config)
 
-        # Import Mathlib exactly once; reuse the resulting environment.
-        t0 = time.perf_counter()
+        self.base_env, self.base_env_seconds, self.base_env_source = self._base_env()
+
+    def _base_env(self):
+        """Get an environment with Mathlib imported.
+
+        `import Mathlib` costs minutes (>300s measured on Windows). It is a
+        one-time cost per process, so we snapshot the resulting environment to
+        disk and unpickle it in subsequent processes, which takes seconds.
+        """
+        from lean_interact import Command, PickleEnvironment, UnpickleEnvironment
+
         prelude = "\n".join(f"import {m}" for m in BASE_IMPORTS)
-        resp = self.server.run(Command(cmd=prelude), timeout=max(self.timeout, 300))
-        self.base_env = getattr(resp, "env", None)
-        self.base_env_seconds = time.perf_counter() - t0
-        if self.base_env is None:
-            raise RuntimeError(
-                f"Could not build base environment from {prelude!r}: {resp}"
-            )
+
+        if ENV_PICKLE_PATH and os.path.exists(ENV_PICKLE_PATH):
+            t0 = time.perf_counter()
+            try:
+                resp = self.server.run(
+                    UnpickleEnvironment(unpickle_env_from=ENV_PICKLE_PATH),
+                    timeout=BASE_ENV_TIMEOUT_SECONDS,
+                )
+                env = getattr(resp, "env", None)
+                if env is not None:
+                    return env, time.perf_counter() - t0, "unpickled"
+                print(f"[verifier] unpickle returned no env; rebuilding. {resp}")
+            except Exception as e:  # noqa: BLE001 - fall back to a real import
+                print(f"[verifier] unpickle failed ({type(e).__name__}: {e}); rebuilding.")
+
+        t0 = time.perf_counter()
+        resp = self.server.run(Command(cmd=prelude), timeout=BASE_ENV_TIMEOUT_SECONDS)
+        env = getattr(resp, "env", None)
+        elapsed = time.perf_counter() - t0
+        if env is None:
+            raise RuntimeError(f"Could not build base environment from {prelude!r}: {resp}")
+
+        if ENV_PICKLE_PATH:
+            try:
+                os.makedirs(os.path.dirname(ENV_PICKLE_PATH), exist_ok=True)
+                self.server.run(
+                    PickleEnvironment(env=env, pickle_to=ENV_PICKLE_PATH),
+                    timeout=BASE_ENV_TIMEOUT_SECONDS,
+                )
+                print(f"[verifier] snapshotted Mathlib env -> {ENV_PICKLE_PATH}")
+            except Exception as e:  # noqa: BLE001 - snapshot is an optimisation
+                print(f"[verifier] could not snapshot env ({type(e).__name__}: {e})")
+
+        return env, elapsed, "imported"
 
     # ------------------------------------------------------------------ #
 

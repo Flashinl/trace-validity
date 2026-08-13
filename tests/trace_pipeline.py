@@ -16,6 +16,12 @@ import json
 import os
 import sys
 
+# Lean output contains math symbols (turnstile, blackboard bold). The Windows
+# console defaults to cp1252 and raises UnicodeEncodeError on them.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from parser import parse_output  # noqa: E402

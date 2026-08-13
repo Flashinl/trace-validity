@@ -167,10 +167,11 @@ add("pipeline_01", "pipeline_formatted", "valid",
     + "/-- We can start by breaking down the number into its prime factors. -/\n"
       "theorem test\n  (n: ℕ)\n  (h₀: n = 1061520150601):\n"
       "  ∃ a: ℕ, a^6 = n := by\n"
-      "  use 101\n  rw [h₀]\n",
+      "  use 101\n  norm_num [h₀]\n",
     "Byte-for-byte the shape generate.py emits (Goedel header + doc-comment + "
-    "theorem + tactic body). This is the real sample-0 proof.",
-    confidence="medium")
+    "theorem + tactic body). This is the real sample-0 proof, verbatim: "
+    "`use 101` then `norm_num [h₀]`.",
+    confidence="high")
 
 add("pipeline_02", "pipeline_formatted", "valid",
     GOEDEL_HEADER
@@ -192,11 +193,12 @@ add("pipeline_04", "pipeline_formatted", "compile_error",
 
 # ---------------------------------------------------------------- timeout ---
 add("timeout_01", "timeout", "timeout",
-    HEADER + "theorem to01 : Nat.Prime 1000000007 := by decide\n",
-    "`decide` on a large primality goal blows up. Should hit the per-verify "
-    "timeout rather than hanging forever. Label is about the HARNESS behaving, "
-    "not about Lean semantics.",
-    confidence="medium")
+    HEADER + "set_option maxRecDepth 1000000 in\ntheorem to01 : Nat.Prime 1000000007 := by decide\n",
+    "`decide` on a 10-digit primality goal via kernel reduction. Without the "
+    "raised maxRecDepth this failed fast with a recursion-depth error instead "
+    "of hanging, so the timeout path went untested. Label is about the HARNESS "
+    "behaving, not about Lean semantics. UNCONFIRMED until observed.",
+    confidence="low")
 
 if __name__ == "__main__":
     out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "control_set.jsonl")

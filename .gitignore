@@ -9,7 +9,12 @@ lean_project/*
 !lean_project/lean-toolchain
 lean_project.lock
 
+# Bulk per-run result dumps stay out, but the debugging analysis outputs are
+# deliverables and are small (~40KB total) — keep them.
 results/*.json
+!results/control_set_run.json
+!results/crosscheck.json
+!results/pipeline_trace.json
 results/*.png
 .lake/
 *.olean
