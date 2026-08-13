@@ -15,6 +15,7 @@ results/*.json
 !results/control_set_run.json
 !results/crosscheck.json
 !results/pipeline_trace.json
+!results/reference_proofs.json
 results/*.png
 .lake/
 *.olean
