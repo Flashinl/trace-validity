@@ -88,6 +88,35 @@ provable. Note these are **different questions**: the dataset says whether the
 **Zero false positives.** We never returned `valid` for a statement the dataset
 could not prove — the direction that would most damage the paper.
 
+### 3a. Provability, measured rather than assumed
+
+`results/reference_proofs.json`. "Has a reference proof" is the dataset's claim.
+`tests/verify_reference_proofs.py` compiles those proofs so the ground-truth axis
+is measured. This also exercises the verifier on code no model wrote, so a
+failure here would implicate our setup rather than the prover.
+
+| | n | % |
+|---|---|---|
+| reference proof compiles | 26 | 96.3% |
+| reference proof fails | 1 | 3.7% |
+
+**26/27 compiling is strong evidence the pinning and headers are correct** — a
+broken setup would fail most of them, not one.
+
+The single failure is **sample 14** (`simp` made no progress), and it is one of
+the six "model failed on a provable statement" cases. Its statement's provability
+is therefore **UNKNOWN**, not provable: the dataset's proof is likely stale for
+Mathlib v4.32.0. Corrected partition:
+
+| | n |
+|---|---|
+| statement provable (verified) AND our verdict `valid` | 21 |
+| statement provable (verified), model's proof failed | 5 |
+| statement provability UNKNOWN (ref proof stale) | 1 (sample 14) |
+| no reference proof — statement presumed unprovable | 23 |
+
+So the model failed on **5** verified-provable statements, not 6.
+
 The 23 "agree_unprovable" cases are mostly CoT steps that are *mathematically
 false*, so the formal statement is unprovable and `compile_error` is correct.
 E.g. sample 2 claims `1061520150601 = 1.061520150601 × 10⁹` (off by 1000×) and
