@@ -2,7 +2,13 @@ __pycache__/
 *.pyc
 *.pyo
 .ipynb_checkpoints/
-lean_project/
+# Ignore the built Lean project (.lake alone is ~7GB) but DO commit the pins:
+# the toolchain and Mathlib rev are the whole point of issue #6.
+lean_project/*
+!lean_project/lakefile.toml
+!lean_project/lean-toolchain
+lean_project.lock
+
 results/*.json
 results/*.png
 .lake/

@@ -1,0 +1,22 @@
+# Pinned end-to-end. Do not bump any of these independently.
+#
+#   Lean toolchain : leanprover/lean4:v4.32.0   (see ./lean-toolchain)
+#   Mathlib rev    : v4.32.0                    (its lean-toolchain IS v4.32.0)
+#   lean_interact REPL: augustepoiroux/repl @ v1.3.18, which publishes a
+#                       matching tag  v1.3.18_lean-toolchain-v4.32.0
+#
+# The previously observed "unexpected token" / "unknown constant" failures came
+# from Mathlib v4.32.2 (toolchain v4.32.2) against a REPL that has NO
+# v4.32.2 tag. Pinning a Mathlib tag whose name equals the Lean version is what
+# keeps the three in lockstep -- mathlib4 tags vX.Y.Z always declare
+# leanprover/lean4:vX.Y.Z in their lean-toolchain.
+name = "verification"
+defaultTargets = ["Verification"]
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "v4.32.0"
+
+[[lean_lib]]
+name = "Verification"
