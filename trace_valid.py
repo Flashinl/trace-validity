@@ -5,13 +5,17 @@ import sys
 
 from config import RESULTS_DIR, NUM_SAMPLES, NUM_TRAJECTORIES
 from data_loader import FormalStepDataset
-from model import GoedelProver
+from prompting import build_prompt, extract_lean4_block
 from parser import parse_output
-from verifier import LeanVerifier
-from analysis import compute_stats, print_report, plot_single_temperature, plot_temperature_sweep
+from generate import dry_run, run_generation, default_output_path
 
 
 def run_experiment(temperature, num_samples=NUM_SAMPLES, num_trajectories=NUM_TRAJECTORIES):
+    """Full pipeline: generate + verify. Needs a working Lean verifier."""
+    from model import GoedelProver
+    from verifier import LeanVerifier
+    from analysis import compute_stats, print_report, plot_single_temperature
+
     os.makedirs(RESULTS_DIR, exist_ok=True)
 
     print(f"Loading dataset ({num_samples} samples)...")
@@ -26,27 +30,32 @@ def run_experiment(temperature, num_samples=NUM_SAMPLES, num_trajectories=NUM_TR
     results = []
 
     for idx in range(len(dataset)):
-        problem, ground_truth = dataset[idx]
+        sample = dataset[idx]
+        prompt = build_prompt(sample)
         print(f"\n[{idx+1}/{len(dataset)}] Processing sample...")
 
         trajectories = prover.generate(
-            problem,
+            prompt,
             temperature=temperature,
             num_trajectories=num_trajectories,
         )
 
         sample_result = {
             "index": idx,
-            "problem": problem,
-            "ground_truth": ground_truth,
+            "problem": sample["problem"],
+            "formal_statement": sample["formal_statement"],
+            "reference_proof": sample["reference_proof"],
+            "ground_truth": sample["ground_truth"],
             "temperature": temperature,
             "trajectories": [],
         }
 
         valid_count = 0
-        for traj_idx, raw_output in enumerate(trajectories):
-            parsed = parse_output(raw_output, prompt=problem)
-            lean_code = parsed["code"]
+        for traj_idx, gen in enumerate(trajectories):
+            raw_output = gen["text"]
+            full_code = extract_lean4_block(prompt, raw_output)
+            parsed = parse_output(raw_output, prompt=None)
+            lean_code = full_code if full_code is not None else parsed["code"]
 
             verification = verifier.verify(lean_code)
 
@@ -58,7 +67,8 @@ def run_experiment(temperature, num_samples=NUM_SAMPLES, num_trajectories=NUM_TR
                 "raw_output": raw_output,
                 "parsed_code": lean_code,
                 "theorem_name": parsed["theorem_name"],
-                "truncated": parsed["truncated"],
+                "truncated": gen["truncated"],
+                "hit_token_limit": gen["hit_token_limit"],
                 "has_sorry": parsed["has_sorry"],
                 "trace_valid": verification["valid"],
                 "errors": verification["errors"],
@@ -77,6 +87,10 @@ def run_experiment(temperature, num_samples=NUM_SAMPLES, num_trajectories=NUM_TR
         print(f"  Valid trajectories: {valid_count}/{num_trajectories}")
 
     output_path = os.path.join(RESULTS_DIR, f"results_temp_{temperature}.json")
+    if os.path.exists(output_path):
+        raise FileExistsError(
+            f"{output_path} exists; results from real runs are never overwritten."
+        )
     with open(output_path, "w") as f:
         json.dump(results, f, indent=2)
     print(f"\nResults saved to {output_path}")
@@ -89,33 +103,88 @@ def run_experiment(temperature, num_samples=NUM_SAMPLES, num_trajectories=NUM_TR
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Trace validity checker for CoT reasoning")
-    parser.add_argument("--temp", type=float, nargs="+", default=[0.0],
-                        help="Temperature(s) for generation. E.g. --temp 0 0.2 0.5 0.8 1")
-    parser.add_argument("--num-samples", type=int, default=NUM_SAMPLES,
-                        help=f"Number of dataset samples (default: {NUM_SAMPLES})")
-    parser.add_argument("--num-trajectories", type=int, default=NUM_TRAJECTORIES,
-                        help=f"Trajectories per sample (default: {NUM_TRAJECTORIES})")
-    parser.add_argument("--analyze-only", action="store_true",
-                        help="Skip inference, only run analysis on existing results")
+    parser = argparse.ArgumentParser(
+        description="Trace validity checker for CoT reasoning"
+    )
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    # ---- generate (GPU; no Lean) -----------------------------------------
+    g = sub.add_parser(
+        "generate", help="Generate trajectories to JSONL. No Lean required."
+    )
+    g.add_argument("--temp", type=float, default=0.0, help="Sampling temperature")
+    g.add_argument("--num-samples", type=int, default=NUM_SAMPLES)
+    g.add_argument("--num-trajectories", type=int, default=NUM_TRAJECTORIES)
+    g.add_argument("--out", type=str, default=None,
+                   help="Output JSONL (default: traces/temp_{T}.jsonl)")
+    g.add_argument("--resume", action="store_true",
+                   help="Skip (sample, temp, trajectory) tuples already in --out")
+    g.add_argument("--dry-run", action="store_true",
+                   help="Render prompts and exercise the parser with no model loaded")
+    g.add_argument("--show-sample", type=int, default=0,
+                   help="Which sample's prompt to print in --dry-run")
+    g.add_argument("--traj-batch", type=int, default=1,
+                   help="Trajectories per generate() call (>1 is faster, "
+                        "but per-trajectory timing becomes a batch average)")
+    g.add_argument("--seed", type=int, default=None)
+
+    # ---- run (GPU + Lean) -------------------------------------------------
+    r = sub.add_parser("run", help="Full pipeline: generate + verify in Lean")
+    r.add_argument("--temp", type=float, nargs="+", default=[0.0])
+    r.add_argument("--num-samples", type=int, default=NUM_SAMPLES)
+    r.add_argument("--num-trajectories", type=int, default=NUM_TRAJECTORIES)
+
+    # ---- analyze (CPU) ----------------------------------------------------
+    a = sub.add_parser("analyze", help="Analysis only, on existing results")
+    a.add_argument("--temp", type=float, nargs="+", default=[0.0])
+
     args = parser.parse_args()
 
-    if args.analyze_only:
+    if args.command == "generate":
+        if args.dry_run:
+            dry_run(
+                num_samples=args.num_samples,
+                show_sample=args.show_sample,
+                temperature=args.temp,
+                num_trajectories=args.num_trajectories,
+            )
+            return
+        out = args.out or default_output_path(args.temp)
+        run_generation(
+            temperature=args.temp,
+            output_path=out,
+            num_samples=args.num_samples,
+            num_trajectories=args.num_trajectories,
+            resume=args.resume,
+            traj_batch=args.traj_batch,
+            seed=args.seed,
+        )
+        return
+
+    if args.command == "analyze":
+        from analysis import plot_single_temperature, plot_temperature_sweep
+
         if len(args.temp) == 1:
             plot_single_temperature(args.temp[0])
         else:
             plot_temperature_sweep()
         return
 
-    for temp in args.temp:
-        print(f"\n{'#'*60}")
-        print(f"  Running experiment with temperature = {temp}")
-        print(f"{'#'*60}")
-        run_experiment(temp, num_samples=args.num_samples, num_trajectories=args.num_trajectories)
+    if args.command == "run":
+        from analysis import plot_temperature_sweep
 
-    if len(args.temp) > 1:
-        print("\nGenerating temperature sweep analysis...")
-        plot_temperature_sweep()
+        for temp in args.temp:
+            print(f"\n{'#'*60}")
+            print(f"  Running experiment with temperature = {temp}")
+            print(f"{'#'*60}")
+            run_experiment(
+                temp,
+                num_samples=args.num_samples,
+                num_trajectories=args.num_trajectories,
+            )
+        if len(args.temp) > 1:
+            print("\nGenerating temperature sweep analysis...")
+            plot_temperature_sweep()
 
 
 if __name__ == "__main__":
