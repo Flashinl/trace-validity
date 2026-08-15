@@ -1,0 +1,6 @@
+datasets
+transformers
+torch
+lean_interact
+accelerate
+matplotlib
