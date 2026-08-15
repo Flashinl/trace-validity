@@ -27,6 +27,16 @@ import re
 import subprocess
 import time
 
+# elan installs lake/lean/elan into ~/.elan/bin and adds it to PATH via the
+# shell profile. A Python process started from a non-login shell — Colab cells,
+# a notebook kernel, nohup, a CI step — never sources that profile, so `lake`
+# is missing and setup dies with "lake: command not found" even though the
+# install succeeded. Prepending it here fixes every such entry point at once.
+# Ported from the code-validity branch, where it was found the hard way.
+_ELAN_BIN = os.path.expanduser("~/.elan/bin")
+if os.path.isdir(_ELAN_BIN) and _ELAN_BIN not in os.environ.get("PATH", "").split(os.pathsep):
+    os.environ["PATH"] = _ELAN_BIN + os.pathsep + os.environ.get("PATH", "")
+
 from config import (
     LEAN_TOOLCHAIN,
     LEAN_PROJECT_DIR,
