@@ -59,16 +59,38 @@ def _git(*args):
         return None
 
 
+CODE_VERSION_FILE = "CODE_VERSION"
+
+
 def git_state():
-    """Commit the code was run from, and whether the tree was dirty."""
+    """Commit the code was run from, and whether the tree was dirty.
+
+    The generation host runs from an uploaded archive with no .git, so `git`
+    returns nothing there and the first A10 run recorded sha=null — the exact
+    provenance hole run_meta.json exists to close. Deploy writes a CODE_VERSION
+    file next to the source; it is read when git is unavailable. `source` says
+    which of the two answered, so a recorded SHA is never mistaken for a live
+    repository check.
+    """
     sha = _git("rev-parse", "HEAD")
-    status = _git("status", "--porcelain")
-    return {
-        "sha": sha,
-        "branch": _git("rev-parse", "--abbrev-ref", "HEAD"),
-        # None means "could not determine", which is not the same as "clean".
-        "dirty": None if status is None else bool(status.strip()),
-    }
+    if sha:
+        status = _git("status", "--porcelain")
+        return {
+            "source": "git",
+            "sha": sha,
+            "branch": _git("rev-parse", "--abbrev-ref", "HEAD"),
+            # None means "could not determine", which is not "clean".
+            "dirty": None if status is None else bool(status.strip()),
+        }
+
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                        CODE_VERSION_FILE)
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            recorded = json.load(f)
+        return dict(recorded, source="code_version_file")
+
+    return {"source": None, "sha": None, "branch": None, "dirty": None}
 
 
 def environment_state():
@@ -433,6 +455,31 @@ def dry_run(num_samples, show_sample=0, temperature=0.0, num_trajectories=1,
 # real generation
 # ---------------------------------------------------------------------------
 
+# One model per process, shared across every temperature in a sweep.
+#
+# Constructing a second GoedelProver while the first is still resident fails the
+# VRAM preflight: the weights are ~12.9 GiB on a 22 GiB A10, so the second
+# instance sees ~9 GiB free against 15.5 GiB required and correctly refuses to
+# offload to CPU. That is exactly what happened to `--temp 0 0.2`: temperature 0
+# finished, temperature 0.2 died before generating anything. Temperature is a
+# per-call argument, not a property of the loaded model, so one load serves all
+# of them — and a sweep no longer pays a 13.8 GB reload per temperature.
+_PROVER = None
+
+
+def load_prover():
+    global _PROVER
+    if _PROVER is None:
+        from model import GoedelProver  # late import: --dry-run needs no CUDA
+
+        print("Loading model...", file=sys.stderr)
+        t_load = time.perf_counter()
+        _PROVER = GoedelProver()
+        print(f"Model loaded in {time.perf_counter() - t_load:.1f}s", file=sys.stderr)
+    else:
+        print("Reusing the already-loaded model.", file=sys.stderr)
+    return _PROVER
+
 def run_generation(
     temperature,
     output_path,
@@ -499,12 +546,7 @@ def run_generation(
               file=sys.stderr)
         return output_path
 
-    from model import GoedelProver  # imported late so --dry-run never needs torch/CUDA
-
-    print("Loading model...", file=sys.stderr)
-    t_load = time.perf_counter()
-    prover = GoedelProver()
-    print(f"Model loaded in {time.perf_counter() - t_load:.1f}s", file=sys.stderr)
+    prover = load_prover()
 
     if temperature == 0.0 and num_trajectories > 1:
         print(
