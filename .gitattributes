@@ -1,0 +1,4 @@
+# Trace and result files are content-addressed by sha256 in run_meta.json.
+# Without this, git's autocrlf rewrites every line ending on a Windows checkout
+# and the file no longer hashes to what the run recorded.
+*.jsonl -text
