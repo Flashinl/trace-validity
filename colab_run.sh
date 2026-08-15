@@ -16,6 +16,6 @@ echo "=== Running experiment ==="
 #python3 trace_valid.py --temp 0 0.2 0.5 0.8 1.0
 
 #check for validity
-python3 verify_traces.py --input /path/to/traces.jsonl --temp 0 
+python3 verify_traces.py --input /traces.jsonl --temp 0 
 
 echo "=== Done ==="
