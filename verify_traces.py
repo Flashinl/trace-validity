@@ -129,6 +129,12 @@ def main():
                 "trajectory_index": r["trajectory_index"],
                 "temperature": r["temperature"],
                 "problem_unique_id": r.get("problem_unique_id"),
+                # Dataset provenance and the dataset's OWN provability label,
+                # carried through so the analysis can cross-tabulate our verdict
+                # against it without re-opening the dataset.
+                "dataset_row": r.get("dataset_row"),
+                "state": r.get("state"),
+                "level": r.get("level"),
                 "outcome": res["outcome"],
                 "trace_valid": res["valid"],
                 "num_errors": res["num_errors"],
