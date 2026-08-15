@@ -15,10 +15,27 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
+# Resolve an interpreter that actually runs. On Windows/git-bash `python3` is
+# the Microsoft Store stub, which prints "Python was not found" and exits 9009,
+# so testing for the name alone is not enough — each candidate has to be run.
+PYTHON_OVERRIDE="${PYTHON:-}"
+PYTHON=""
+for candidate in "$PYTHON_OVERRIDE" python3 python py; do
+    [ -n "$candidate" ] || continue
+    if "$candidate" -c 'import sys' >/dev/null 2>&1; then
+        PYTHON="$candidate"
+        break
+    fi
+done
+if [ -z "$PYTHON" ]; then
+    echo "No working Python interpreter found (tried \$PYTHON, python3, python, py)." >&2
+    exit 1
+fi
+
 # Single source of truth for the pins — never hardcode them here.
-LEAN_TOOLCHAIN="$(python3 -c 'import config; print(config.LEAN_TOOLCHAIN)')"
-MATHLIB_REV="$(python3 -c 'import config; print(config.MATHLIB_REV)')"
-LEAN_PROJECT="$(python3 -c 'import config; print(config.LEAN_PROJECT_DIR)')"
+LEAN_TOOLCHAIN="$("$PYTHON" -c 'import config; print(config.LEAN_TOOLCHAIN)')"
+MATHLIB_REV="$("$PYTHON" -c 'import config; print(config.MATHLIB_REV)')"
+LEAN_PROJECT="$("$PYTHON" -c 'import config; print(config.LEAN_PROJECT_DIR)')"
 
 # Shared build cache. Override MATHLIB_CACHE_DIR to relocate it; the point is
 # that it survives between clones so the multi-GB download is paid once.
@@ -27,6 +44,7 @@ MATHLIB_CACHE_DIR="${MATHLIB_CACHE_DIR:-$XDG_CACHE_HOME/mathlib}"
 mkdir -p "$MATHLIB_CACHE_DIR"
 
 echo "=== Pins (from config.py) ==="
+echo "  python    : $PYTHON ($("$PYTHON" --version 2>&1))"
 echo "  toolchain : $LEAN_TOOLCHAIN"
 echo "  mathlib   : $MATHLIB_REV"
 echo "  project   : $LEAN_PROJECT"
@@ -40,7 +58,14 @@ fi
 . "$HOME/.elan/env" 2>/dev/null || export PATH="$HOME/.elan/bin:$PATH"
 
 echo "=== Installing toolchain $LEAN_TOOLCHAIN ==="
-elan toolchain install "$LEAN_TOOLCHAIN"
+# `elan toolchain install` exits 1 with "is already installed" on a second run,
+# and under `set -e` that aborts setup on every machine that has already been
+# set up once. Setup has to be safe to re-run, so install only when absent.
+if elan toolchain list 2>/dev/null | grep -qF "$LEAN_TOOLCHAIN"; then
+    echo "  already installed"
+else
+    elan toolchain install "$LEAN_TOOLCHAIN"
+fi
 # Without a default, `lake` outside the project dir fails with
 # "no default toolchain configured". The project's own lean-toolchain still
 # wins inside lean_project/.
@@ -51,7 +76,7 @@ echo "=== Creating the pinned Lean project ==="
 # config.py, runs `lake update`, then `lake exe cache get` BEFORE `lake build`,
 # so Mathlib is downloaded rather than compiled. Reusing it here keeps setup and
 # verification from drifting apart.
-python3 -c "import verifier; verifier.setup_lean_project(verbose=True)"
+"$PYTHON" -c "import verifier; verifier.setup_lean_project(verbose=True)"
 
 echo "=== Lean setup complete ==="
 lean --version
