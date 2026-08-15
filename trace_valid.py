@@ -3,7 +3,21 @@ import json
 import os
 import sys
 
-from config import RESULTS_DIR, NUM_SAMPLES, NUM_TRAJECTORIES
+# Lean statements carry math symbols (ℕ, ℝ, ∑). The Windows console defaults to
+# cp1252 and raises UnicodeEncodeError when printing them, which killed the dry
+# run before it could render a prompt.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
+from config import (
+    RESULTS_DIR,
+    NUM_SAMPLES,
+    NUM_TRAJECTORIES,
+    SAMPLE_STRATEGY,
+    PROBLEM_STRIDE,
+    STEP_SELECTION,
+)
 from data_loader import FormalStepDataset
 from prompting import build_prompt, extract_lean4_block
 from parser import parse_output
@@ -112,7 +126,10 @@ def main():
     g = sub.add_parser(
         "generate", help="Generate trajectories to JSONL. No Lean required."
     )
-    g.add_argument("--temp", type=float, default=0.0, help="Sampling temperature")
+    # nargs="+" makes a temperature sweep a loop over one command rather than a
+    # manual re-run per temperature. Each temperature gets its own run dir.
+    g.add_argument("--temp", type=float, nargs="+", default=[0.0],
+                   help="Sampling temperature(s); more than one runs a sweep")
     g.add_argument("--num-samples", type=int, default=NUM_SAMPLES)
     g.add_argument("--num-trajectories", type=int, default=NUM_TRAJECTORIES)
     g.add_argument("--out", type=str, default=None,
@@ -127,6 +144,18 @@ def main():
                    help="Trajectories per generate() call (>1 is faster, "
                         "but per-trajectory timing becomes a batch average)")
     g.add_argument("--seed", type=int, default=None)
+    g.add_argument("--sample-strategy", choices=("distinct_problems", "head"),
+                   default=SAMPLE_STRATEGY,
+                   help="distinct_problems: one step from each of N different "
+                        "problems. head: the first N rows, which are N steps of "
+                        "ONE problem (the original behaviour)")
+    g.add_argument("--stride", type=int, default=PROBLEM_STRIDE,
+                   help="Stride across the ordered problem list")
+    g.add_argument("--step-selection", choices=("first", "median"),
+                   default=STEP_SELECTION,
+                   help="Which CoT step to take from each selected problem")
+    g.add_argument("--allow-unseeded", action="store_true",
+                   help="Permit sampling (temp>0) with no seed; records seed=null")
 
     # ---- run (GPU + Lean) -------------------------------------------------
     r = sub.add_parser("run", help="Full pipeline: generate + verify in Lean")
@@ -145,20 +174,37 @@ def main():
             dry_run(
                 num_samples=args.num_samples,
                 show_sample=args.show_sample,
-                temperature=args.temp,
+                temperature=args.temp[0],
                 num_trajectories=args.num_trajectories,
+                strategy=args.sample_strategy,
+                stride=args.stride,
+                step_selection=args.step_selection,
             )
             return
-        out = args.out or default_output_path(args.temp)
-        run_generation(
-            temperature=args.temp,
-            output_path=out,
-            num_samples=args.num_samples,
-            num_trajectories=args.num_trajectories,
-            resume=args.resume,
-            traj_batch=args.traj_batch,
-            seed=args.seed,
-        )
+
+        if args.out and len(args.temp) > 1:
+            parser.error("--out names a single file; drop it for a sweep so each "
+                         "temperature gets its own run directory")
+
+        for temp in args.temp:
+            out = args.out or default_output_path(
+                temp, args.num_samples, args.num_trajectories
+            )
+            if len(args.temp) > 1:
+                print(f"\n{'#'*60}\n  temperature = {temp}\n{'#'*60}")
+            run_generation(
+                temperature=temp,
+                output_path=out,
+                num_samples=args.num_samples,
+                num_trajectories=args.num_trajectories,
+                resume=args.resume,
+                traj_batch=args.traj_batch,
+                seed=args.seed,
+                strategy=args.sample_strategy,
+                stride=args.stride,
+                step_selection=args.step_selection,
+                allow_unseeded=args.allow_unseeded,
+            )
         return
 
     if args.command == "analyze":

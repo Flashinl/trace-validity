@@ -5,10 +5,15 @@ Every trajectory is appended to JSONL the moment it is produced, so an
 interrupted run loses nothing.
 """
 
+import hashlib
 import json
 import os
+import platform
+import socket
+import subprocess
 import sys
 import time
+from datetime import datetime, timezone
 
 from config import (
     MODEL_NAME,
@@ -17,10 +22,147 @@ from config import (
     TRACES_DIR,
     MODEL_MAX_CONTEXT,
     MAX_NEW_TOKENS,
+    TOP_P,
+    DATASET_NAME,
+    DATASET_SPLIT,
+    SAMPLE_STRATEGY,
+    PROBLEM_STRIDE,
+    STEP_SELECTION,
 )
+
+META_FILENAME = "run_meta.json"
+META_SCHEMA_VERSION = 1
 from data_loader import FormalStepDataset
 from prompting import build_prompt, extract_lean4_block
 from parser import parse_output
+
+
+# ---------------------------------------------------------------------------
+# Run metadata
+# ---------------------------------------------------------------------------
+# A run whose configuration is not written down is a run that cannot be cited.
+# traces/temp_0.jsonl has no seed, no top_p, no git SHA and no dataset revision
+# recorded anywhere, so its provenance had to be reconstructed by reading the
+# records. Every run now writes run_meta.json beside its JSONL — once at start
+# (status "running") so an interrupted run still leaves its config on disk, and
+# again at the end with the realised counts and the output hash.
+
+def _git(*args):
+    try:
+        out = subprocess.run(
+            ["git", *args],
+            cwd=os.path.dirname(os.path.abspath(__file__)),
+            capture_output=True, text=True, timeout=15,
+        )
+        return out.stdout.strip() if out.returncode == 0 else None
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
+def git_state():
+    """Commit the code was run from, and whether the tree was dirty."""
+    sha = _git("rev-parse", "HEAD")
+    status = _git("status", "--porcelain")
+    return {
+        "sha": sha,
+        "branch": _git("rev-parse", "--abbrev-ref", "HEAD"),
+        # None means "could not determine", which is not the same as "clean".
+        "dirty": None if status is None else bool(status.strip()),
+    }
+
+
+def environment_state():
+    env = {
+        "hostname": socket.gethostname(),
+        "platform": platform.platform(),
+        "python": platform.python_version(),
+    }
+    for mod in ("torch", "transformers", "datasets"):
+        try:
+            env[mod] = __import__(mod).__version__
+        except Exception:  # noqa: BLE001 - a missing version is recorded as such
+            env[mod] = None
+    try:
+        import torch
+
+        if torch.cuda.is_available():
+            free, total = torch.cuda.mem_get_info()
+            env["gpu"] = torch.cuda.get_device_name(0)
+            env["gpu_total_gib"] = round(total / 1024 ** 3, 2)
+            env["gpu_free_gib_at_start"] = round(free / 1024 ** 3, 2)
+        else:
+            env["gpu"] = None
+    except Exception:  # noqa: BLE001
+        env["gpu"] = None
+    return env
+
+
+def sha256_file(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def meta_path_for(output_path):
+    return os.path.join(os.path.dirname(os.path.abspath(output_path)), META_FILENAME)
+
+
+def write_run_meta(output_path, meta):
+    path = meta_path_for(output_path)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(meta, f, indent=2, ensure_ascii=False)
+        f.write("\n")
+        f.flush()
+        os.fsync(f.fileno())
+    return path
+
+
+def build_run_meta(dataset, temperature, num_trajectories, seed, output_path,
+                   resume=False):
+    do_sample = temperature > 0.0
+    return {
+        "schema_version": META_SCHEMA_VERSION,
+        "status": "running",
+        "started_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "finished_utc": None,
+        "command": " ".join(sys.argv),
+        "resumed": bool(resume),
+        "git": git_state(),
+        "model": {
+            "name": MODEL_NAME,
+            "max_new_tokens": MAX_NEW_TOKENS,
+            "declared_context": MODEL_MAX_CONTEXT,
+        },
+        "sampling": {
+            "temperature": temperature,
+            "do_sample": do_sample,
+            # top_p only reaches the model when sampling; recording it for a
+            # greedy run would imply it had an effect.
+            "top_p": TOP_P if do_sample else None,
+            "seed": seed,
+            "greedy_deterministic": not do_sample,
+            "num_samples": len(dataset),
+            "num_trajectories_per_sample": num_trajectories,
+        },
+        "dataset": {
+            "name": getattr(dataset, "name", DATASET_NAME),
+            "split": getattr(dataset, "split", DATASET_SPLIT),
+            "fingerprint": getattr(dataset, "fingerprint", None),
+            "rows_in_split": getattr(dataset, "num_rows_in_split", None),
+            "selection": getattr(dataset, "selection", None),
+        },
+        "environment": environment_state(),
+        "output": {
+            "traces": os.path.basename(output_path),
+            "records_written": 0,
+            "records_expected": len(dataset) * num_trajectories,
+            "sha256": None,
+            "elapsed_seconds": None,
+        },
+    }
 
 
 def traj_key(sample_index, temperature, trajectory_index):
@@ -108,7 +250,7 @@ class JsonlWriter:
         self.close()
 
 
-def build_record(sample, prompt, gen, temperature, trajectory_index):
+def build_record(sample, prompt, gen, temperature, trajectory_index, seed=None):
     """Assemble one JSONL record from a raw generation result."""
     completion = gen["text"]
     full_code = extract_lean4_block(prompt, completion)
@@ -128,6 +270,15 @@ def build_record(sample, prompt, gen, temperature, trajectory_index):
         "trajectory_index": trajectory_index,
         "problem_unique_id": sample["problem_unique_id"],
         "model": MODEL_NAME,
+        # provenance: which dataset row this came from, and the decode config
+        # that produced it. Per-record as well as in run_meta.json, so a trace
+        # separated from its sidecar is still self-describing.
+        "dataset_row": sample.get("dataset_row"),
+        "state": sample.get("state"),
+        "level": sample.get("level"),
+        "type": sample.get("type"),
+        "top_p": TOP_P if temperature > 0.0 else None,
+        "seed": seed,
         # inputs
         "prompt": prompt,
         "formal_statement": sample["formal_statement"],
@@ -160,9 +311,30 @@ def build_record(sample, prompt, gen, temperature, trajectory_index):
 # dry run — no model is loaded
 # ---------------------------------------------------------------------------
 
-def dry_run(num_samples, show_sample=0, temperature=0.0, num_trajectories=1):
-    dataset = FormalStepDataset(num_samples=num_samples)
+def dry_run(num_samples, show_sample=0, temperature=0.0, num_trajectories=1,
+            strategy=SAMPLE_STRATEGY, stride=PROBLEM_STRIDE,
+            step_selection=STEP_SELECTION):
+    dataset = FormalStepDataset(
+        num_samples=num_samples,
+        strategy=strategy,
+        stride=stride,
+        step_selection=step_selection,
+    )
     print(f"Loaded {len(dataset)} samples. Columns: {dataset.columns}\n")
+    sel = dataset.selection
+    print("SAMPLE SELECTION")
+    print(f"  strategy                  : {sel['strategy']}")
+    if sel["strategy"] == "distinct_problems":
+        print(f"  stride / step             : {sel['stride']} / {sel['step_selection']}")
+        print(f"  problems in split         : {sel['problems_in_split']}")
+    print(f"  distinct problems selected: {sel['distinct_problems_in_selection']}"
+          f" / {len(dataset)} samples")
+    print(f"  levels                    : {sel['levels']}")
+    print(f"  dataset states            : {sel['states']}")
+    print(f"  dataset rows              : {sel['dataset_rows'][:8]} ...\n")
+    if sel["distinct_problems_in_selection"] < len(dataset):
+        print("  [WARN] these samples are CoT steps of the same problem, not "
+              "independent samples.\n")
 
     tokenizer = None
     try:
@@ -269,9 +441,40 @@ def run_generation(
     resume=False,
     traj_batch=1,
     seed=None,
+    strategy=SAMPLE_STRATEGY,
+    stride=PROBLEM_STRIDE,
+    step_selection=STEP_SELECTION,
+    allow_unseeded=False,
 ):
-    dataset = FormalStepDataset(num_samples=num_samples)
-    print(f"Loaded {len(dataset)} samples from FormalStep.", file=sys.stderr)
+    # Sampling without a seed cannot be reproduced. Greedy decoding can, so a
+    # seed is only mandatory when the run actually samples.
+    if temperature > 0.0 and seed is None and not allow_unseeded:
+        raise ValueError(
+            f"temperature={temperature} samples, so the run is unreproducible "
+            "without a seed. Pass --seed, or --allow-unseeded to record "
+            "seed=null deliberately."
+        )
+
+    dataset = FormalStepDataset(
+        num_samples=num_samples,
+        strategy=strategy,
+        stride=stride,
+        step_selection=step_selection,
+    )
+    sel = dataset.selection
+    print(
+        f"Loaded {len(dataset)} samples from FormalStep "
+        f"[{sel['strategy']}]: {sel['distinct_problems_in_selection']} distinct "
+        f"problem(s), levels {sel['levels']}, states {sel['states']}",
+        file=sys.stderr,
+    )
+    if sel["distinct_problems_in_selection"] < len(dataset):
+        print(
+            f"[warn] {len(dataset)} samples span only "
+            f"{sel['distinct_problems_in_selection']} distinct problem(s) — "
+            "these are CoT steps of the same problem, not independent samples.",
+            file=sys.stderr,
+        )
 
     done = load_done_keys(output_path) if resume else set()
     if resume:
@@ -282,6 +485,12 @@ def run_generation(
             f"{output_path} already exists. Pass --resume to continue it, or "
             "choose a new path — existing trajectory files are never overwritten."
         )
+
+    # Written before the model loads: an interrupted run still leaves a sidecar
+    # describing exactly what it was trying to do.
+    meta = build_run_meta(dataset, temperature, num_trajectories, seed,
+                          output_path, resume=resume)
+    print(f"[meta] {write_run_meta(output_path, meta)}", file=sys.stderr)
 
     # Load the model only once we know there is work to do.
     total_wanted = len(dataset) * num_trajectories
@@ -336,7 +545,8 @@ def run_generation(
             )
 
             for traj_index, gen in zip(wanted, gens):
-                record = build_record(sample, prompt, gen, temperature, traj_index)
+                record = build_record(sample, prompt, gen, temperature, traj_index,
+                                      seed=seed)
                 writer.write(record)
                 written += 1
                 print(
@@ -347,14 +557,42 @@ def run_generation(
                 )
 
     elapsed = time.perf_counter() - t_run
+
+    present = len(load_done_keys(output_path))
+    meta["status"] = "complete" if present >= total_wanted else "incomplete"
+    meta["finished_utc"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    meta["output"].update(
+        records_written=present,
+        sha256=sha256_file(output_path),
+        elapsed_seconds=round(elapsed, 1),
+    )
+    write_run_meta(output_path, meta)
+
     print(
         f"\nWrote {written} trajectories ({skipped} skipped) to {output_path} "
         f"in {elapsed:.1f}s"
         + (f" ({elapsed / written:.2f}s per trajectory)" if written else ""),
         file=sys.stderr,
     )
+    print(f"[meta] status={meta['status']} "
+          f"{present}/{total_wanted} records, sha256={meta['output']['sha256'][:16]}",
+          file=sys.stderr)
     return output_path
 
 
-def default_output_path(temperature):
-    return os.path.join(TRACES_DIR, f"temp_{temperature}.jsonl")
+def run_dir_name(temperature, num_samples, num_trajectories):
+    """Directory name that states the config it holds.
+
+    Temperature sweeps write to sibling directories rather than overwriting one
+    another, which is also why nothing here ever includes a bare "temp_0".
+    """
+    return f"temp{temperature}_n{num_samples}_{num_trajectories}each"
+
+
+def default_output_path(temperature, num_samples=NUM_SAMPLES,
+                        num_trajectories=NUM_TRAJECTORIES):
+    return os.path.join(
+        TRACES_DIR,
+        run_dir_name(temperature, num_samples, num_trajectories),
+        "traces.jsonl",
+    )
