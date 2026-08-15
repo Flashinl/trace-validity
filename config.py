@@ -7,6 +7,24 @@ NUM_SAMPLES = 50
 NUM_TRAJECTORIES = 10
 
 # ---------------------------------------------------------------------------
+# Sample selection
+# ---------------------------------------------------------------------------
+# FormalStep is one row per CoT step, ordered by problem (~62 steps/problem,
+# 500 problems in train). Taking the first 50 rows therefore samples 50 steps of
+# ONE problem — the temp-0 run in traces/temp_0.jsonl is 500 trajectories over
+# math_train_counting_and_probability_408 and nothing else.
+#
+# `distinct_problems` takes one step from each of 50 different problems,
+# striding across the ordered problem list so the selection spans the split
+# instead of its first 5%. Deterministic: no RNG anywhere in selection.
+#
+# `head` reproduces the original single-problem behaviour, kept so the earlier
+# run can be regenerated exactly.
+SAMPLE_STRATEGY = "distinct_problems"
+PROBLEM_STRIDE = 10          # 500 problems / stride 10 -> 50 selected
+STEP_SELECTION = "first"     # "first" | "median" step within each problem
+
+# ---------------------------------------------------------------------------
 # Lean pinning (issue #6) — these three MUST move together
 # ---------------------------------------------------------------------------
 # mathlib4 tag vX.Y.Z always declares leanprover/lean4:vX.Y.Z in its
