@@ -51,16 +51,29 @@ def load_jsonl(path):
         return [json.loads(line) for line in f if line.strip()]
 
 
-def load_run(verification_path):
-    """A verification file plus, when present, the run_meta.json of its traces."""
+def load_run(verification_path, meta_path=None):
+    """A verification file plus the run_meta.json of the traces it verified.
+
+    Verification output lives in results/ while run_meta.json lives in the run's
+    traces/ directory, so the sidecar is looked for beside the verification file
+    first and otherwise has to be named explicitly with --meta. An unfound
+    sidecar is reported, never guessed at.
+    """
     rows = load_jsonl(verification_path)
-    meta = None
-    meta_path = os.path.join(os.path.dirname(os.path.abspath(verification_path)),
-                             "run_meta.json")
-    if os.path.exists(meta_path):
-        with open(meta_path, encoding="utf-8") as f:
-            meta = json.load(f)
-    return {"path": verification_path, "rows": rows, "meta": meta}
+    candidates = []
+    if meta_path:
+        candidates.append(meta_path)
+    candidates.append(os.path.join(
+        os.path.dirname(os.path.abspath(verification_path)), "run_meta.json"))
+
+    for path in candidates:
+        if os.path.exists(path):
+            with open(path, encoding="utf-8") as f:
+                return {"path": verification_path, "rows": rows,
+                        "meta": json.load(f), "meta_path": path}
+    if meta_path:
+        raise FileNotFoundError(f"--meta {meta_path} does not exist")
+    return {"path": verification_path, "rows": rows, "meta": None, "meta_path": None}
 
 
 def summarise(rows):
@@ -238,9 +251,17 @@ def main():
     ap.add_argument("verifications", nargs="+",
                     help="verification JSONL file(s) from verify_traces.py")
     ap.add_argument("--out", default=None, help="write the report as JSON")
+    ap.add_argument("--meta", nargs="*", default=None,
+                    help="run_meta.json for each verification file, in the same "
+                         "order (the traces dir, not the results dir)")
     args = ap.parse_args()
 
-    runs = [load_run(p) for p in args.verifications]
+    metas = args.meta or []
+    if metas and len(metas) != len(args.verifications):
+        ap.error(f"--meta takes one path per verification file "
+                 f"({len(args.verifications)} given, {len(metas)} metas)")
+    runs = [load_run(p, metas[i] if metas else None)
+            for i, p in enumerate(args.verifications)]
     report = {"runs": []}
     for run in runs:
         report["runs"].append(dict(report_run(run), path=run["path"]))
