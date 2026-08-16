@@ -20,6 +20,27 @@ def compute_stats(results):
     valid_correct = sum(1 for r in valid_traces if r["answer_correct"])
     invalid_correct = sum(1 for r in invalid_traces if r["answer_correct"])
 
+    # ISSUE #5 — `invalid_accuracy` below is DEGENERATE, always exactly 0.0.
+    #
+    #   trace_valid.py:  answer_correct = trace_valid and not has_sorry
+    #   here:            invalid_traces = [r for r in results if not r["trace_valid"]]
+    #                    invalid_correct = sum(... if r["answer_correct"])
+    #
+    # Every row in `invalid_traces` has trace_valid == False, so its
+    # answer_correct is `False and ...` == False. invalid_correct is therefore
+    # identically 0 and invalid_accuracy is identically 0.0 — it measures
+    # nothing. The 2x2 contingency between "is the trace a valid proof" and "is
+    # the answer right" collapses because answer_correct is DERIVED FROM
+    # trace_valid instead of being an independent signal.
+    #
+    # Not silently redefined here: the corrected definition is proposed in the
+    # PR body for review. See `outcome_distribution` below for reporting that
+    # does not depend on this metric.
+    assert invalid_correct == 0 or not invalid_traces, (
+        "invalid_correct became non-zero — answer_correct is no longer derived "
+        "from trace_valid, so the issue #5 note above needs updating."
+    )
+
     return {
         "total": len(results),
         "valid_count": len(valid_traces),
@@ -32,6 +53,47 @@ def compute_stats(results):
         "invalid_correct": invalid_correct,
         "invalid_incorrect": len(invalid_traces) - invalid_correct,
     }
+
+
+def load_verification(path):
+    """Load a verification JSONL produced by verify_traces.py."""
+    rows = []
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            if line.strip():
+                rows.append(json.loads(line))
+    return rows
+
+
+def outcome_distribution(rows):
+    """Distinct outcomes, never collapsed into a single boolean (issue #5)."""
+    from collections import Counter
+
+    counts = Counter(r["outcome"] for r in rows)
+    total = len(rows)
+    return {
+        "total": total,
+        "counts": dict(counts),
+        "fractions": {k: v / total for k, v in counts.items()} if total else {},
+    }
+
+
+def print_outcome_report(path):
+    rows = load_verification(path)
+    dist = outcome_distribution(rows)
+    print(f"\n{'='*60}")
+    print(f"  Outcome distribution — {os.path.basename(path)}")
+    print(f"{'='*60}")
+    print(f"  total verified: {dist['total']}")
+    for outcome, n in sorted(dist["counts"].items(), key=lambda kv: -kv[1]):
+        print(f"    {outcome:<16} {n:>4}  ({dist['fractions'][outcome]:.1%})")
+
+    secs = [r["seconds"] for r in rows if "seconds" in r]
+    if secs:
+        print(f"\n  per-verification seconds: min {min(secs):.2f} "
+              f"mean {sum(secs)/len(secs):.2f} max {max(secs):.2f}")
+    print(f"{'='*60}\n")
+    return dist
 
 
 def print_report(temperature, stats):

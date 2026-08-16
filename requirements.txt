@@ -1,0 +1,24 @@
+# Pinned deliberately. Unpinned, `pip install transformers` resolves to 5.x on a
+# fresh Lambda A10 image, where importing the model dies with
+#   ModuleNotFoundError: Could not import module 'LlamaConfig'
+# before a single trajectory is generated. Goedel-Prover-SFT is a Llama-arch
+# model and needs the 4.x line.
+#
+# Verified working together on the generation host (A10, CUDA 12.x, Python 3.10)
+# and on the Windows verification box (Python 3.13).
+#
+# Do not resolve a conflict here by dropping a pin.
+transformers==4.46.3
+datasets==3.6.0
+accelerate==1.1.1
+tokenizers==0.20.3
+
+# torch is NOT pinned: the CUDA build must match the host driver, and the Lambda
+# image ships a working 2.7.0. Install torch from the vendor index for your CUDA
+# version, then this file. Verified against torch 2.7.0.
+torch
+
+# Verification side (no GPU). lean_interact pins its own REPL revision; see
+# config.py for why the Lean toolchain, Mathlib tag and REPL tag move together.
+lean_interact==0.11.5
+matplotlib
