@@ -19,6 +19,7 @@ if hasattr(sys.stdout, "reconfigure"):
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+import verifier as verifier_mod
 from config import GOEDEL_LEAN4_HEADER
 from verifier import LeanVerifier
 
@@ -47,19 +48,22 @@ S12 = """{OPT}theorem test
   decide
 """
 
+# depth=None means "leave config.LEAN_MAX_REC_DEPTH alone"; a number overrides
+# what the verifier injects, so the 12a/12b pair still contrasts the old default
+# against the configured value now that the fix is in place.
 CASES = [
     ("19a  statement as shipped, proof replaced by `sorry`",
-     GOEDEL_LEAN4_HEADER + S19.replace("{IN}", "in"),
-     "compile_error", "rejected with NO model proof present"),
+     GOEDEL_LEAN4_HEADER + S19.replace("{IN}", "in"), None,
+     "statement_error", "rejected with NO model proof present"),
     ("19b  same statement, `in` -> `∈`, still just `sorry`",
-     GOEDEL_LEAN4_HEADER + S19.replace("{IN}", "∈"),
+     GOEDEL_LEAN4_HEADER + S19.replace("{IN}", "∈"), None,
      "has_sorry", "parses; only the sorry remains"),
-    ("12a  statement + a correct proof, default maxRecDepth",
-     GOEDEL_LEAN4_HEADER + S12.replace("{OPT}", ""),
+    ("12a  correct proof, Lean's OLD default depth (512)",
+     GOEDEL_LEAN4_HEADER + S12.replace("{OPT}", ""), 512,
      "compile_error", "recursion limit, not a wrong proof"),
-    ("12b  identical, with `set_option maxRecDepth 10000`",
-     GOEDEL_LEAN4_HEADER + S12.replace("{OPT}", "set_option maxRecDepth 10000\n\n"),
-     "valid", "same proof compiles once the limit is raised"),
+    ("12b  identical, at the configured LEAN_MAX_REC_DEPTH",
+     GOEDEL_LEAN4_HEADER + S12.replace("{OPT}", ""), None,
+     "valid", "same proof compiles at the configured depth"),
 ]
 
 
@@ -71,8 +75,23 @@ def main():
 
     failures = 0
     results = []
-    for label, code, expected, note in CASES:
-        res = v.verify(code)
+    for label, code, depth, expected, note in CASES:
+        original = verifier_mod.LEAN_MAX_REC_DEPTH
+        if depth is not None:
+            verifier_mod.LEAN_MAX_REC_DEPTH = depth
+        try:
+            res = v.verify(code)
+        finally:
+            verifier_mod.LEAN_MAX_REC_DEPTH = original
+        # 19a reaches statement_error only through verify_traces, which runs the
+        # statement probe; verify() alone reports the underlying compile_error.
+        if expected == "statement_error" and res["outcome"] == "compile_error":
+            broken, detail = v.statement_is_broken(
+                code.split("Rat\n\n", 1)[-1].replace("\n  sorry\n", "")
+            )
+            if broken:
+                res = dict(res, outcome="statement_error",
+                           statement_error_detail=detail)
         ok = res["outcome"] == expected
         failures += not ok
         results.append((label, expected, res, note))

@@ -21,7 +21,10 @@ import time
 from collections import Counter
 
 from config import RESULTS_DIR, VERIFY_TIMEOUT_SECONDS
-from verifier import LeanVerifier, OUTCOMES, PARSE_FAILURE, has_declaration
+from verifier import (
+    LeanVerifier, OUTCOMES, PARSE_FAILURE, COMPILE_ERROR, STATEMENT_ERROR,
+    has_declaration,
+)
 
 DEFAULT_TRACES = [
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "traces", "temp_0.jsonl"),
@@ -122,6 +125,23 @@ def main():
                 }
             else:
                 res = v.verify(code, timeout=args.timeout)
+
+                # A compile_error is a verdict on the model's proof only if the
+                # goal was well-formed. Re-verify the statement on its own with
+                # `sorry` for a proof; if that still fails, Lean rejected the
+                # goal and never judged the model, so the outcome becomes
+                # statement_error instead of being scored against the prover.
+                if res["outcome"] == COMPILE_ERROR:
+                    broken, detail = v.statement_is_broken(
+                        r.get("formal_statement"), timeout=args.timeout
+                    )
+                    if broken:
+                        res = dict(
+                            res,
+                            outcome=STATEMENT_ERROR,
+                            valid=False,
+                            statement_error_detail=detail,
+                        )
             counts[res["outcome"]] += 1
 
             rec = {
@@ -143,6 +163,7 @@ def main():
                 "warnings": res["warnings"][:3],
                 "seconds": res["seconds"],
                 "mode": res["mode"],
+                "statement_error_detail": res.get("statement_error_detail"),
                 # generation-side context, carried through for analysis
                 "gen_extract_status": r.get("extract_status"),
                 "gen_truncated": r.get("truncated"),

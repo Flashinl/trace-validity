@@ -44,6 +44,8 @@ from config import (
     VERIFY_TIMEOUT_SECONDS,
     BASE_ENV_TIMEOUT_SECONDS,
     ENV_PICKLE_PATH,
+    LEAN_MAX_REC_DEPTH,
+    GOEDEL_LEAN4_HEADER,
 )
 
 # The outcome taxonomy. Never collapse these into a bare boolean (issue #5).
@@ -52,10 +54,15 @@ PARSE_FAILURE = "parse_failure"
 EMPTY_CODE = "empty_code"
 HAS_SORRY = "has_sorry"
 COMPILE_ERROR = "compile_error"
+# The GOAL was rejected, so the proof was never judged. Distinct from
+# compile_error, which is a verdict on the model's proof. See
+# statement_is_broken() and tests/diagnose_statement_failures.py.
+STATEMENT_ERROR = "statement_error"
 TIMEOUT = "timeout"
 VERIFIER_CRASH = "verifier_crash"
 
-OUTCOMES = (VALID, PARSE_FAILURE, EMPTY_CODE, HAS_SORRY, COMPILE_ERROR, TIMEOUT, VERIFIER_CRASH)
+OUTCOMES = (VALID, PARSE_FAILURE, EMPTY_CODE, HAS_SORRY, COMPILE_ERROR,
+            STATEMENT_ERROR, TIMEOUT, VERIFIER_CRASH)
 
 # Only `valid` counts as a proved theorem. Everything else is a distinct failure.
 BASE_IMPORTS = ("Mathlib", "Aesop")
@@ -269,11 +276,19 @@ class LeanVerifier:
                 "num_errors": 0, "num_sorries": 0, "seconds": 0.0, "mode": "none",
             }
 
+        # Elaboration budget, applied here rather than in the prompt header so
+        # that verification config never alters what the model was asked.
+        rec = f"set_option maxRecDepth {LEAN_MAX_REC_DEPTH}\n"
+
         # Fast path only when the snippet's imports are exactly the base set.
         # Otherwise run standalone so a missing import is a real failure rather
         # than being masked by the shared environment.
         use_base = bool(imports) and set(imports) <= set(BASE_IMPORTS)
-        cmd = rest if use_base else lean_code
+        if use_base:
+            cmd = rec + rest
+        else:
+            # Imports must stay first, so the option goes after them.
+            cmd = "\n".join(f"import {m}" for m in imports) + "\n" + rec + rest
         env = self.base_env if use_base else None
         mode = "shared_env" if use_base else "fresh"
 
@@ -299,6 +314,40 @@ class LeanVerifier:
             }
 
         return self._classify(resp, time.perf_counter() - t0, mode)
+
+    def statement_is_broken(self, formal_statement, timeout=None):
+        """Does the STATEMENT alone fail, with no model proof involved?
+
+        Called only after a `compile_error`, to decide whether Lean was judging
+        the model's proof or refusing the goal before reaching it. The statement
+        is verified with `sorry` as its entire proof: a well-formed goal then
+        returns `has_sorry`, and anything that still errors was never a test of
+        the prover.
+
+        This is a re-verification, not a regex over the error text — it
+        generalises past the two causes we happen to have seen (pre-v4.32
+        big-operator syntax, and binder-level `Finset` defaults) to any
+        statement Lean will not accept.
+
+        Returns (broken: bool, detail: str).
+        """
+        if not (formal_statement or "").strip():
+            return False, "no formal_statement on the record"
+
+        stmt = formal_statement.rstrip()
+        if not re.search(r"\bby\s*\Z", stmt):
+            stmt += " := by" if not stmt.endswith(":=") else " by"
+        probe = f"{GOEDEL_LEAN4_HEADER}{stmt}\n  sorry\n"
+
+        res = self.verify(probe, timeout=timeout)
+        if res["outcome"] == HAS_SORRY:
+            return False, "statement elaborates; the failure is in the proof"
+        if res["outcome"] == VALID:
+            # `sorry` was not needed: the statement is closed by its own
+            # elaboration. Unusual, but it is not a broken statement.
+            return False, "statement closes without a proof"
+        detail = res["errors"][0].strip().splitlines()[0][:200] if res["errors"] else res["outcome"]
+        return True, detail
 
     def _restart(self):
         """A timed-out REPL is killed by lean_interact; rebuild the session."""
