@@ -107,14 +107,30 @@ and an **environment snapshot** so later processes restore instead of importing.
 | Stage | Cost | Paid |
 |---|---|---|
 | `lake exe cache get` (8,639 files) | multi-GB download | once per machine, into `~/.cache/mathlib` |
-| First `import Mathlib` in a process | **182.5s** | once, then snapshotted |
-| REPL up + env, first ever run | **389.5s** | includes the import above |
-| Restore snapshot in a later process | seconds | every subsequent process |
-| One verification against the shared env | **0.12–0.27s** | per trace |
+| Full setup from a clean clone, cache warm | **1574s** | once per clone |
+| REPL up + Mathlib env, Defender exclusions in place | **359–645s** (env alone 134–162s) | once per process |
+| One verification against the shared env | **0.12–0.53s** | per trace |
 
-Snapshot path is `config.ENV_PICKLE_PATH`; the build cache honours
-`MATHLIB_CACHE_DIR` (default `~/.cache/mathlib`). Deleting either only costs
-time, never correctness.
+Measured on one Windows box, same Mathlib, same day:
+
+| Clone | Defender exclusion | Cold (no snapshot) | Warm (snapshot exists) |
+|---|---|---|---|
+| main repo | yes | 389.5s (env 182.5s) | **359.2s** (env 134.1s) |
+| clean clone | **no** | 978.1s (env 432.6s) | **920.8s** (env 394.6s) |
+
+Two things follow, and the second one is easy to get backwards:
+
+1. `lake exe cache get` on the clean clone reported **"No files to download"** — the
+   shared build cache is what makes a second clone cheap, and it works.
+2. **The Defender exclusion matters far more than the environment snapshot.** In an
+   excluded path the snapshot is worth having; in an unexcluded one it saved only
+   ~6% (978s → 921s), because the cost is Defender inspecting ~8,600 `.olean`
+   files on read, which the snapshot does not avoid. Adding the exclusion is
+   worth ~2.6x. Do not skip step 3 and expect the snapshot to compensate.
+
+The snapshot path is `config.ENV_PICKLE_PATH`, created automatically on the first
+run that imports Mathlib; the build cache honours `MATHLIB_CACHE_DIR` (default
+`~/.cache/mathlib`). Deleting either only costs time, never correctness.
 
 `config.VERIFY_TIMEOUT_SECONDS` is the **per-verification** budget and applies to
 warm verifications, where the typical cost is well under a second. Building the
