@@ -27,6 +27,7 @@ results/*.json
 !results/phase1_live_probe.json
 !results/analysis_n50_hardened.json
 !results/phase1_deadbranches.json
+!results/vacuity_scan.json
 results/*.png
 .lake/
 *.olean
