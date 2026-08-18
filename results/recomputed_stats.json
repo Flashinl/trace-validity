@@ -154,5 +154,16 @@
     "min": 0.009,
     "max": 23.468,
     "under_50ms": 28
+  },
+  "sample_shift": {
+    "old_median_stmt_chars": 95,
+    "new_median_stmt_chars": 103,
+    "old_states": "NOT RECORDED - traces/temp_0.jsonl predates the `state` field",
+    "new_states": {
+      "Failure of Proof": 11,
+      "Success of Proof": 39
+    },
+    "old_distinct_problems": 1,
+    "old_trajectories_per_sample": 10
   }
 }

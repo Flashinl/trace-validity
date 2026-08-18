@@ -180,3 +180,115 @@ script) → samples 8, 17, 20, 21, 26, 28, 33, 38, 42, 48.
 6. **Audited fraction, stated honestly: 37/37 mechanically, 10/37 (27%) by hand.**
 
 **Deliverable:** `results/PHASE2_POSITIVES.md`, `results/phase2_positives.json`.
+
+---
+
+## 2026-08-19T00:35Z — Phase 4 — cross-branch comparison
+
+**Checked:** `git show <branch>:{config,data_loader,verifier,trace_valid,README}`
+across `master`, `origin/code-validity`, `fix/generation-input-path` (#8),
+`fix/verifier-debug` (#9) and HEAD (#10), plus `git grep answer_correct`.
+
+**Found:**
+
+1. **`master` and `origin/code-validity` feed `item["problem"]`** — the English
+   prose — to a theorem prover (`data_loader.py:17`). Issue #2, fatal. Both also
+   carry `MAX_NEW_TOKENS = 20000` against a 4096-token context, no Lean pinning,
+   and no outcome taxonomy. Verdict: **ignore** / **fix before merge**.
+2. **PR #8 closes #2, #3, #4** (formal_statement input, PROMPT_TEMPLATE,
+   MAX_NEW_TOKENS=2048 + MODEL_MAX_CONTEXT=4096). Verdict: **adopt**.
+3. **PR #9 closes #1, #6** (7-outcome taxonomy, Lean pinning, control set,
+   analyze_runs.py, CODE_VERSION fallback at generate.py:62-93). Strongest branch
+   in the repo. Verdict: **adopt**.
+4. **HEAD (#10)** is the best code state (8 outcomes, both verifier fixes) but
+   verdict **fix before merge**: two commits unpushed, `answer_correct` still
+   written, README drift.
+5. **README drift resolved explicitly.** Master's drift (`answer_correct` schema,
+   `results/results_temp_{T}.json`, 10 trajectories, five-temperature sweep) is
+   real but **confined to `master` and `code-validity`** — HEAD's README was
+   already rewritten. Two drifts remain on HEAD, both introduced by the audited
+   commits: the outcome list omits `statement_error`, and the worked example
+   writes/analyses the **superseded** `verify_temp0.0.jsonl`, so following the
+   docs reproduces 72% rather than 74%.
+6. **`answer_correct` IS still written** — `trace_valid.py:97`, read in seven
+   places in `analysis.py`. Mitigating: the n50 runs used `generate`, not `run`,
+   and no artifact behind the reported 74% contains the field (verified against
+   the record schemas of `traces/*/traces.jsonl` and `results/verify2_*.jsonl`).
+7. **Lean pinning was incomplete.** `lean_project/lake-manifest.json` was
+   gitignored by `lean_project/*`, despite `.gitignore:5-6` calling the pins "the
+   whole point of issue #6". Seven of nine deps declare floating `main`/`master`;
+   only the manifest holds resolved SHAs. **Fixed** — manifest now tracked, and
+   Mathlib `81a5d257c8e410db227a6665ed08f64fea08e997` is now recoverable.
+
+**Deliverable:** `results/BRANCH_COMPARISON.md`.
+
+---
+
+## 2026-08-19T01:05Z — Phase 1 addendum — live Lean probes
+
+**Checked:** `tests/audit/phase1_live.py` against the built local `lean_project`
+(Lake: "Build completed successfully (8656 jobs)"; Mathlib env unpickled in
+92.8 s; verifier ready in 242 s). 13 fixtures.
+
+**Found:**
+
+1. **The timing question is SETTLED.** Negative controls fail correctly and at
+   the same millisecond scale as the positives: `(2:Nat)+2 = 5` →
+   `compile_error` "unsolved goals ⊢ False" in 107 ms; `n > 0 := by skip` →
+   `compile_error` in 15 ms; unknown identifier → `compile_error` in **4 ms**.
+   A pipeline that was not elaborating would have returned `valid` for all three.
+   Mathlib was genuinely imported; the sub-10 ms `valid` results are real.
+   **Finding 1-D did not fire.**
+2. **NEW FINDING 1-F (high, confirmed live): `axiom` is a working escape hatch.**
+   `axiom cheat : (2:Nat)+2 = 5` followed by `theorem t : (2:Nat)+2 = 5 := by
+   exact cheat` returns **`valid` in 9 ms**. No `#print axioms` /
+   `Lean.collectAxioms` anywhere in `verifier.py`. Measured impact on this run:
+   **zero** — 0 `axiom` declarations across all 100 traces.
+3. **`admit` IS caught** → `has_sorry` (6 ms). Lean's `admit` produces a sorry,
+   which the structural `sorries` check sees. So of the brief's escape-hatch
+   list, only `axiom` is open.
+4. **`timeout` could NOT be fired.** The `decide`-on-`Nat.choose 100000 50000`
+   probe hit `maxRecDepth 10000` and returned `compile_error` in 100 ms instead.
+   `LEAN_MAX_REC_DEPTH` now bounds runaway elaboration *before* the 60 s clock,
+   making `timeout` even less reachable in practice. `verifier_crash` likewise
+   unfired. **Finding 1-C stays unresolved.**
+
+**Deliverable:** `results/phase1_live_probe.json`,
+`results/mathlib_build_evidence.log`, updated `results/PHASE1_PIPELINE.md`.
+
+---
+
+## 2026-08-19T01:25Z — Phase 5 — rewrite
+
+**Checked / applied:**
+
+1. Rewrote `results/SUMMARY_n50_distinct.md`. "What this does NOT measure" is now
+   the first section, above the results, and leads with the two items the brief
+   named: whether the proved statement is the target statement, and the partial
+   audit of positives.
+2. Every rate now carries n and a Wilson 95% CI; precision reduced to whole
+   percents. Every claim names the artifact it comes from.
+3. Reproducibility block records toolchain, **Mathlib commit SHA
+   `81a5d257c8e410db227a6665ed08f64fea08e997`**, `lake-manifest.json` sha256
+   `62bff1a7…`, dataset fingerprint, seed, traces sha256, key library versions —
+   and explicitly lists full `pip freeze` as UNRECOVERABLE and the generation
+   commit SHA as UNRECORDED.
+4. Corrected §5's transposed samples (P3-1); restored the 1/38 denominator
+   (P3-2); replaced false-positive framing with agreement + the 26% one-sided
+   bound (P3-3); added McNemar exact p=1.000 with the n≥6 power note (P3-4);
+   relabelled the "change of sample" claim as a hypothesis and reported the
+   median-length measurement that runs against its stated mechanism.
+5. **Deleted rather than reworded** the §7 claim "measured as harder than the
+   median step (median statement 104 vs 66 chars, 11 vs 8 unprovable)" — not
+   reproducible from any committed artifact. Logged in UNRESOLVED #4 with what it
+   would take.
+6. Old and new verification passes reported side by side (72% [58–83%] vs
+   74% [60–84%]), with the three samples that moved.
+7. `UNRESOLVED` list of 9 items, each with the reason and an effort estimate.
+
+**Deliverable:** rewritten `results/SUMMARY_n50_distinct.md`,
+`results/AUDIT_REPORT.md`.
+
+**Bottom line:** 74% can be reported, with a CI, framed as "produced a compiling
+Lean proof of the dataset's statement", and with the unrecorded generation SHA
+stated. 72% cannot — it is the superseded pass.

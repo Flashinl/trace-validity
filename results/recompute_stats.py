@@ -228,20 +228,29 @@ try:
     med = lambda x: sorted(x)[len(x) // 2]
     bstates = {}
     for r in base:
-        if r["trajectory_index"] == 0:
+        if r["trajectory_index"] == 0 and "state" in r:
             bstates[r["state"]] = bstates.get(r["state"], 0) + 1
+    if not bstates:
+        bstates = "NOT RECORDED - traces/temp_0.jsonl predates the `state` field"
     nstates = meta["0.0"]["dataset"]["selection"]["states"]
     R["sample_shift"] = {"old_median_stmt_chars": med(blen), "new_median_stmt_chars": med(nlen),
                          "old_states": bstates, "new_states": nstates,
-                         "old_distinct_problems": len({r.get("problem_unique_id") for r in base})}
-    print("  OLD set (traces/temp_0.jsonl): %d samples, %d distinct problem(s), median"
-          " formal_statement %d chars, states %s"
-          % (len(seen), R["sample_shift"]["old_distinct_problems"], med(blen), bstates))
-    print("  NEW set: 50 samples, 50 distinct problems, median formal_statement %d chars,"
-          " states %s" % (med(nlen), nstates))
-    print("  -> The two sets differ in problem coverage and statement length, so they are")
-    print("     not exchangeable. This SUPPORTS the 'change of sample' reading but does")
-    print("     not test it: no experiment holds the model fixed across matched samples.")
+                         "old_distinct_problems": len({r.get("problem_unique_id") for r in base}),
+                         "old_trajectories_per_sample": len(base) // len(seen)}
+    print("  OLD set (traces/temp_0.jsonl): %d samples, %d distinct problem(s), %d"
+          " trajectories each, median formal_statement %d chars, states: %s"
+          % (len(seen), R["sample_shift"]["old_distinct_problems"],
+             R["sample_shift"]["old_trajectories_per_sample"], med(blen), bstates))
+    print("  NEW set: 50 samples, 50 distinct problems, 1 trajectory each, median"
+          " formal_statement %d chars, states %s" % (med(nlen), nstates))
+    print("  VERDICT: the two sets are NOT exchangeable -- 1 problem vs 50 problems is")
+    print("  the whole difference. But statement LENGTH does not explain it: %d vs %d"
+          % (med(blen), med(nlen)))
+    print("  chars is no meaningful gap, and it runs slightly AGAINST the summary's")
+    print("  'first steps are easier' wording. The claim that the jump is a change of")
+    print("  sample remains a HYPOTHESIS: no experiment holds the model fixed across")
+    print("  matched samples, and the old set's dataset `state` labels were never")
+    print("  recorded, so its provability mix cannot be compared at all.")
 except Exception as e:
     print("  UNVERIFIED -- could not load the baseline set: %s: %s" % (type(e).__name__, e))
 
