@@ -1,0 +1,158 @@
+{
+  "outcomes_0.0": {
+    "valid": 37,
+    "compile_error": 11,
+    "statement_error": 2
+  },
+  "valid_over_all_0.0": {
+    "k": 37,
+    "n": 50,
+    "rate": 0.74,
+    "ci95": [
+      0.6044684273515117,
+      0.8412847250644762
+    ],
+    "label": ""
+  },
+  "valid_over_verdicts_0.0": {
+    "k": 37,
+    "n": 48,
+    "rate": 0.7708333333333334,
+    "ci95": [
+      0.6346073590999655,
+      0.8669217373308877
+    ],
+    "label": ""
+  },
+  "outcomes_0.2": {
+    "compile_error": 11,
+    "valid": 37,
+    "statement_error": 2
+  },
+  "valid_over_all_0.2": {
+    "k": 37,
+    "n": 50,
+    "rate": 0.74,
+    "ci95": [
+      0.6044684273515117,
+      0.8412847250644762
+    ],
+    "label": ""
+  },
+  "valid_over_verdicts_0.2": {
+    "k": 37,
+    "n": 48,
+    "rate": 0.7708333333333334,
+    "ci95": [
+      0.6346073590999655,
+      0.8669217373308877
+    ],
+    "label": ""
+  },
+  "old_valid_0.0": {
+    "k": 36,
+    "n": 50,
+    "rate": 0.72,
+    "ci95": [
+      0.5833487630404344,
+      0.8252582933408878
+    ],
+    "label": ""
+  },
+  "old_valid_0.2": {
+    "k": 36,
+    "n": 50,
+    "rate": 0.72,
+    "ci95": [
+      0.5833487630404344,
+      0.8252582933408878
+    ],
+    "label": ""
+  },
+  "crosstab_0.0": {
+    "valid": {
+      "Success of Proof": 37
+    },
+    "not_valid": {
+      "Failure of Proof": 10,
+      "Success of Proof": 1
+    },
+    "no_verdict": {
+      "Success of Proof": 1,
+      "Failure of Proof": 1
+    }
+  },
+  "disagree_0.0": {
+    "k": 0,
+    "n": 10,
+    "one_sided_95_upper": 0.2588655508930523
+  },
+  "provable_fail_0.0": {
+    "k": 1,
+    "n": 38,
+    "rate": 0.02631578947368421,
+    "ci95": [
+      0.004660587685768783,
+      0.1349487611595213
+    ],
+    "label": ""
+  },
+  "crosstab_0.2": {
+    "not_valid": {
+      "Success of Proof": 1,
+      "Failure of Proof": 10
+    },
+    "valid": {
+      "Success of Proof": 37
+    },
+    "no_verdict": {
+      "Success of Proof": 1,
+      "Failure of Proof": 1
+    }
+  },
+  "disagree_0.2": {
+    "k": 0,
+    "n": 10,
+    "one_sided_95_upper": 0.2588655508930523
+  },
+  "provable_fail_0.2": {
+    "k": 1,
+    "n": 38,
+    "rate": 0.02631578947368421,
+    "ci95": [
+      0.004660587685768783,
+      0.1349487611595213
+    ],
+    "label": ""
+  },
+  "untestable_0.0": [
+    19,
+    49
+  ],
+  "untestable_0.2": [
+    19,
+    49
+  ],
+  "paired": {
+    "both": 36,
+    "only_T0.0": 1,
+    "only_T0.2": 1,
+    "neither": 12,
+    "mcnemar_exact_p": 1.0,
+    "n_discordant": 2
+  },
+  "timing_0.0": {
+    "total": 33.0,
+    "mean": 0.66,
+    "min": 0.009,
+    "max": 27.687,
+    "under_50ms": 30
+  },
+  "timing_0.2": {
+    "total": 37.7,
+    "mean": 0.753,
+    "min": 0.009,
+    "max": 23.468,
+    "under_50ms": 28
+  }
+}
