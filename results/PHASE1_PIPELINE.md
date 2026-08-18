@@ -191,15 +191,87 @@ it is the mechanism by which a false 74% would be produced, and it is one line
 from being fixed (require `getattr(resp, "env", None) is not None` before
 returning `VALID`).
 
-### Fixtures
+### Fixtures — RUN, against the real local Mathlib
 
-`tests/audit/phase1_live.py` was written to fire each branch: a negative control
-(`2+2=5`) that must not be `valid`, an unsolved-goals case, an unknown
-identifier, `sorry`, `admit`, an `axiom` escape hatch, empty code, a declaration
--free file, and a `decide` on `Nat.choose 100000 50000` under a 20 s budget to
-force the timeout path. Results in §5 / `results/phase1_live_probe.json`.
+`tests/audit/phase1_live.py` was executed against the built `lean_project`
+(Lake reports "Build completed successfully (8656 jobs)", Mathlib env
+**unpickled in 92.8 s**, verifier ready in 242 s). Full output:
+`results/phase1_live_probe.json`, build log `results/mathlib_build_evidence.log`.
 
----
+| fixture | expected | **got** | time |
+|---|---|---|---|
+| `theorem t : True := by trivial` | valid | `valid` | 0.447 s (first call) |
+| `n + 0 = n := by simp` | valid | `valid` | 0.050 s |
+| `Nat.choose 5 2 = 10 := by decide` | valid | `valid` | 0.016 s |
+| **`(2:Nat)+2 = 5 := by norm_num`** | **must NOT be valid** | **`compile_error`** — "unsolved goals ⊢ False" | 0.107 s |
+| `n > 0 := by skip` | compile_error | `compile_error` — "unsolved goals" | 0.015 s |
+| `exact totally_bogus_lemma_xyz` | compile_error | `compile_error` — "Unknown identifier" | 0.004 s |
+| `:= by sorry` | has_sorry | `has_sorry` | 0.008 s |
+| **`:= by admit`** | ? | **`has_sorry`** | 0.006 s |
+| **`axiom cheat : 2+2=5` then `exact cheat`** | ? | **`valid`** ⚠ | 0.009 s |
+| declaration-free file | empty_code | `empty_code` | 0 s |
+| empty string | empty_code | `empty_code` | 0 s |
+| `decide` on `Nat.choose 100000 50000` | timeout | `compile_error` — maxRecDepth | 0.100 s |
+
+### This settles the timing question
+
+**The negative controls fail, at the same millisecond scale as the positives.**
+`2+2=5` is rejected in 107 ms, an unsolved goal in 15 ms, an unknown identifier
+in **4 ms**. A pipeline that was not elaborating would have returned `valid` for
+all three. Combined with `mode = shared_env` on every record and a Mathlib-only
+lemma (`Nat.choose 5 2 = 10`) succeeding in 16 ms, this is conclusive:
+
+> **Mathlib was genuinely imported, the sub-10 ms verifications are real
+> elaborations against a warm environment, and no failure short-circuited before
+> elaboration.** Issue #6's concern does not apply to this run.
+
+It also means **FINDING 1-D did not fire.** The fail-open default is a real
+design defect, but the negative controls prove the REPL was returning populated
+responses throughout, so the 37 `valid` results are not empty-response artefacts.
+
+### FINDING 1-F (HIGH — confirmed live, not hypothetical) — `axiom` is a working escape hatch
+
+```lean
+axiom cheat : (2:Nat) + 2 = 5
+theorem t : (2:Nat) + 2 = 5 := by exact cheat
+```
+→ **`valid`**, in 9 ms.
+
+The verifier never inspects the axioms a proof depends on. There is no
+`#print axioms`, no check of `Lean.collectAxioms`, and no rejection of
+user-declared `axiom` in the submitted source. Any generation that declares its
+own axiom and cites it scores as a proved theorem.
+
+- **Did it happen here? No.** The full scan of all 100 traces found **zero**
+  `axiom` declarations (§2), so the reported 74% contains no axiom-laundered
+  proof. The measured count is 0, not "we assume 0".
+- **Is the hole real? Yes, demonstrated.** It is the one escape hatch in the
+  brief's list that the pipeline does not close. `sorry` and `admit` are both
+  caught (structurally, via the REPL's `sorries` list); `axiom` is not.
+
+**Fix required (no GPU, no new generation):** either reject source containing a
+top-level `axiom` declaration before verifying, or — better — assert after a
+successful compile that the theorem's axiom dependencies are a subset of
+`{propext, Classical.choice, Quot.sound}`. The second is the standard soundness
+check and would also catch axioms introduced by other means.
+
+### `timeout` and `verifier_crash` remain unfired
+
+The `decide`-on-`Nat.choose 100000 50000` probe intended to force the timeout
+path instead hit `maxRecDepth 10000` and returned `compile_error` in 100 ms. So:
+
+- **`timeout` is reachable in code but was not triggered by any fixture.** The
+  60 s wall clock is real, but `LEAN_MAX_REC_DEPTH = 10000` now bounds runaway
+  elaboration *before* the clock can expire, making `timeout` even less
+  reachable in practice than the taxonomy implies.
+- **`verifier_crash` remains untested**, as the summary already concedes
+  (`SUMMARY_n50_distinct.md:198`). Finding 1-C — that a non-`TimeoutError`
+  timeout would be misfiled as `verifier_crash` — is therefore **still
+  unresolved**, and is listed in UNRESOLVED.
+
+Both counts being 0 in the reported table is consistent with a clean run rather
+than dead code, but only the *branch existence* has been verified, not the
+branch *behaviour*.
 
 ## 4. Truncation
 
@@ -305,16 +377,22 @@ wall-clock in the JSONL.
 
 ## Summary of Phase 1 findings
 
-| ID | Severity | Finding | Changes 74%? |
-|---|---|---|---|
-| 1-D | **High (latent)** | `_classify` fails open: `valid` is the else-branch, with no positive confirmation the declaration entered the environment | Not on this run (no evidence it fired); would invalidate it entirely if it ever fires |
-| 1-A | Medium | Statement fidelity holds by prompt construction only; unenforced and untested in the verifier | No — measured 50/50 both temps |
-| 1-C | Medium | `except TimeoutError` before `except Exception` means a non-`TimeoutError` timeout is recorded as `verifier_crash`; neither branch has a fixture | No — both counts are 0 |
-| 1-B | Low | Two different `has_sorry` fields, one a regex (`parser.py:102`), one structural (`verifier.py:235`) | No |
-| 1-E | Low | Reported verification wall-clock (33.5/38.0 s) is not derivable from the artifacts (33.0/37.7 s) | No |
+| ID | Severity | Finding | Status | Changes 74%? |
+|---|---|---|---|---|
+| **1-F** | **High** | `axiom` is a working escape hatch: a self-declared axiom cited in the proof returns `valid` in 9 ms. No `#print axioms` / `collectAxioms` check anywhere | **Confirmed live** (`results/phase1_live_probe.json`) | **No** — 0 `axiom` declarations across all 100 traces, measured |
+| 1-D | High (design) | `_classify` (`verifier.py:240-245`) makes `VALID` the else-branch; an empty response scores valid, with no confirmation the declaration entered the environment | **Did not fire** — negative controls returned `compile_error` at ms scale, so responses were populated throughout | No |
+| 1-A | Medium | Statement fidelity is enforced by prompt construction only; the verifier never compares (`verify_traces.py:116-127`) | Holds in fact, 50/50 both temps | No |
+| 1-C | Medium | `except TimeoutError` precedes `except Exception`, so a timeout not raised as a `TimeoutError` is filed as `verifier_crash`; **neither branch was successfully fired by any fixture** | **Unresolved** | No — both counts are 0 |
+| 1-B | Low | Two different `has_sorry` fields: regex (`parser.py:102`) vs structural (`verifier.py:235`) | Open | No |
+| 1-E | Low | Reported wall-clock (33.5 / 38.0 s) is not derivable from the artifacts (33.0 / 37.7 s) | Open | No |
 
 **Gate result: PASS.** The headline number is a validity rate. `valid` means the
 model produced a Lean proof of the dataset's statement, with no `sorry`, no
-`admit`, no `axiom`, and no truncation. `results/CRITICAL.md` was **not**
-written, because the condition for it — no binding between generated theorem and
-source statement — is false in fact even though it is true in the verifier code.
+`admit`, no `axiom`, no truncation, against a genuinely imported Mathlib whose
+negative controls fail correctly. `results/CRITICAL.md` was **not** written,
+because the condition for it — no binding between generated theorem and source
+statement — is false in fact, even though it is true in the verifier code.
+
+The two things that would change that verdict are both *fix-required, not
+fix-applied*: the axiom hole (1-F) and the fail-open classifier (1-D). Neither
+affected this run, and both are demonstrated rather than speculated.

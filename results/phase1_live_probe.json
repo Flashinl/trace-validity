@@ -1,0 +1,119 @@
+[
+  {
+    "case": "A_true_trivial",
+    "expect": "valid",
+    "outcome": "valid",
+    "reported_s": 0.447,
+    "wall_s": 0.447,
+    "mode": "shared_env",
+    "err": ""
+  },
+  {
+    "case": "B_real_mathlib",
+    "expect": "valid",
+    "outcome": "valid",
+    "reported_s": 0.05,
+    "wall_s": 0.05,
+    "mode": "shared_env",
+    "err": ""
+  },
+  {
+    "case": "C_mathlib_only",
+    "expect": "valid",
+    "outcome": "valid",
+    "reported_s": 0.016,
+    "wall_s": 0.016,
+    "mode": "shared_env",
+    "err": ""
+  },
+  {
+    "case": "D_needs_mathlib",
+    "expect": "either",
+    "outcome": "compile_error",
+    "reported_s": 0.041,
+    "wall_s": 0.041,
+    "mode": "shared_env",
+    "err": "invalid `\u25b8` notation, argument   Finset.card_def has type   \u2200 (s : Finset ?m.5), s.card = s.val.card equality "
+  },
+  {
+    "case": "E_false",
+    "expect": "compile_error",
+    "outcome": "compile_error",
+    "reported_s": 0.107,
+    "wall_s": 0.107,
+    "mode": "shared_env",
+    "err": "unsolved goals \u22a2 False"
+  },
+  {
+    "case": "F_unsolved",
+    "expect": "compile_error",
+    "outcome": "compile_error",
+    "reported_s": 0.015,
+    "wall_s": 0.016,
+    "mode": "shared_env",
+    "err": "unsolved goals n : \u2115 \u22a2 n > 0"
+  },
+  {
+    "case": "G_unknown_ident",
+    "expect": "compile_error",
+    "outcome": "compile_error",
+    "reported_s": 0.004,
+    "wall_s": 0.004,
+    "mode": "shared_env",
+    "err": "Unknown identifier `totally_bogus_lemma_xyz`"
+  },
+  {
+    "case": "H_sorry",
+    "expect": "has_sorry",
+    "outcome": "has_sorry",
+    "reported_s": 0.008,
+    "wall_s": 0.008,
+    "mode": "shared_env",
+    "err": ""
+  },
+  {
+    "case": "I_admit",
+    "expect": "has_sorry?",
+    "outcome": "has_sorry",
+    "reported_s": 0.006,
+    "wall_s": 0.006,
+    "mode": "shared_env",
+    "err": ""
+  },
+  {
+    "case": "J_axiom_hatch",
+    "expect": "??",
+    "outcome": "valid",
+    "reported_s": 0.009,
+    "wall_s": 0.009,
+    "mode": "shared_env",
+    "err": ""
+  },
+  {
+    "case": "K_no_decl",
+    "expect": "empty_code",
+    "outcome": "empty_code",
+    "reported_s": 0.0,
+    "wall_s": 0.0,
+    "mode": "none",
+    "err": ""
+  },
+  {
+    "case": "L_empty",
+    "expect": "empty_code",
+    "outcome": "empty_code",
+    "reported_s": 0.0,
+    "wall_s": 0.0,
+    "mode": "none",
+    "err": ""
+  },
+  {
+    "case": "M_timeout",
+    "expect": "timeout?",
+    "outcome": "compile_error",
+    "reported_s": 0.1,
+    "wall_s": 0.1,
+    "mode": "shared_env",
+    "err": "maximum recursion depth has been reached use `set_option maxRecDepth <num>` to increase limit use `set_option "
+  }
+]
