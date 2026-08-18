@@ -315,7 +315,7 @@ def build_record(sample, prompt, gen, temperature, trajectory_index, seed=None):
         "parsed_code": parsed["code"],
         "theorem_name": parsed["theorem_name"],
         "found_declaration": parsed["found_declaration"],
-        "has_sorry": parsed["has_sorry"],
+        "has_sorry_literal": parsed["has_sorry_literal"],
         # explicit generation-side failure modes (issue #4)
         "extract_status": extract_status,
         "truncated": gen["truncated"],

@@ -23,29 +23,42 @@ Read this before the results, not after.
    valid/invalid × correct/incorrect cross-tab cannot be produced from this
    pipeline. The older code set `answer_correct = trace_valid and not has_sorry`,
    which is why `invalid_accuracy` was identically 0.0 — the second axis was
-   derived from the first. **That field is still written by `trace_valid.py:97`**
-   and should not be read as a measurement. No artifact behind the numbers below
-   contains it (those runs used `generate`, not `run`).
+   derived from the first. **That field has now been deleted at source**
+   (`trace_valid.py`), along with the `valid_accuracy` / `invalid_accuracy` /
+   `overall_accuracy` metrics in `analysis.py` that were computed from it and the
+   2x2 chart that plotted it. No artifact behind the numbers below ever contained
+   it. There is no answer axis; do not re-add a placeholder for one.
 
 2. **The positives were only partially audited by hand.** All 37 `valid` traces
    were checked mechanically; **10 of 37 (27%) were read in full** (random, seed
    `20260818`). Nothing below extrapolates the hand-read subset to the whole.
 
-3. **The verifier never checks that the proved theorem is the target theorem.**
-   It compiles `full_code` and classifies the result (`verify_traces.py:116-127`);
-   there is no `isDefEq` or syntactic comparison against the dataset statement.
-   *In fact the property holds* — the prompt ends mid-fence immediately after the
-   dataset's `formal_statement`, so the model writes only a proof body, and this
-   was verified on **50/50 traces at both temperatures** (statement present
-   verbatim, exactly one declaration per file). But it holds by construction, not
-   by check: an edit to `prompting.py` would void it silently with no test
-   failing. See `results/PHASE1_PIPELINE.md` §1.
+3. **The proved theorem IS the target theorem — now checked, not assumed.** The
+   verifier used to compile `full_code` without ever comparing it to the dataset
+   statement; the property held only because the prompt ends mid-fence
+   immediately after `formal_statement`. It is now asserted per record
+   (`verify_traces.statement_mismatch()`, outcome `statement_mismatch`):
+   statement present verbatim, exactly one declaration. **Measured 50/50 at both
+   temperatures; 0 mismatches.**
 
-4. **A self-declared `axiom` would be scored `valid`.** Demonstrated live:
-   `axiom cheat : 2+2=5` followed by `theorem t : 2+2=5 := by exact cheat`
-   returns `valid` in 9 ms (`results/phase1_live_probe.json`). The verifier does
-   not inspect axiom dependencies. **Measured impact on this run: zero** — no
-   trace across all 100 declares an axiom. `sorry` and `admit` *are* both caught.
+4. **No proof stands on an untrusted axiom — now checked, not assumed.** The
+   verifier previously accepted `axiom cheat : 2+2=5` + `exact cheat` as `valid`
+   in 9 ms. It now asks Lean (`#print axioms`) after every clean compile and
+   rejects anything outside `{propext, Classical.choice, Quot.sound}` as
+   `unsound_axioms` (`verifier._axiom_audit()`). **All 37 positives audited at
+   both temperatures; 0 rejections.** The observed dependency sets:
+
+   | axioms the proof stands on | T=0.0 | T=0.2 |
+   |---|---|---|
+   | none at all | 10 | 8 |
+   | `propext` | 17 | 17 |
+   | `propext, Classical.choice, Quot.sound` | 10 | 11 |
+   | `propext, Quot.sound` | 0 | 1 |
+   | **outside the trusted set** | **0** | **0** |
+
+   This is stronger than the earlier "no `axiom` keyword found": Lean reports the
+   real transitive dependency set, so it also catches an axiom pulled in through
+   a lemma.
 
 5. **`valid` on this sample mostly means ground arithmetic.** 26 of 37 positives
    (70%) close a decidable ground goal — 9 by a single decision/normalisation
@@ -69,10 +82,14 @@ Read this before the results, not after.
 ## Artifacts
 
 - Traces: `traces/temp0.0_n50_1each/`, `traces/temp0.2_n50_1each/` (+ `run_meta.json` each)
-- Verification: `results/verify2_temp0.0.jsonl`, `results/verify2_temp0.2.jsonl`
+- **Verification (canonical): `results/verify3_temp0.0.jsonl`, `results/verify3_temp0.2.jsonl`**
+  — produced by the hardened verifier (axiom audit, statement-fidelity check,
+  fail-closed classification)
 - Analysis: `results/analysis_n50_corrected.json`; independently recomputed into
   `results/recomputed_stats.json` by `results/recompute_stats.py`
-- Superseded verification: `results/verify_temp0.0.jsonl`, `results/verify_temp0.2.jsonl` — kept, do not mix (§6)
+- Earlier passes, kept but **do not mix** (§6): `verify2_temp0.{0,2}.jsonl`
+  (before the audit hardening — identical outcomes), `verify_temp0.{0,2}.jsonl`
+  (before the `maxRecDepth`/`statement_error` fixes — 36/50)
 
 **Samples.** One CoT step from each of 50 *different* problems
 (`distinct_problems`, stride 10 over the 500 problems in FormalStep train, first
@@ -83,7 +100,8 @@ temperature comparison is **paired**.
 
 ## 1. Outcome distribution
 
-Source: `results/verify2_temp0.{0,2}.jsonl` via `recompute_stats.py [1]`.
+Source: `results/verify3_temp0.{0,2}.jsonl` via `recompute_stats.py [1]`.
+Identical to the `verify2` pass: the audit hardening changed no outcome.
 
 | outcome | T=0.0 | T=0.2 |
 |---|---|---|
@@ -93,6 +111,8 @@ Source: `results/verify2_temp0.{0,2}.jsonl` via `recompute_stats.py [1]`.
 | `has_sorry` | 0 | 0 |
 | `empty_code` | 0 | 0 |
 | `parse_failure` | 0 | 0 |
+| `statement_mismatch` | 0 | 0 |
+| `unsound_axioms` | 0 | 0 |
 | `truncated generations` | **0** | **0** |
 | `timeout` | 0 | 0 |
 | `verifier_crash` | 0 | 0 |
@@ -115,9 +135,11 @@ uncertainty from untestable samples.
 
 **Exclusion rule, stated once and applied everywhere:** a sample is *testable*
 iff its outcome is a verdict on the model's proof, i.e. `outcome ∉
-{statement_error, parse_failure, timeout, verifier_crash}`. An excluded sample
-leaves **both** numerator and denominator. `maxRecDepth` is verifier
-configuration, not an exclusion.
+{statement_error, statement_mismatch, parse_failure, timeout, verifier_crash}`.
+An excluded sample leaves **both** numerator and denominator. `maxRecDepth` is
+verifier configuration, not an exclusion. Note `unsound_axioms` is deliberately
+**not** on that list — a file that compiled was judged, and leaning on a
+self-declared axiom is a failed attempt, not an untestable sample.
 
 **Verification cost.** 33.0 s (T=0.0) and 37.7 s (T=0.2) summed over per-record
 `seconds`; mean 0.66 s / 0.75 s, but the **median is under 50 ms** (30/50 and
@@ -367,59 +389,66 @@ re-run**.
 
 ---
 
+## Fixed during the audit
+
+Each of these was a defect in the pipeline, not the prose. All were applied and
+then **re-verified against all 100 traces**, which produced
+`results/verify3_temp0.{0,2}.jsonl`: **outcome-for-outcome identical to the
+previous pass.** The hardening changed nothing about this result; it changes what
+the next run can be trusted to report.
+
+| fix | where | effect on this run |
+|---|---|---|
+| Axiom audit — `#print axioms` after every clean compile, rejecting anything outside `{propext, Classical.choice, Quot.sound}` as `unsound_axioms` | `verifier._axiom_audit()` | 0 rejections; all 37 positives verified within the trusted set at both temperatures |
+| Statement-fidelity assertion — statement verbatim + exactly one declaration, else `statement_mismatch` | `verify_traces.statement_mismatch()` | 0 mismatches |
+| **Fail closed** — `VALID` is no longer the bare `else`; a response with no messages *and* no environment is now `verifier_crash`, not a proved theorem | `verifier._classify()` | no change (responses were populated throughout) |
+| `answer_correct` and the three fake accuracy metrics deleted at source | `trace_valid.py`, `analysis.py` | none — no artifact here contained the field |
+| `parser.has_sorry` renamed `has_sorry_literal`, so the naive regex flag cannot be mistaken for the verifier's structural `has_sorry` outcome | `parser.py` | none |
+| README: documents all 10 outcomes, distinguishes verdict from non-verdict, and names which verification pass is canonical | `README.md` | none |
+
+Regression check on the hardened verifier (`results/phase1_live_probe.json`):
+the axiom fixture now returns `unsound_axioms` — "proof depends on untrusted
+axiom(s): cheat" — where it previously returned `valid`, and the other 12
+fixtures are unchanged.
+
+---
+
 ## UNRESOLVED
 
-Items the audit could not close within its budget, with what each would take.
+Items the audit could not close, with what each would take.
 
-1. **`verifier_crash` and `timeout` were never fired by any fixture.** The
-   timeout probe (`decide` on `Nat.choose 100000 50000`) hit `maxRecDepth` and
-   returned `compile_error` in 100 ms instead. Both branches exist and are
-   correctly wired (`config.py:45`, `verifier.py:296-314`), but their *behaviour*
-   is unverified. Related: `except TimeoutError` precedes `except Exception`, so
-   a timeout raised as anything other than a `TimeoutError` — e.g.
-   `subprocess.TimeoutExpired`, which is not one — would be filed as
-   `verifier_crash`. *Would take: a fixture that kills the REPL process, plus one
-   that blocks past 60 s without recursing. ~1 h.*
+1. **A natural `timeout` is close to unreachable, and that is now understood
+   rather than fixed.** `LEAN_MAX_REC_DEPTH = 10000` bounds runaway elaboration
+   before the 60 s wall clock can expire — the heavy-`decide` probe returned
+   `compile_error` in 208 ms. The classification path is exercised by
+   `tests/audit/phase1_deadbranches.py` (see `results/phase1_deadbranches.json`),
+   but no *organic* timeout has ever been observed. Related risk, still open:
+   `except TimeoutError` precedes `except Exception`, so a timeout raised as
+   anything else — `subprocess.TimeoutExpired` is not a `TimeoutError` — would be
+   filed as `verifier_crash`.
 
 2. **Systematic vacuity check over all 37 positives.** Sample 17 (goal `True`)
    was caught mechanically, but sample 38's goal reduces to `600-486 = 600-486`
    after substituting its own hypotheses — a tautology caught only by reading.
    Scriptable against the local Mathlib build, no GPU. *~30 min. Expected to find
-   between 1 and ~5 vacuous positives; would change what 74% means, not its
-   value.*
+   1–5 vacuous positives; would change what 74% means, not its value.*
 
 3. **27 of 37 positives (73%) were not read by hand.** Mechanical checks rule out
-   `restated` and `weakened` over the full 37 (statement verbatim 37/37, one
-   declaration 37/37), so the residual risk is confined to subtle vacuity —
-   item 2.
+   `restated` and `weakened` over the full 37, so the residual risk is confined
+   to subtle vacuity — item 2.
 
-4. **§7's earlier claim that first steps are "measured as harder than the median
-   step" (104 vs 66 chars, 11 vs 8 unprovable)** could not be reproduced from any
-   committed artifact and has been **removed**, not reworded. *Would take: a dry
-   run with `--step-selection median` over the same 50 problems. No GPU. ~15 min.*
+4. **The earlier §7 claim that first steps are "measured as harder than the
+   median step" (104 vs 66 chars, 11 vs 8 unprovable)** could not be reproduced
+   from any committed artifact and was **removed**, not reworded. *Would take: a
+   dry run with `--step-selection median` over the same 50 problems. No GPU,
+   ~15 min.*
 
-5. **Statement-fidelity assertion is not in the pipeline.** The invariant holds
-   50/50 but is unenforced. *Fix: ~6 lines in `verify_traces.py` emitting a
-   `statement_mismatch` outcome. Not applied — it changes the verifier.*
+5. **Generation cannot be re-run.** One trajectory per sample at T>0, the
+   unrecorded generation SHA, and the missing `pip freeze` all need a GPU host
+   that no longer exists.
 
-6. **Axiom-dependency check is absent** (see "What this does not measure" #4).
-   *Fix: assert the proved theorem's axioms ⊆ `{propext, Classical.choice,
-   Quot.sound}` after a successful compile. Not applied.*
-
-7. **The `answer_correct` field is still emitted** by `trace_valid.py:97`.
-   *Fix: delete or rename. Not applied — it changes pipeline output.*
-
-8. **README drift.** `README.md`'s outcome list omits `statement_error`, and its
-   worked example writes and analyses `results/verify_temp0.0.jsonl` — the
-   **superseded** pass. Following the documented commands reproduces 72%, not the
-   74% above. *Fix: two one-line edits. Not applied — the second needs a decision
-   on the canonical filename.*
-
-9. **PR #10 shows superseded numbers.** `origin/merge/analysis-into-code-validity`
-   is at `852aec7`; the two commits containing everything in §6 are unpushed.
-   *Fix: push. The author's call.*
-
----
+6. **PR #10 still shows superseded numbers.** `origin/merge/analysis-into-code-validity`
+   is at `852aec7` (36/50 = 72%); everything above is unpushed. *Fix: push.*
 
 ## Known gaps that remain by design
 

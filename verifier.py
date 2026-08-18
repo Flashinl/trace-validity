@@ -58,16 +58,37 @@ COMPILE_ERROR = "compile_error"
 # compile_error, which is a verdict on the model's proof. See
 # statement_is_broken() and tests/diagnose_statement_failures.py.
 STATEMENT_ERROR = "statement_error"
+# The compiled file does not carry the dataset's statement, or carries more than
+# one declaration, so whatever compiled is not a proof of the target. Distinct
+# from compile_error: nothing was wrong with the Lean, it just proved the wrong
+# thing. See verify_traces.py and audit finding 1-A.
+STATEMENT_MISMATCH = "statement_mismatch"
+# The proof compiled but depends on an axiom outside the Lean/Mathlib trusted
+# set -- most importantly one the generation declared itself. A proof standing
+# on `axiom cheat : 2 + 2 = 5` is not a proof. See audit finding 1-F.
+UNSOUND_AXIOMS = "unsound_axioms"
 TIMEOUT = "timeout"
 VERIFIER_CRASH = "verifier_crash"
 
 OUTCOMES = (VALID, PARSE_FAILURE, EMPTY_CODE, HAS_SORRY, COMPILE_ERROR,
-            STATEMENT_ERROR, TIMEOUT, VERIFIER_CRASH)
+            STATEMENT_ERROR, STATEMENT_MISMATCH, UNSOUND_AXIOMS, TIMEOUT,
+            VERIFIER_CRASH)
+
+# Axioms every ordinary Mathlib proof may stand on. Anything else -- above all a
+# user-declared `axiom` -- makes the proof worthless as evidence.
+TRUSTED_AXIOMS = frozenset({"propext", "Classical.choice", "Quot.sound"})
 
 # Only `valid` counts as a proved theorem. Everything else is a distinct failure.
 BASE_IMPORTS = ("Mathlib", "Aesop")
 
 _IMPORT_RE = re.compile(r"^[ \t]*import[ \t]+([\w.]+)[ \t]*$", re.M)
+_THM_NAME_RE = re.compile(
+    r"^[ \t]*(?:@\[[^\]]*\]\s*)?"
+    r"(?:private\s+|protected\s+|noncomputable\s+)*"
+    r"(?:theorem|lemma)\s+([^\s:({\[]+)", re.M)
+_AXIOM_DECL_RE = re.compile(r"^[ \t]*axiom\s+", re.M)
+_AXIOM_MSG_RE = re.compile(r"depends on axioms:\s*\[([^\]]*)\]")
+
 _DECL_RE = re.compile(
     r"^[ \t]*(?:@\[[^\]]*\]\s*)?"
     r"(?:private\s+|protected\s+|noncomputable\s+)*"
@@ -241,6 +262,17 @@ class LeanVerifier:
             outcome = COMPILE_ERROR
         elif sorries or sorry_warning:
             outcome = HAS_SORRY
+        elif getattr(resp, "env", None) is None:
+            # FAIL CLOSED (audit finding 1-D). VALID used to be the bare `else`,
+            # so a response carrying no messages AND no environment -- a dropped
+            # command, a restore that did not restore, a schema skew -- scored as
+            # a proved theorem. No environment means nothing was added to it,
+            # which is not something we can call valid.
+            outcome = VERIFIER_CRASH
+            errors = list(errors) + [
+                "REPL returned no environment and no messages; nothing was "
+                "elaborated. Refusing to score this as valid."
+            ]
         else:
             outcome = VALID
 
@@ -254,6 +286,56 @@ class LeanVerifier:
             "seconds": round(elapsed, 3),
             "mode": mode,
         }
+
+    def _axiom_audit(self, code, env, timeout):
+        """After a clean compile, what does the theorem actually stand on?
+
+        A compiling proof is only evidence if its axiom dependencies lie in the
+        trusted set. `axiom cheat : 2 + 2 = 5` followed by `exact cheat`
+        compiles perfectly and proves nothing -- measured at 9ms against this
+        very verifier before this check existed (audit finding 1-F).
+
+        We ask Lean, rather than grepping: `#print axioms` reports the real
+        transitive dependency set, so it also catches an axiom pulled in through
+        a lemma or a macro rather than declared in the file.
+
+        Returns (ok: bool, detail: str).
+        """
+        m = _THM_NAME_RE.search(code)
+        if m is None:
+            # No named theorem to interrogate. Fall back to the static check so
+            # a self-declared axiom still cannot pass unnoticed.
+            if _AXIOM_DECL_RE.search(code):
+                return False, "file declares its own `axiom` and has no named theorem to audit"
+            return True, "no named theorem; no axiom declaration present"
+
+        name = m.group(1)
+        try:
+            resp = self.server.run(
+                self._Command(cmd=f"#print axioms {name}", env=env), timeout=timeout
+            )
+        except Exception as e:  # noqa: BLE001 - an un-auditable proof is not a pass
+            return False, f"axiom audit failed ({type(e).__name__}: {e})"
+
+        msgs = " ".join(
+            (getattr(m_, "data", "") or "") for m_ in (getattr(resp, "messages", []) or [])
+        )
+        if "does not depend on any axioms" in msgs:
+            return True, "depends on no axioms"
+
+        found = _AXIOM_MSG_RE.search(msgs)
+        if not found:
+            # Could not read the dependency set. Do not guess in the permissive
+            # direction; fall back to the static check.
+            if _AXIOM_DECL_RE.search(code):
+                return False, f"file declares its own `axiom`; could not read #print axioms output: {msgs[:120]}"
+            return True, f"could not parse #print axioms output: {msgs[:120]}"
+
+        used = {a.strip() for a in found.group(1).split(",") if a.strip()}
+        extra = sorted(used - TRUSTED_AXIOMS)
+        if extra:
+            return False, "proof depends on untrusted axiom(s): " + ", ".join(extra)
+        return True, "axioms: " + ", ".join(sorted(used))
 
     def verify(self, lean_code, timeout=None):
         """Verify one snippet. Always returns a dict carrying `outcome`."""
@@ -313,7 +395,16 @@ class LeanVerifier:
                 "seconds": round(elapsed, 3), "mode": mode,
             }
 
-        return self._classify(resp, time.perf_counter() - t0, mode)
+        res = self._classify(resp, time.perf_counter() - t0, mode)
+
+        # Only a clean compile needs auditing; everything else already failed.
+        if res["outcome"] == VALID:
+            ok, detail = self._axiom_audit(rest, getattr(resp, "env", None), timeout)
+            res["axioms"] = detail
+            if not ok:
+                res = dict(res, outcome=UNSOUND_AXIOMS, valid=False,
+                           errors=list(res["errors"]) + [detail])
+        return res
 
     def statement_is_broken(self, formal_statement, timeout=None):
         """Does the STATEMENT alone fail, with no model proof involved?

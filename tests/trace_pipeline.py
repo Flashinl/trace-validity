@@ -100,7 +100,7 @@ def main():
         parsed = parse_output(r["raw_output"], prompt=None)
         show("STAGE 2  parser.parse_output -> ['code']", parsed["code"])
         print(f"\n  parser flags: found_declaration={parsed['found_declaration']} "
-              f"truncated={parsed['truncated']} has_sorry={parsed['has_sorry']} "
+              f"truncated={parsed['truncated']} has_sorry_literal={parsed['has_sorry_literal']} "
               f"theorem_name={parsed['theorem_name']}")
 
         # stage 3: fence extraction over prompt+completion (what generate.py stored)

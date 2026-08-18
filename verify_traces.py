@@ -20,11 +20,57 @@ if hasattr(sys.stdout, "reconfigure"):
 import time
 from collections import Counter
 
+import re
+
 from config import RESULTS_DIR, VERIFY_TIMEOUT_SECONDS
 from verifier import (
     LeanVerifier, OUTCOMES, PARSE_FAILURE, COMPILE_ERROR, STATEMENT_ERROR,
-    has_declaration,
+    STATEMENT_MISMATCH, has_declaration,
 )
+
+_DECL_COUNT_RE = re.compile(
+    r"^[ \t]*(?:@\[[^\]]*\]\s*)?"
+    r"(?:private\s+|protected\s+|noncomputable\s+)*"
+    r"(?:theorem|lemma|example)\b", re.M)
+
+
+def _strip_comments(code):
+    code = re.sub(r"/-.*?-/", "", code, flags=re.S)
+    return re.sub(r"--[^\n]*", "", code)
+
+
+def _norm(s):
+    return re.sub(r"\s+", " ", (s or "")).strip()
+
+
+def statement_mismatch(full_code, formal_statement):
+    """Is the compiled file actually a proof of the DATASET's statement?
+
+    Nothing else in the pipeline checks this. `verify()` compiles a string and
+    classifies the result; it never sees `formal_statement`, so a file that
+    proves some *other* theorem compiles just as happily and scores `valid`.
+
+    In practice the property holds, because PROMPT_TEMPLATE ends mid-fence
+    immediately after the statement (which already ends `:= by`), so the model
+    writes only a proof body -- measured 50/50 at both temperatures across the
+    n50 runs. But it held by construction and was asserted nowhere: an edit to
+    prompting.py would void it silently with no test failing. That is audit
+    finding 1-A, and this is the assertion that closes it.
+
+    Returns (mismatched: bool, detail: str).
+    """
+    stmt = _norm(formal_statement)
+    if not stmt:
+        return False, "no formal_statement on the record; cannot check"
+
+    if stmt not in _norm(full_code):
+        return True, "compiled file does not contain the dataset's formal_statement"
+
+    n_decl = len(_DECL_COUNT_RE.findall(_strip_comments(full_code or "")))
+    if n_decl != 1:
+        return True, f"compiled file declares {n_decl} theorems; expected exactly 1"
+
+    return False, "statement present verbatim, exactly one declaration"
 
 DEFAULT_TRACES = [
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "traces", "temp_0.jsonl"),
@@ -126,6 +172,16 @@ def main():
             else:
                 res = v.verify(code, timeout=args.timeout)
 
+                # Before scoring a clean compile, confirm that what compiled is
+                # a proof of the DATASET's statement and not of something the
+                # generation wrote itself. Only meaningful on a pass: a file
+                # that failed to compile was not a proof of anything.
+                if res["valid"]:
+                    bad, why = statement_mismatch(code, r.get("formal_statement"))
+                    if bad:
+                        res = dict(res, outcome=STATEMENT_MISMATCH, valid=False,
+                                   statement_mismatch_detail=why)
+
                 # A compile_error is a verdict on the model's proof only if the
                 # goal was well-formed. Re-verify the statement on its own with
                 # `sorry` for a proof; if that still fails, Lean rejected the
@@ -164,6 +220,10 @@ def main():
                 "seconds": res["seconds"],
                 "mode": res["mode"],
                 "statement_error_detail": res.get("statement_error_detail"),
+                "statement_mismatch_detail": res.get("statement_mismatch_detail"),
+                # What the proof actually stands on. `valid` is only evidence if
+                # this is a subset of the trusted set (audit finding 1-F).
+                "axioms": res.get("axioms"),
                 # generation-side context, carried through for analysis
                 "gen_extract_status": r.get("extract_status"),
                 "gen_truncated": r.get("truncated"),

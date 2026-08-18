@@ -1,0 +1,34 @@
+[
+  {
+    "case": "wall_clock_overrun",
+    "expected": "timeout",
+    "got": "timeout",
+    "pass": true,
+    "detail": "verification exceeded 0.01s",
+    "seconds": 43.868
+  },
+  {
+    "case": "verifier_usable_after_timeout",
+    "expected": "valid",
+    "got": "valid",
+    "pass": true,
+    "detail": "",
+    "seconds": null
+  },
+  {
+    "case": "bogus_environment",
+    "expected": "verifier_crash",
+    "got": "verifier_crash",
+    "pass": true,
+    "detail": "REPL returned no environment and no messages; nothing was elaborated. Refusing to score this as valid.",
+    "seconds": 0.001
+  },
+  {
+    "case": "verifier_usable_after_crash",
+    "expected": "valid",
+    "got": "valid",
+    "pass": true,
+    "detail": "",
+    "seconds": null
+  }
+]

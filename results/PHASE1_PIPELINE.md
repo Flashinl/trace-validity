@@ -377,22 +377,22 @@ wall-clock in the JSONL.
 
 ## Summary of Phase 1 findings
 
-| ID | Severity | Finding | Status | Changes 74%? |
+All six were fixed after the audit and the result re-verified across all 100
+traces (`results/verify3_temp0.{0,2}.jsonl`) — **no outcome changed**.
+
+| ID | Severity | Finding | Status | Changed 74%? |
 |---|---|---|---|---|
-| **1-F** | **High** | `axiom` is a working escape hatch: a self-declared axiom cited in the proof returns `valid` in 9 ms. No `#print axioms` / `collectAxioms` check anywhere | **Confirmed live** (`results/phase1_live_probe.json`) | **No** — 0 `axiom` declarations across all 100 traces, measured |
-| 1-D | High (design) | `_classify` (`verifier.py:240-245`) makes `VALID` the else-branch; an empty response scores valid, with no confirmation the declaration entered the environment | **Did not fire** — negative controls returned `compile_error` at ms scale, so responses were populated throughout | No |
-| 1-A | Medium | Statement fidelity is enforced by prompt construction only; the verifier never compares (`verify_traces.py:116-127`) | Holds in fact, 50/50 both temps | No |
-| 1-C | Medium | `except TimeoutError` precedes `except Exception`, so a timeout not raised as a `TimeoutError` is filed as `verifier_crash`; **neither branch was successfully fired by any fixture** | **Unresolved** | No — both counts are 0 |
-| 1-B | Low | Two different `has_sorry` fields: regex (`parser.py:102`) vs structural (`verifier.py:235`) | Open | No |
-| 1-E | Low | Reported wall-clock (33.5 / 38.0 s) is not derivable from the artifacts (33.0 / 37.7 s) | Open | No |
+| **1-F** | **High** | `axiom` was a working escape hatch: a self-declared axiom cited in the proof returned `valid` in 9 ms | **FIXED** — `verifier._axiom_audit()` runs `#print axioms` and rejects untrusted deps as `unsound_axioms`. Fixture now returns `unsound_axioms`; all 37 positives re-audited, 0 rejections | No |
+| 1-D | High | `_classify` made `VALID` the else-branch; an empty response scored valid | **FIXED** — fails closed. The bogus-environment fixture proves the old code would have scored an un-elaborated snippet as a proved theorem | No |
+| 1-A | Medium | Statement fidelity enforced by prompt construction only | **FIXED** — `verify_traces.statement_mismatch()`, new outcome `statement_mismatch`. 0 mismatches in 100 traces | No |
+| 1-C | Medium | `timeout` / `verifier_crash` never fired by any fixture | **FIXED by fixture** — `tests/audit/phase1_deadbranches.py`, 4/4 pass. `timeout` classifies as `timeout` (so `lean_interact` does raise a real `TimeoutError`), `verifier_crash` fires, and the verifier recovers from both. Residual: no *organic* timeout is reachable, since `maxRecDepth` bounds elaboration first | No |
+| 1-B | Low | Two different `has_sorry` fields, one a regex | **FIXED** — parser's renamed `has_sorry_literal`, consumers updated | No |
+| 1-E | Low | Reported wall-clock not derivable from the artifacts | **FIXED in the summary** — artifact-derived figures reported, with the median alongside the mean | No |
 
-**Gate result: PASS.** The headline number is a validity rate. `valid` means the
-model produced a Lean proof of the dataset's statement, with no `sorry`, no
-`admit`, no `axiom`, no truncation, against a genuinely imported Mathlib whose
-negative controls fail correctly. `results/CRITICAL.md` was **not** written,
-because the condition for it — no binding between generated theorem and source
-statement — is false in fact, even though it is true in the verifier code.
-
-The two things that would change that verdict are both *fix-required, not
-fix-applied*: the axiom hole (1-F) and the fail-open classifier (1-D). Neither
-affected this run, and both are demonstrated rather than speculated.
+**Gate result: PASS, and now defended.** `valid` means the model produced a Lean
+proof of the dataset's statement — a claim now *asserted per record* rather than
+holding by luck of prompt construction — with no `sorry`, no `admit`, no
+truncation, standing only on axioms Lean itself confirms are in the trusted set,
+against a genuinely imported Mathlib whose negative controls fail correctly.
+`results/CRITICAL.md` was never written, because the condition for it was false
+in fact even when it was true in the verifier code.

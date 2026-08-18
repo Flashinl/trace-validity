@@ -37,10 +37,17 @@ if hasattr(sys.stdout, "reconfigure"):
 
 from verifier import (
     OUTCOMES, VALID, TIMEOUT, VERIFIER_CRASH, PARSE_FAILURE, STATEMENT_ERROR,
+    STATEMENT_MISMATCH, UNSOUND_AXIOMS,
 )
 
 # Outcomes that are a verdict about the proof.
-PROOF_VERDICT = ("valid", "compile_error", "has_sorry", "empty_code")
+#
+# UNSOUND_AXIOMS is a verdict, and a damning one: the file compiled, so the
+# model was judged, and it leaned on an axiom outside the trusted set. That is a
+# failed proof attempt, not an untestable sample — counting it as "no verdict"
+# would let a proof of `2 + 2 = 5` quietly leave the denominator.
+PROOF_VERDICT = ("valid", "compile_error", "has_sorry", "empty_code",
+                 UNSOUND_AXIOMS)
 # Outcomes that are the absence of a verdict. Never counted as invalid.
 #
 # STATEMENT_ERROR belongs here: Lean rejected the goal, so the model's proof was
@@ -48,7 +55,14 @@ PROOF_VERDICT = ("valid", "compile_error", "has_sorry", "empty_code")
 # compatibility with our Mathlib version, not the model. Verified per record by
 # re-running the statement with `sorry` as its proof — see
 # verifier.statement_is_broken().
-NO_VERDICT = (TIMEOUT, VERIFIER_CRASH, PARSE_FAILURE, STATEMENT_ERROR)
+#
+# STATEMENT_MISMATCH belongs here too, for the same reason from the other side:
+# something compiled, but it was not the target theorem, so the record says
+# nothing about whether the model can prove the target. It is a pipeline alarm
+# rather than a score — if this is ever non-zero, stop and fix generation before
+# reading any rate. See verify_traces.statement_mismatch().
+NO_VERDICT = (TIMEOUT, VERIFIER_CRASH, PARSE_FAILURE, STATEMENT_ERROR,
+              STATEMENT_MISMATCH)
 
 PROVABLE = "Success of Proof"
 UNPROVABLE = "Failure of Proof"
@@ -184,10 +198,27 @@ def report_run(run):
 
     print(f"\n  TRACE VALIDITY x DATASET PROVABILITY (`state`)")
     print("  " + fmt_crosstab(table).replace("\n", "\n  "))
-    fp = table.get("valid", {}).get(UNPROVABLE, 0)
-    print(f"\n    false positives (we said valid, dataset says unprovable): {fp}")
+
+    # NOT "false positives". A false positive needs ground truth about THIS
+    # proof; `state` records whether FormalStep could prove the STATEMENT, which
+    # is a different question about a different object. This is an agreement
+    # measure between two labels, and naming it otherwise smuggles in a claim
+    # the data cannot support.
+    disagree = table.get("valid", {}).get(UNPROVABLE, 0)
+    n_unprov = sum(table.get(b, {}).get(UNPROVABLE, 0)
+                   for b in ("valid", "not_valid"))
+    print(f"\n    DISAGREEMENT — we said valid, dataset says unprovable: "
+          f"{disagree}/{n_unprov}")
+    if disagree == 0 and n_unprov:
+        # Exact one-sided 95% bound. A zero count is not a zero rate, and at
+        # these sample sizes the bound is wide enough to matter.
+        ub = 1 - 0.05 ** (1.0 / n_unprov)
+        print(f"      0 events in n={n_unprov} bounds the true rate at "
+              f"<={ub:.0%} (one-sided 95%), NOT at 0.")
+    n_prov = sum(table.get(b, {}).get(PROVABLE, 0)
+                 for b in ("valid", "not_valid"))
     print(f"    model failed a provable statement: "
-          f"{table.get('not_valid', {}).get(PROVABLE, 0)}")
+          f"{table.get('not_valid', {}).get(PROVABLE, 0)}/{n_prov}")
     print()
     return {"summary": s, "crosstab": table,
             "meta": {k: meta[k] for k in ("sampling", "git", "status")} if meta else None}

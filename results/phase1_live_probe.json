@@ -3,8 +3,8 @@
     "case": "A_true_trivial",
     "expect": "valid",
     "outcome": "valid",
-    "reported_s": 0.447,
-    "wall_s": 0.447,
+    "reported_s": 0.59,
+    "wall_s": 0.597,
     "mode": "shared_env",
     "err": ""
   },
@@ -12,8 +12,8 @@
     "case": "B_real_mathlib",
     "expect": "valid",
     "outcome": "valid",
-    "reported_s": 0.05,
-    "wall_s": 0.05,
+    "reported_s": 0.057,
+    "wall_s": 0.073,
     "mode": "shared_env",
     "err": ""
   },
@@ -21,8 +21,8 @@
     "case": "C_mathlib_only",
     "expect": "valid",
     "outcome": "valid",
-    "reported_s": 0.016,
-    "wall_s": 0.016,
+    "reported_s": 0.018,
+    "wall_s": 0.022,
     "mode": "shared_env",
     "err": ""
   },
@@ -30,8 +30,8 @@
     "case": "D_needs_mathlib",
     "expect": "either",
     "outcome": "compile_error",
-    "reported_s": 0.041,
-    "wall_s": 0.041,
+    "reported_s": 0.036,
+    "wall_s": 0.037,
     "mode": "shared_env",
     "err": "invalid `\u25b8` notation, argument   Finset.card_def has type   \u2200 (s : Finset ?m.5), s.card = s.val.card equality "
   },
@@ -39,8 +39,8 @@
     "case": "E_false",
     "expect": "compile_error",
     "outcome": "compile_error",
-    "reported_s": 0.107,
-    "wall_s": 0.107,
+    "reported_s": 0.141,
+    "wall_s": 0.141,
     "mode": "shared_env",
     "err": "unsolved goals \u22a2 False"
   },
@@ -48,8 +48,8 @@
     "case": "F_unsolved",
     "expect": "compile_error",
     "outcome": "compile_error",
-    "reported_s": 0.015,
-    "wall_s": 0.016,
+    "reported_s": 0.022,
+    "wall_s": 0.022,
     "mode": "shared_env",
     "err": "unsolved goals n : \u2115 \u22a2 n > 0"
   },
@@ -57,8 +57,8 @@
     "case": "G_unknown_ident",
     "expect": "compile_error",
     "outcome": "compile_error",
-    "reported_s": 0.004,
-    "wall_s": 0.004,
+    "reported_s": 0.006,
+    "wall_s": 0.007,
     "mode": "shared_env",
     "err": "Unknown identifier `totally_bogus_lemma_xyz`"
   },
@@ -66,8 +66,8 @@
     "case": "H_sorry",
     "expect": "has_sorry",
     "outcome": "has_sorry",
-    "reported_s": 0.008,
-    "wall_s": 0.008,
+    "reported_s": 0.013,
+    "wall_s": 0.013,
     "mode": "shared_env",
     "err": ""
   },
@@ -75,19 +75,19 @@
     "case": "I_admit",
     "expect": "has_sorry?",
     "outcome": "has_sorry",
-    "reported_s": 0.006,
-    "wall_s": 0.006,
+    "reported_s": 0.009,
+    "wall_s": 0.009,
     "mode": "shared_env",
     "err": ""
   },
   {
     "case": "J_axiom_hatch",
     "expect": "??",
-    "outcome": "valid",
-    "reported_s": 0.009,
-    "wall_s": 0.009,
+    "outcome": "unsound_axioms",
+    "reported_s": 0.013,
+    "wall_s": 0.018,
     "mode": "shared_env",
-    "err": ""
+    "err": "proof depends on untrusted axiom(s): cheat"
   },
   {
     "case": "K_no_decl",
@@ -111,8 +111,8 @@
     "case": "M_timeout",
     "expect": "timeout?",
     "outcome": "compile_error",
-    "reported_s": 0.1,
-    "wall_s": 0.1,
+    "reported_s": 0.208,
+    "wall_s": 0.208,
     "mode": "shared_env",
     "err": "maximum recursion depth has been reached use `set_option maxRecDepth <num>` to increase limit use `set_option "
   }

@@ -99,5 +99,11 @@ def parse_output(raw, prompt=None, strip_comments=False, add_header=True):
         "theorem_name": name.group(1) if name else None,
         "found_declaration": bool(start),
         "truncated": truncated,
-        "has_sorry": bool(re.search(r"\bsorry\b", code)),
+        # NAME THIS HONESTLY (audit finding 1-B). This is a REGEX over the
+        # source, so it also fires on the word inside comments and string
+        # literals. It is NOT the verifier's `has_sorry` OUTCOME, which reads the
+        # REPL's structured `sorries` list. Two same-named fields with different
+        # semantics in one pipeline is a trap; this one is the naive
+        # generation-side flag, and its name now says so.
+        "has_sorry_literal": bool(re.search(r"\bsorry\b", code)),
     }

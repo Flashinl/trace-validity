@@ -83,7 +83,8 @@ def run_experiment(temperature, num_samples=NUM_SAMPLES, num_trajectories=NUM_TR
                 "theorem_name": parsed["theorem_name"],
                 "truncated": gen["truncated"],
                 "hit_token_limit": gen["hit_token_limit"],
-                "has_sorry": parsed["has_sorry"],
+                "has_sorry_literal": parsed["has_sorry_literal"],
+                "outcome": verification["outcome"],
                 "trace_valid": verification["valid"],
                 "errors": verification["errors"],
             })
@@ -94,7 +95,20 @@ def run_experiment(temperature, num_samples=NUM_SAMPLES, num_trajectories=NUM_TR
         )
 
         sample_result["trace_valid"] = best_traj["trace_valid"]
-        sample_result["answer_correct"] = best_traj["trace_valid"] and not best_traj["has_sorry"]
+        sample_result["outcome"] = best_traj["outcome"]
+        # `answer_correct` REMOVED (issue #5, audit finding 13).
+        #
+        # It was `trace_valid and not has_sorry` — derived entirely from
+        # trace_valid, so the valid/invalid x correct/incorrect cross-tab it
+        # implied was degenerate by construction and `invalid_accuracy` was
+        # identically 0.0. A field that is emitted, documented, and named like a
+        # measurement will be read as one, so it is deleted rather than renamed.
+        #
+        # Answer correctness is NOT measured by this pipeline and cannot be:
+        # Goedel-Prover emits a Lean proof, not a final answer, and FormalStep's
+        # `ground_truth` is the whole problem's answer, identical for every step
+        # of that problem. Recovering a real answer axis needs a separate solver
+        # producing per-problem answers. Do not re-add a placeholder.
         sample_result["valid_trajectory_count"] = valid_count
 
         results.append(sample_result)

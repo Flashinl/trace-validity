@@ -25,6 +25,8 @@ results/*.json
 !results/recomputed_stats.json
 !results/phase2_positives.json
 !results/phase1_live_probe.json
+!results/analysis_n50_hardened.json
+!results/phase1_deadbranches.json
 results/*.png
 .lake/
 *.olean

@@ -292,3 +292,94 @@ across `master`, `origin/code-validity`, `fix/generation-input-path` (#8),
 **Bottom line:** 74% can be reported, with a CI, framed as "produced a compiling
 Lean proof of the dataset's statement", and with the unrecorded generation SHA
 stated. 72% cannot — it is the superseded pass.
+
+---
+
+## 2026-08-19T02:40Z — Phase 6 — apply the fixes and re-verify
+
+Not part of the original 3-hour brief. Undertaken after the audit, on request,
+once the audited numbers were locked so any change would be visible.
+
+**Applied — six pipeline defects:**
+
+1. **1-F axiom escape hatch.** `verifier._axiom_audit()` runs `#print axioms
+   <name>` against the post-compile environment and rejects any dependency
+   outside `{propext, Classical.choice, Quot.sound}` as the new outcome
+   `unsound_axioms`. Asks Lean rather than grepping, so it also catches an axiom
+   pulled in through a lemma. Falls back to a static `axiom` check when there is
+   no named theorem, and treats an un-auditable proof as a failure.
+2. **1-D fail-open classifier.** `verifier._classify()` no longer makes `VALID`
+   the bare `else`. A response with no error messages *and* no environment is now
+   `verifier_crash`.
+3. **1-A statement fidelity.** `verify_traces.statement_mismatch()` asserts, per
+   record and before a pass is scored, that the dataset `formal_statement`
+   appears verbatim and the file declares exactly one theorem; otherwise the new
+   outcome `statement_mismatch`, classified as no-verdict.
+4. **`answer_correct` deleted at source** (`trace_valid.py`), along with
+   `valid_accuracy` / `invalid_accuracy` / `overall_accuracy` in `analysis.py`
+   and the 2x2 chart whose two of four bars were structurally zero. Deleted, not
+   renamed.
+5. **1-B `has_sorry` ambiguity.** Parser's regex flag renamed
+   `has_sorry_literal`; consumers updated in `generate.py`, `trace_valid.py`,
+   `tests/trace_pipeline.py`.
+6. **README drift.** All ten outcomes documented, the three non-verdict outcomes
+   separated from `unsound_axioms` (which IS a verdict), and a table naming which
+   of the three verification passes is canonical.
+
+Also reframed `analyze_runs.py`'s crosstab report: "false positives" →
+"DISAGREEMENT", with the real denominator (0/10, not 0/11) and the exact
+one-sided 95% bound printed inline ("bounds the true rate at <=26%, NOT at 0").
+The tool now refuses to overstate the same way the prose did.
+
+**Re-verified — all 100 traces through the hardened verifier:**
+
+`results/verify3_temp0.0.jsonl`, `results/verify3_temp0.2.jsonl`.
+
+```
+T=0.0: valid 37, compile_error 11, statement_error 2   (35.7s)
+T=0.2: valid 37, compile_error 11, statement_error 2   (53.9s)
+outcome changes vs verify2: NONE at either temperature
+statement_mismatch: 0    unsound_axioms: 0
+```
+
+**The headline is unchanged: 37/50 = 74%, 37/48 = 77%.** The hardening does not
+move this result; it changes whether the next one can be trusted without another
+audit.
+
+**Axiom audit results across the 37 positives** — this is now positive evidence,
+not the absence of a grep hit. Lean reports the real transitive dependency set:
+
+| dependency set | T=0.0 | T=0.2 |
+|---|---|---|
+| none at all | 10 | 8 |
+| `propext` | 17 | 17 |
+| `propext, Classical.choice, Quot.sound` | 10 | 11 |
+| `propext, Quot.sound` | 0 | 1 |
+| outside the trusted set | **0** | **0** |
+
+**Regression check** (`results/phase1_live_probe.json`, re-run): the axiom
+fixture went `valid` → **`unsound_axioms`** ("proof depends on untrusted
+axiom(s): cheat"); the other 12 fixtures unchanged.
+
+**1-C dead branches — now fired.** `tests/audit/phase1_deadbranches.py`, 4/4 pass
+(`results/phase1_deadbranches.json`):
+
+- Real elaboration under a 0.01 s budget → **`timeout`**, not `verifier_crash`.
+  So `lean_interact` does raise a genuine `TimeoutError` and the handler ordering
+  is safe on this path — the concern in finding 1-C is resolved for the observed
+  case.
+- Verification against a nonexistent environment id → **`verifier_crash`**, via
+  the new fail-closed branch. **This proves finding 1-D was live, not
+  theoretical:** the old classifier would have reached `else: outcome = VALID`
+  and scored a snippet that was never elaborated at all as a proved theorem.
+- A normal proof immediately after each → `valid`. `_restart()` works; one
+  timeout does not poison the rest of a run.
+
+Residual on 1-C, still open: no *organic* timeout is reachable, because
+`LEAN_MAX_REC_DEPTH = 10000` bounds runaway elaboration before the 60 s clock can
+expire (the heavy-`decide` probe returned `compile_error` in 208 ms).
+
+**Still not fixed, and why:** the systematic vacuity scan over all 37 positives
+(~30 min, would change what 74% means rather than its value); the 27 positives
+not read by hand; the median-step comparison; anything needing a GPU; and
+pushing the branch, which is the author's call.
