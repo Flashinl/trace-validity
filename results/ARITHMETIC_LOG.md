@@ -114,3 +114,77 @@ answer arriving early.
 
 **Deliverable:** `results/arithmetic_provenance.json`, `tests/audit/lean_arith.py`,
 `tests/audit/provenance.py`.
+
+---
+
+## 2026-08-19T03:45Z — Phase 2 — pipeline ruled out
+
+**Checked:** `tests/audit/pipeline_checks.py`.
+
+1. **Prompt template — clean.** `PROMPT_TEMPLATE` is absent on `master`, present
+   from PR #8 on. Both sets carry it (`prompt` field starts with the template
+   verbatim). Stronger check: the statement appears verbatim in `full_code` and
+   there is exactly one declaration in **600/600 records across all three sets**.
+   The model could not have substituted its own theorem, so every statement
+   analysed in Phase 1 is FormalStep's text.
+2. **BPE / numeric tokenization — clean.** `repair_bpe()` only fires on `Ġ/Ċ/ĉ`,
+   and **0 of 600 records contain any**. Checked anyway in both directions on
+   every 4+ digit literal: **618 checks, 0 corrupted.** (My first version of this
+   check compared against `formal_statement` instead of the whole `prompt` and
+   appeared to show 90 corruptions — the informal-step doc-comment supplies
+   literals too. Against the full prompt it is zero.)
+3. **Truncation — clean and non-vacuous.** `truncated` is computed from tensor
+   shapes at `model.py:195-210`, not hardcoded. Every generation stopped on EOS
+   with a closed fence, max 660 of 2048 tokens, ≥1388 tokens of headroom. The
+   **baseline set also used 2048**, so it too post-dates issue #4.
+
+**Verdict: not contaminated.** The Phase 1 finding stands.
+
+**Deliverable:** `results/PIPELINE_RULED_OUT.md`, `tests/audit/pipeline_checks.py`.
+
+---
+
+## 2026-08-19T04:05Z — Phase 3 — delegation hypothesis: NOT TESTABLE, and that is the answer
+
+**Checked:** `tests/audit/delegation.py`, over ALL samples, not just failures. A
+sample counts as hand-computing if its proof body writes a multi-digit literal
+that appears in neither the statement nor the prompt.
+
+| set | hand-computed | delegated | validity \| hand | validity \| delegated |
+|---|---|---|---|---|
+| baseline | **2**/50 | 48/50 | 1/2 = 50% [9–91%] | 20/48 = 42% [29–56%] |
+| n50 T=0.0 | **1**/50 | 49/50 | 1/1 = 100% [21–100%] | 36/49 = 73% [60–84%] |
+| n50 T=0.2 | **0**/50 | 50/50 | n/a | 37/50 = 74% [60–84%] |
+
+**The hypothesis cannot be tested because the behaviour does not occur.** With
+2, 1 and 0 hand-computing proofs, the cross-tab has no power — a 1/1 cell is not
+evidence of anything.
+
+But the negative result is itself the finding: **the model already does the right
+thing.** It routes arithmetic through `norm_num`/`decide`/`linarith`/`rfl` rather
+than writing intermediate values by hand, in 48/50, 49/50 and 50/50 proofs. There
+is no prompting or few-shot fix to recommend here, because the failure mode the
+hypothesis predicted is absent. Chasing it would be work against a problem that
+does not exist in this data.
+
+This also explains Phase 1's tiny proof-side denominator: only 1 proof-side
+equality was assertable across all 55 failures, precisely because the model
+hardly ever asserts one.
+
+**Deliverable:** `tests/audit/delegation.py`.
+
+---
+
+## 2026-08-19T04:15Z — Phase 4 — repair loop: REQUIRES A NEW GENERATION RUN
+
+Feeding the Lean error back for a retry needs Goedel-Prover-SFT (≈7B) loaded on a
+GPU. `traces/PROVENANCE.md` records that the Lambda A10 instance was terminated
+after the run, and this host has no GPU. **Not attempted.** Logged under
+"requires a new run" per the ground rules.
+
+Worth stating for whoever does run it: a repair loop cannot help the dominant
+bucket. 26 of 55 failures are `statement_false` — the goal is arithmetically
+false, so no retry can produce a proof, and any apparent gain would come from the
+model finding a way to exploit contradictory hypotheses rather than from better
+proving. The bucket a repair loop could legitimately move is `tactic_mismatch`
+(10 + 5 + 4 = 19 samples), and that is the number to report against.
