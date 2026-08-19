@@ -35,6 +35,7 @@ from collections import Counter, defaultdict
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
+from stats import rate, pct, zero_event_upper
 from verifier import (
     OUTCOMES, VALID, TIMEOUT, VERIFIER_CRASH, PARSE_FAILURE, STATEMENT_ERROR,
     STATEMENT_MISMATCH, UNSOUND_AXIOMS,
@@ -180,15 +181,16 @@ def report_run(run):
         n = s["counts"][o]
         if n:
             tag = "   <- not a verdict" if o in NO_VERDICT else ""
-            print(f"    {o:<16}{n:>5}  ({n/s['total']:6.1%}){tag}")
+            print(f"    {o:<16}{n:>5}  ({pct(n/s['total']):>5}){tag}")
 
     print(f"\n  VALIDITY RATE")
+    # Every rate goes through stats.rate(), which attaches the Wilson interval
+    # and refuses to emit one when the underlying records are clustered. Nothing
+    # in this file divides two counts and prints the result itself.
     if s["validity_rate_over_verdicts"] is not None:
-        print(f"    {s['valid']}/{s['verdicts']} = "
-              f"{s['validity_rate_over_verdicts']:.1%}  over traces that got a "
-              f"verdict")
-    print(f"    {s['valid']}/{s['total']} = {s['validity_rate_over_all']:.1%}  "
-          f"over all traces")
+        print(f"    {rate(s['valid'], s['verdicts'], records=rows)}"
+              f"  over traces that got a verdict")
+    print(f"    {rate(s['valid'], s['total'], records=rows)}  over all traces")
     if s["no_verdict"]:
         print(f"    {s['no_verdict']} trace(s) produced no verdict "
               f"({'/'.join(NO_VERDICT)}) and are excluded from the first "

@@ -23,6 +23,7 @@ from collections import Counter
 import re
 
 from config import RESULTS_DIR, VERIFY_TIMEOUT_SECONDS
+from stats import pct
 from verifier import (
     LeanVerifier, OUTCOMES, PARSE_FAILURE, COMPILE_ERROR, STATEMENT_ERROR,
     STATEMENT_MISMATCH, has_declaration,
@@ -243,7 +244,7 @@ def main():
     print("\nOUTCOME DISTRIBUTION")
     for o in OUTCOMES:
         if counts[o]:
-            print(f"  {o:<16} {counts[o]:>4}  ({counts[o]/len(todo):.1%})")
+            print(f"  {o:<16} {counts[o]:>4}  ({pct(counts[o]/len(todo))})")
     print(f"\nwrote {out}")
 
 

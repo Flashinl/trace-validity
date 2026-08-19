@@ -5,6 +5,7 @@ import glob
 import matplotlib.pyplot as plt
 
 from config import RESULTS_DIR
+from stats import pct, rate
 
 
 def load_results(temperature):
@@ -80,7 +81,7 @@ def print_outcome_report(path):
     print(f"{'='*60}")
     print(f"  total verified: {dist['total']}")
     for outcome, n in sorted(dist["counts"].items(), key=lambda kv: -kv[1]):
-        print(f"    {outcome:<16} {n:>4}  ({dist['fractions'][outcome]:.1%})")
+        print(f"    {outcome:<16} {n:>4}  ({pct(dist['fractions'][outcome])})")
 
     secs = [r["seconds"] for r in rows if "seconds" in r]
     if secs:
@@ -96,8 +97,7 @@ def print_report(temperature, stats):
     print(f"{'='*60}")
     print(f"  Total samples:    {stats['total']}")
     print(f"  Valid traces:     {stats['valid_count']}  |  Invalid traces: {stats['invalid_count']}")
-    print(f"  Validity rate:    {stats['validity_rate']:.1%}  "
-          f"({stats['valid_count']}/{stats['total']})")
+    print(f"  Validity rate:    {rate(stats['valid_count'], stats['total'])}")
     if stats["outcome_counts"]:
         print("  Outcomes:")
         for outcome, n in sorted(stats["outcome_counts"].items(), key=lambda kv: -kv[1]):
