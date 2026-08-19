@@ -1,0 +1,26 @@
+{
+  "T=0.0": {
+    "untestable": [
+      19,
+      49
+    ],
+    "prov_testable": 38,
+    "prov_fail": [
+      35
+    ],
+    "unprov_testable": 10,
+    "certified": []
+  },
+  "T=0.2": {
+    "untestable": [
+      19,
+      49
+    ],
+    "prov_testable": 38,
+    "prov_fail": [
+      0
+    ],
+    "unprov_testable": 10,
+    "certified": []
+  }
+}
