@@ -57,10 +57,20 @@ def group_by_sample(records, temperature):
 def code_for_record(record, prompt):
     """Pick the best Lean code we have for this trajectory.
 
-    Priority: `parsed_code` if it looks like valid Lean (contains a theorem/
-    lemma/example declaration), else parse `raw_output` from scratch, else
-    fall back to `full_code`.
+    Priority: prefer `full_code` (already-stitched theorem + tactic body from
+    the trace producer) when present, since re-parsing tactic-only output here
+    tends to drop the theorem declaration. Then fall back to `parsed_code`,
+    then to parsing `raw_output` from scratch.
     """
+    full = record.get("full_code", "")
+    if full:
+        return (
+            full,
+            record.get("theorem_name"),
+            record.get("truncated", False),
+            record.get("has_sorry", False),
+        )
+
     parsed_code = record.get("parsed_code")
     if parsed_code and ("theorem" in parsed_code or "lemma" in parsed_code or "example" in parsed_code):
         return parsed_code, record.get("theorem_name"), record.get("truncated", False), record.get("has_sorry", False)
@@ -74,10 +84,6 @@ def code_for_record(record, prompt):
             parsed["truncated"],
             parsed["has_sorry"],
         )
-
-    full = record.get("full_code", "")
-    if full:
-        return full, record.get("theorem_name"), record.get("truncated", False), record.get("has_sorry", False)
 
     return "", None, False, False
 
