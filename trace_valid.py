@@ -52,6 +52,13 @@ def run_experiment(temperature, num_samples=NUM_SAMPLES, num_trajectories=NUM_TR
 
             if verification["valid"]:
                 valid_count += 1
+                print(f"    traj {traj_idx}: VALID")
+            else:
+                first_err = verification["errors"][0] if verification["errors"] else "unknown error"
+                # Truncate to keep console output scannable.
+                if len(first_err) > 120:
+                    first_err = first_err[:117] + "..."
+                print(f"    traj {traj_idx}: INVALID — {first_err}")
 
             sample_result["trajectories"].append({
                 "trajectory_index": traj_idx,

@@ -119,11 +119,19 @@ def run_for_temperature(records, temperature, verifier):
 
             verification = verifier.verify(lean_code) if lean_code else {"valid": False, "errors": ["empty code"], "num_errors": 1}
 
+            traj_idx = record.get("trajectory_index")
             if verification["valid"]:
                 valid_count += 1
+                print(f"    traj {traj_idx}: VALID")
+            else:
+                first_err = verification["errors"][0] if verification["errors"] else "unknown error"
+                # Truncate to keep console output scannable.
+                if len(first_err) > 120:
+                    first_err = first_err[:117] + "..."
+                print(f"    traj {traj_idx}: INVALID — {first_err}")
 
             sample_result["trajectories"].append({
-                "trajectory_index": record.get("trajectory_index"),
+                "trajectory_index": traj_idx,
                 "raw_output": record.get("raw_output", ""),
                 "parsed_code": lean_code,
                 "theorem_name": thm_name,

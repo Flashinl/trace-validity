@@ -54,7 +54,14 @@ class LeanVerifier:
         ]
 
         is_valid = len(errors) == 0
-        error_messages = [getattr(e, "data", str(e)) for e in errors]
+        # Prefer the first line of `data` (Lean's one-line error header) so a
+        # long diagnostic blob doesn't drown the per-trajectory console output.
+        # Fall back to the full data string if the message has no first line.
+        error_messages = []
+        for e in errors:
+            data = getattr(e, "data", "") or str(e)
+            first_line = data.split("\n", 1)[0].strip()
+            error_messages.append(first_line or data)
 
         return {
             "valid": is_valid,
