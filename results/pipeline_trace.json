@@ -1,0 +1,57 @@
+[
+  {
+    "sample_index": 0,
+    "parser_lost_theorem": true,
+    "fence_matches_stored": true,
+    "outcome": "valid",
+    "num_errors": 0,
+    "num_sorries": 0,
+    "seconds": 0.827,
+    "mode": "shared_env",
+    "first_error": null
+  },
+  {
+    "sample_index": 1,
+    "parser_lost_theorem": true,
+    "fence_matches_stored": true,
+    "outcome": "valid",
+    "num_errors": 0,
+    "num_sorries": 0,
+    "seconds": 0.712,
+    "mode": "shared_env",
+    "first_error": null
+  },
+  {
+    "sample_index": 2,
+    "parser_lost_theorem": true,
+    "fence_matches_stored": true,
+    "outcome": "compile_error",
+    "num_errors": 1,
+    "num_sorries": 0,
+    "seconds": 0.255,
+    "mode": "shared_env",
+    "first_error": "unsolved goals\nn : \u211d\nh\u2080 : n = 1061520150601\n\u22a2 False"
+  },
+  {
+    "sample_index": 3,
+    "parser_lost_theorem": true,
+    "fence_matches_stored": true,
+    "outcome": "compile_error",
+    "num_errors": 1,
+    "num_sorries": 0,
+    "seconds": 0.11,
+    "mode": "shared_env",
+    "first_error": "`ring_nf` made no progress on the goal"
+  },
+  {
+    "sample_index": 4,
+    "parser_lost_theorem": true,
+    "fence_matches_stored": true,
+    "outcome": "compile_error",
+    "num_errors": 1,
+    "num_sorries": 0,
+    "seconds": 0.036,
+    "mode": "shared_env",
+    "first_error": "unsolved goals\nx : \u211d\nh\u2080 : x = 10303 * 103\n\u22a2 False"
+  }
+]

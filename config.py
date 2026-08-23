@@ -44,6 +44,19 @@ LEAN_PROJECT_DIR = os.path.join(os.path.dirname(__file__), "lean_project")
 # (`timeout`), never silently folded into "invalid".
 VERIFY_TIMEOUT_SECONDS = 60
 
+# Building the base environment means `import Mathlib`, which is enormously
+# more expensive than any single verification. Measured >300s on Windows, where
+# Defender inspects each of ~8.6k .olean files as they are read. This is a
+# ONE-TIME cost per process, so it gets its own generous budget; do not conflate
+# it with VERIFY_TIMEOUT_SECONDS.
+BASE_ENV_TIMEOUT_SECONDS = 1800
+
+# Snapshot of the imported-Mathlib environment. Restoring this is seconds
+# instead of minutes, so every process after the first skips the import.
+ENV_PICKLE_PATH = os.path.join(
+    os.path.dirname(__file__), "lean_project", "mathlib_env.olean_pickle"
+)
+
 RESULTS_DIR = os.path.join(os.path.dirname(__file__), "results")
 TRACES_DIR = os.path.join(os.path.dirname(__file__), "traces")
 

@@ -1,0 +1,170 @@
+{
+  "counts": {
+    "valid": 26,
+    "compile_error": 1
+  },
+  "rows": [
+    {
+      "sample_index": 0,
+      "outcome": "valid",
+      "seconds": 0.843,
+      "first_error": null
+    },
+    {
+      "sample_index": 1,
+      "outcome": "valid",
+      "seconds": 0.728,
+      "first_error": null
+    },
+    {
+      "sample_index": 5,
+      "outcome": "valid",
+      "seconds": 0.03,
+      "first_error": null
+    },
+    {
+      "sample_index": 8,
+      "outcome": "valid",
+      "seconds": 0.336,
+      "first_error": null
+    },
+    {
+      "sample_index": 9,
+      "outcome": "valid",
+      "seconds": 0.235,
+      "first_error": null
+    },
+    {
+      "sample_index": 10,
+      "outcome": "valid",
+      "seconds": 0.171,
+      "first_error": null
+    },
+    {
+      "sample_index": 11,
+      "outcome": "valid",
+      "seconds": 0.174,
+      "first_error": null
+    },
+    {
+      "sample_index": 14,
+      "outcome": "compile_error",
+      "seconds": 0.163,
+      "first_error": "`simp` made no progress"
+    },
+    {
+      "sample_index": 15,
+      "outcome": "valid",
+      "seconds": 0.045,
+      "first_error": null
+    },
+    {
+      "sample_index": 17,
+      "outcome": "valid",
+      "seconds": 0.051,
+      "first_error": null
+    },
+    {
+      "sample_index": 18,
+      "outcome": "valid",
+      "seconds": 0.03,
+      "first_error": null
+    },
+    {
+      "sample_index": 22,
+      "outcome": "valid",
+      "seconds": 0.227,
+      "first_error": null
+    },
+    {
+      "sample_index": 25,
+      "outcome": "valid",
+      "seconds": 0.368,
+      "first_error": null
+    },
+    {
+      "sample_index": 26,
+      "outcome": "valid",
+      "seconds": 0.015,
+      "first_error": null
+    },
+    {
+      "sample_index": 27,
+      "outcome": "valid",
+      "seconds": 0.23,
+      "first_error": null
+    },
+    {
+      "sample_index": 28,
+      "outcome": "valid",
+      "seconds": 0.169,
+      "first_error": null
+    },
+    {
+      "sample_index": 29,
+      "outcome": "valid",
+      "seconds": 0.092,
+      "first_error": null
+    },
+    {
+      "sample_index": 30,
+      "outcome": "valid",
+      "seconds": 0.238,
+      "first_error": null
+    },
+    {
+      "sample_index": 33,
+      "outcome": "valid",
+      "seconds": 0.178,
+      "first_error": null
+    },
+    {
+      "sample_index": 35,
+      "outcome": "valid",
+      "seconds": 0.458,
+      "first_error": null
+    },
+    {
+      "sample_index": 40,
+      "outcome": "valid",
+      "seconds": 0.284,
+      "first_error": null
+    },
+    {
+      "sample_index": 41,
+      "outcome": "valid",
+      "seconds": 0.094,
+      "first_error": null
+    },
+    {
+      "sample_index": 43,
+      "outcome": "valid",
+      "seconds": 0.538,
+      "first_error": null
+    },
+    {
+      "sample_index": 44,
+      "outcome": "valid",
+      "seconds": 0.108,
+      "first_error": null
+    },
+    {
+      "sample_index": 45,
+      "outcome": "valid",
+      "seconds": 0.078,
+      "first_error": null
+    },
+    {
+      "sample_index": 47,
+      "outcome": "valid",
+      "seconds": 0.126,
+      "first_error": null
+    },
+    {
+      "sample_index": 48,
+      "outcome": "valid",
+      "seconds": 0.222,
+      "first_error": null
+    }
+  ]
+}
