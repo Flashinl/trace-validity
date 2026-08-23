@@ -151,6 +151,38 @@ check_eq("percentage is of failures, not of all records",
 check_eq("arithmetic split reported", s["arithmetic"][ARITH_STATEMENT]["n"], 1)
 check_eq("table renders", isinstance(s["table"], str) and "unsolved_goals" in s["table"], True)
 
+# --------------------------------------------------------------------------
+print("\nrender_taxonomy() -- the end-of-run block, which shipped broken once")
+
+from verify_traces import render_taxonomy  # noqa: E402
+
+_fail = {"outcome": "compile_error", "failure_kind": UNSOLVED_GOALS,
+         "arithmetic": ARITH_UNKNOWN}
+_pass = {"outcome": "valid", "failure_kind": None, "arithmetic": None}
+
+out = render_taxonomy([_pass, _fail, _fail], 3)
+check_eq("renders a table when records were collected",
+         "FAILURE TAXONOMY" in out and "unsolved_goals" in out, True)
+
+# THE REGRESSION. The first version guarded on a `written` list that the run
+# loop never appended to, so `if written:` was always False and the table
+# silently never printed -- while every unit test here passed, because they
+# covered summarize() and nothing covered the wiring. An n=3 live run caught it.
+# A count mismatch must now be LOUD.
+out = render_taxonomy([], 3)
+check_eq("0 collected for 3 verified is reported as a bug, not as silence",
+         "[warn]" in out and "collected 0 record(s) for 3" in out, True)
+check_eq("  and it does not render an empty string", out.strip() != "", True)
+
+out = render_taxonomy([_pass, _fail], 3)
+check_eq("a partial collection is also reported", "[warn]" in out, True)
+
+out = render_taxonomy([_pass, _pass], 2)
+check_eq("all-pass run says so rather than printing an empty table",
+         "no failures among 2 records" in out, True)
+
+check_eq("a genuinely empty run renders nothing", render_taxonomy([], 0), "")
+
 print()
 if FAILURES:
     print(f"{len(FAILURES)} FAILURES:")
