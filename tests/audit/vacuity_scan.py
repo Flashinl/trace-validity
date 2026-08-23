@@ -87,50 +87,64 @@ def classify(p, contra):
     return "6_contentful"
 
 
-t0 = time.perf_counter()
-v = LeanVerifier(setup=False, verbose=False)
-print(f"[setup] verifier ready in {time.perf_counter()-t0:.0f}s\n")
+def main():
+    """Run the scan. Guarded so importing this module does NOT re-run it.
 
-out = {}
-for T in ("0.0", "0.2"):
-    traces = {r["sample_index"]: r for r in J(f"traces/temp{T}_n50_1each/traces.jsonl")}
-    vers = {r["sample_index"]: r for r in J(f"results/verify3_temp{T}.jsonl")}
-    valid = sorted(i for i, r in vers.items() if r["outcome"] == "valid")
-    print("=" * 92)
-    print(f"T = {T}   probing {len(valid)} `valid` traces")
-    print("=" * 92)
-    print(f"  {'s':<4}{'class':<30}{'True':<6}{'assum':<7}{'rfl_r':<7}{'subst':<7}"
-          f"{'rfl':<5}{'dec':<5}{'contra':<7} goal")
+    This block used to sit at module level. `from vacuity_scan import PROBES,
+    classify` therefore spun up a LeanVerifier, re-probed all 74 passes, and
+    rewrote results/vacuity_scan.json as a side effect of the import -- roughly
+    ten minutes of Lean per import, and a committed artifact overwritten by
+    anything that wanted to reuse a constant from here.
+    """
+    t0 = time.perf_counter()
+    v = LeanVerifier(setup=False, verbose=False)
+    print(f"[setup] verifier ready in {time.perf_counter()-t0:.0f}s\n")
 
-    rows = []
-    for i in valid:
-        stmt = traces[i]["formal_statement"]
-        binders, goal = split_statement(stmt)
-        p = {name: ok(v, stmt_with(stmt, tac)) for name, tac in PROBES}
+    out = {}
+    for T in ("0.0", "0.2"):
+        traces = {r["sample_index"]: r for r in J(f"traces/temp{T}_n50_1each/traces.jsonl")}
+        vers = {r["sample_index"]: r for r in J(f"results/verify3_temp{T}.jsonl")}
+        valid = sorted(i for i, r in vers.items() if r["outcome"] == "valid")
+        print("=" * 92)
+        print(f"T = {T}   probing {len(valid)} `valid` traces")
+        print("=" * 92)
+        print(f"  {'s':<4}{'class':<30}{'True':<6}{'assum':<7}{'rfl_r':<7}{'subst':<7}"
+              f"{'rfl':<5}{'dec':<5}{'contra':<7} goal")
 
-        contra = False
-        if binders.strip():
-            for tac in ("simp_all", "omega", "norm_num at *"):
-                if ok(v, f"{H}theorem contra_probe {binders} : False := by\n  {tac}\n"):
-                    contra = True
-                    break
+        rows = []
+        for i in valid:
+            stmt = traces[i]["formal_statement"]
+            binders, goal = split_statement(stmt)
+            p = {name: ok(v, stmt_with(stmt, tac)) for name, tac in PROBES}
 
-        cls = classify(p, contra)
-        rows.append({"sample": i, "class": cls, "goal": goal[:80], "contra": contra,
-                     "state": vers[i]["state"], "level": traces[i].get("level"), **p})
-        print(f"  {i:<4}{cls:<30}{int(p['P_true']):<6}{int(p['P_assum']):<7}"
-              f"{int(p['P_redrfl']):<7}{int(p['P_substrfl']):<7}{int(p['P_rfl']):<5}"
-              f"{int(p['P_decide']):<5}{int(contra):<7} {goal[:48]}")
+            contra = False
+            if binders.strip():
+                for tac in ("simp_all", "omega", "norm_num at *"):
+                    if ok(v, f"{H}theorem contra_probe {binders} : False := by\n  {tac}\n"):
+                        contra = True
+                        break
 
-    out[T] = rows
-    tally = {}
-    for r in rows:
-        tally[r["class"]] = tally.get(r["class"], 0) + 1
-    print(f"\n  TALLY T={T}:")
-    for k in sorted(tally):
-        print(f"    {k:<32} {tally[k]:>3}")
-    print()
+            cls = classify(p, contra)
+            rows.append({"sample": i, "class": cls, "goal": goal[:80], "contra": contra,
+                         "state": vers[i]["state"], "level": traces[i].get("level"), **p})
+            print(f"  {i:<4}{cls:<30}{int(p['P_true']):<6}{int(p['P_assum']):<7}"
+                  f"{int(p['P_redrfl']):<7}{int(p['P_substrfl']):<7}{int(p['P_rfl']):<5}"
+                  f"{int(p['P_decide']):<5}{int(contra):<7} {goal[:48]}")
 
-json.dump(out, io.open("results/vacuity_scan.json", "w", encoding="utf-8"),
-          indent=2, ensure_ascii=False)
-print("wrote results/vacuity_scan.json")
+        out[T] = rows
+        tally = {}
+        for r in rows:
+            tally[r["class"]] = tally.get(r["class"], 0) + 1
+        print(f"\n  TALLY T={T}:")
+        for k in sorted(tally):
+            print(f"    {k:<32} {tally[k]:>3}")
+        print()
+
+    json.dump(out, io.open("results/vacuity_scan.json", "w", encoding="utf-8"),
+              indent=2, ensure_ascii=False)
+    print("wrote results/vacuity_scan.json")
+
+
+
+if __name__ == "__main__":
+    main()
