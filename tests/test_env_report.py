@@ -82,22 +82,25 @@ for key in ("host", "config_pins", "lean", "python_distributions",
     check(f"report carries `{key}`", key in report)
 
 proj = report["lean"]["project"]
-check("every lake package carries an inputRev and a floating flag",
-      all("inputRev" in p and "floating" in p for p in proj["packages"]),
+check("every lake package carries an inputRev and a branch flag",
+      all("inputRev" in p and "branch_input_rev" in p for p in proj["packages"]),
       f"({len(proj['packages'])} packages)")
 
-check("floating dependencies are detected and named",
-      isinstance(proj["floating_dependencies"], list),
-      f"({len(proj['floating_dependencies'])} floating)")
+check("branch-inputRev dependencies are detected and named",
+      isinstance(proj["branch_input_rev_dependencies"], list),
+      f"({len(proj['branch_input_rev_dependencies'])} on a branch inputRev)")
 
-# The manifest in this repo is known to carry floating deps (issue #16). If that
-# is ever fixed, this test should be updated deliberately, not silently pass.
-check("issue #16 is still present in the committed manifest",
-      len(proj["floating_dependencies"]) > 0,
-      "-- if this FAILS the deps were pinned; update this test")
+# These deps carry a branch inputRev but are pinned transitively by mathlib's
+# own committed manifest at an immutable tag -- verified on a clean clone, see
+# issue #16. Recording them is right; WARNING about them is not, because it
+# trains the reader to ignore the warnings block.
+check("a branch inputRev does NOT raise a warning",
+      not any("floating inputRev" in w for w in report["warnings"]),
+      "-- they are pinned via mathlib's manifest")
 
-check("a floating dependency raises a warning",
-      any("floating inputRev" in w for w in report["warnings"]))
+check("an immutable mathlib tag raises no pin warning",
+      not any("not an immutable" in w for w in report["warnings"]),
+      f"(MATHLIB_REV={report['config_pins']['MATHLIB_REV']})")
 
 check_eq("declared toolchain matches the file on disk",
          report["config_pins"]["LEAN_TOOLCHAIN"],

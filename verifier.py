@@ -126,6 +126,24 @@ def _lakefile_contents():
     )
 
 
+def _manifest_mathlib_input_rev(manifest_path):
+    """The mathlib `inputRev` a manifest records, or None if unreadable.
+
+    Unreadable is deliberately not an error: the caller treats None as "cannot
+    tell", which means "do not force an update on a guess".
+    """
+    try:
+        import json
+        with open(manifest_path, encoding="utf-8") as f:
+            manifest = json.load(f)
+    except (OSError, ValueError):
+        return None
+    for pkg in manifest.get("packages", []):
+        if pkg.get("name") == "mathlib":
+            return pkg.get("inputRev")
+    return None
+
+
 def setup_lean_project(project_dir=LEAN_PROJECT_DIR, verbose=True):
     """Create/refresh the pinned Lean project. Idempotent and safe to re-run.
 
@@ -159,29 +177,45 @@ def setup_lean_project(project_dir=LEAN_PROJECT_DIR, verbose=True):
             print(f"[setup] $ {' '.join(args)}")
         return subprocess.run(args, cwd=project_dir, check=check)
 
-    # Run `lake update` ONLY when there is no manifest to honour (issue #16).
+    # When to run `lake update` (issue #16).
     #
-    # This used to be `not os.path.exists(manifest) or not built`, and `built`
-    # is False on every fresh clone, so `lake update` ran even though
-    # lake-manifest.json is committed. `lake update` RE-RESOLVES every
-    # dependency and rewrites the manifest — and seven of Mathlib's transitive
-    # deps carry a floating inputRev (`main`/`master`): aesop, batteries, Qq,
-    # plausible, proofwidgets, importGraph, LeanSearchClient. Two machines
-    # cloning a week apart therefore got different `aesop` — which the prompt
-    # header imports and which changes tactic behaviour — with an identical
-    # requirements.txt, lean-toolchain and Mathlib tag. That is the drift.
+    # NOT for the reason first supposed. Our manifest records seven of Mathlib's
+    # transitive deps with a floating inputRev (`main`/`master`) — aesop,
+    # batteries, Qq, plausible, proofwidgets, importGraph, LeanSearchClient —
+    # which looks like a drift vector and is not one. Mathlib is required at an
+    # immutable TAG, and mathlib4 commits its own lake-manifest.json; lake
+    # resolves a transitive dependency from that manifest rather than by
+    # re-resolving the branch name. Measured on a clean clone: with aesop
+    # `master` upstream at 18889deb, `lake update` still resolved aesop to
+    # a7dbf0c6 — the revision mathlib v4.32.0 pins — and left our manifest
+    # byte-identical. The floating inputRev is a record of how mathlib DECLARES
+    # the requirement, not a live resolution target for us.
     #
-    # With a manifest present, `lake build` fetches dependencies at the
-    # revisions the manifest records, so nothing is needed here to populate a
-    # fresh clone.
+    # What IS a real bug: the old condition was `not os.path.exists(manifest) or
+    # not built`, which never consults config. Bump config.MATHLIB_REV on a box
+    # that already has a built project and setup rewrites lakefile.toml with the
+    # new rev, no `lake update` runs, and `lake build` quietly proceeds against
+    # the OLD mathlib the stale manifest still pins. The version bump silently
+    # does nothing.
+    #
+    # So: update when there is no manifest to honour, or when the manifest
+    # disagrees with the pin config declares. Otherwise the manifest is
+    # authoritative and `lake build` fetches at the revisions it records.
+    manifest_rev = _manifest_mathlib_input_rev(manifest)
+    stale = os.path.exists(manifest) and manifest_rev not in (None, MATHLIB_REV)
+
     if not os.path.exists(manifest):
         if verbose:
             print("[setup] no lake-manifest.json; resolving dependencies")
         run(["lake", "update"])
-    elif not built:
+    elif stale:
         if verbose:
-            print("[setup] manifest present; honouring its pinned revisions "
-                  "(not running `lake update`)")
+            print(f"[setup] manifest pins mathlib {manifest_rev!r} but config "
+                  f"declares {MATHLIB_REV!r}; re-resolving")
+        run(["lake", "update"])
+    elif verbose:
+        print("[setup] manifest agrees with config; honouring its pinned "
+              "revisions (not running `lake update`)")
 
     # NEVER build Mathlib from source. Non-fatal: a project without Mathlib has
     # no `cache` executable.

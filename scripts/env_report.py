@@ -13,13 +13,18 @@ the answer survives after the fact.
   python scripts/env_report.py --json       # machine-readable
   python scripts/env_report.py --out PATH   # write JSON to PATH
 
-Drift detection
----------------
-The committed `lake-manifest.json` records RESOLVED revisions, but seven of them
-carry a floating `inputRev` (`main` / `master`). If anything re-resolves them,
-the pins move. `collect()` reports the resolved revs alongside their inputRev
-and flags every floating one, so a report that differs from a previous run is
-visible rather than silent.
+What this is for
+----------------
+Not drift detection on a hunch -- the record itself. This module was built on the
+theory that Mathlib's transitive deps float because seven of them carry a branch
+`inputRev`. Running it disproved that: mathlib is required at an immutable tag
+and commits its own manifest, so lake resolves those deps from THAT manifest.
+Measured on a clean clone with aesop `master` upstream at 18889deb, `lake update`
+still produced a7dbf0c6 and left our manifest byte-identical (issue #16).
+
+The report earns its place anyway, and that episode is the argument for it: the
+resolved revisions are now written down, so the next claim about them can be
+checked instead of assumed.
 """
 
 import argparse
@@ -27,6 +32,7 @@ import io
 import json
 import os
 import platform
+import re
 import socket
 import subprocess
 import sys
@@ -159,12 +165,18 @@ def _lean_project(project_dir):
                     "name": pkg.get("name"),
                     "rev": pkg.get("rev"),
                     "inputRev": pkg.get("inputRev"),
-                    # A branch name rather than a tag/SHA means `lake update`
-                    # would move this dependency. Issue #16.
-                    "floating": pkg.get("inputRev") in ("main", "master", None),
+                    # `inputRev` is a BRANCH name. This looks like a drift
+                    # vector and is not one: mathlib is required at an immutable
+                    # tag and commits its own manifest, so lake resolves these
+                    # from THAT manifest rather than re-resolving the branch.
+                    # Measured: with aesop `master` upstream at 18889deb, a
+                    # `lake update` on a clean clone still produced a7dbf0c6.
+                    # Recorded because the resolved rev is what matters, and
+                    # naming it is how a future divergence gets caught.
+                    "branch_input_rev": pkg.get("inputRev") in ("main", "master", None),
                 }
                 packages.append(entry)
-                if entry["floating"]:
+                if entry["branch_input_rev"]:
                     floating.append(entry["name"])
             info["manifest_version"] = manifest.get("version")
         except (ValueError, OSError) as e:
@@ -173,7 +185,7 @@ def _lean_project(project_dir):
         info["manifest_error"] = "lake-manifest.json not found"
 
     info["packages"] = packages
-    info["floating_dependencies"] = floating
+    info["branch_input_rev_dependencies"] = floating
     info["mathlib_rev"] = next(
         (p["rev"] for p in packages if p["name"] == "mathlib"), None
     )
@@ -269,11 +281,17 @@ def _warnings(report):
     proj = report["lean"]["project"]
     pins = report["config_pins"]
 
-    floating = proj.get("floating_dependencies") or []
-    if floating:
+    # Deliberately NOT a warning. These dependencies carry a branch `inputRev`
+    # but are pinned transitively by mathlib's own committed manifest at an
+    # immutable tag -- verified empirically, see issue #16. Warning about them
+    # would train readers to ignore the warnings block.
+    if pins.get("MATHLIB_REV") and not re.match(r"^v\d+\.\d+\.\d+$",
+                                                str(pins["MATHLIB_REV"])):
         out.append(
-            f"{len(floating)} Lean dependencies have a floating inputRev "
-            f"({', '.join(floating)}). `lake update` would move them. Issue #16."
+            f"config.MATHLIB_REV is {pins['MATHLIB_REV']!r}, which is not an "
+            f"immutable vX.Y.Z tag. The transitive Lean dependencies are pinned "
+            f"only because mathlib is pinned to a tag; a branch or moving ref "
+            f"here would make them float for real."
         )
 
     declared = pins.get("LEAN_TOOLCHAIN")
@@ -345,10 +363,11 @@ def render(report):
     a(f"  env snapshot    exists={snap.get('exists')}")
     a("")
     a("  lake dependencies (resolved)")
-    a(f"    {'package':<20}{'rev':<14}{'inputRev':<12}{'floating'}")
+    a(f"    {'package':<20}{'rev':<14}{'inputRev':<12}{'pinned via'}")
     for p in proj.get("packages", []):
+        via = "mathlib manifest" if p["branch_input_rev"] else "tag"
         a(f"    {str(p['name']):<20}{str(p['rev'])[:12]:<14}"
-          f"{str(p['inputRev']):<12}{'YES' if p['floating'] else ''}")
+          f"{str(p['inputRev']):<12}{via}")
 
     a("")
     a("CONFIG PINS")

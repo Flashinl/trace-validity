@@ -279,19 +279,46 @@ v4.32.2 runs against a mismatched REPL and produces `unexpected token` /
 `leanprover/lean4:vX.Y.Z`, so naming the Mathlib tag after the Lean version is
 what keeps all three aligned. The same argument rules out `-rc` toolchains.
 
-### Not fully pinned — known gap
+### Transitive Lean dependencies — pinned, and how
 
 Mathlib pulls seven transitive Lean dependencies whose `inputRev` is a **branch**
 rather than a tag: `aesop` and `Qq` on `master`; `batteries`, `plausible`,
-`proofwidgets`, `importGraph` and `LeanSearchClient` on `main`. The committed
-`lake-manifest.json` records the resolved revisions, so they hold as long as
-nothing re-resolves them. `lake update` re-resolves and rewrites the manifest,
-which is why `setup_lean_project()` now runs it **only when there is no manifest
-to honour** (issue #16). `scripts/env_report.py` reports every resolved revision
-and warns about the floating ones.
+`proofwidgets`, `importGraph` and `LeanSearchClient` on `main`.
 
-`aesop` matters most: the prompt header imports it, and its tactic behaviour can
-change a verdict.
+**This looks like a drift vector and is not one.** Mathlib is required at an
+**immutable tag**, and mathlib4 commits its own `lake-manifest.json`; lake
+resolves a transitive dependency from *that* manifest rather than by
+re-resolving the branch name. The `inputRev` you see is a record of how Mathlib
+*declares* the requirement, not a live resolution target for this project.
+
+Measured on a clean clone (issue #16), which is the only reason this is stated
+as fact rather than as reasoning:
+
+| | |
+|---|---|
+| `aesop` upstream `master` HEAD at the time of the test | `18889deb9e83` |
+| `aesop` that `lake update` actually resolved | **`a7dbf0c63b69`** |
+| `aesop` that mathlib v4.32.0's own manifest pins | `a7dbf0c63b69` |
+| our `lake-manifest.json` after `lake update` | **byte-identical** |
+
+So the whole graph is pinned end to end, and it is pinned *because Mathlib is
+pinned to a tag*. That is the load-bearing condition: point `config.MATHLIB_REV`
+at a branch or a moving ref and these seven genuinely would float.
+`scripts/env_report.py` warns if `MATHLIB_REV` is not a `vX.Y.Z` tag, and
+records every resolved revision on every run.
+
+### The real pinning bug, and the fix
+
+`setup_lean_project()` decided whether to run `lake update` from
+`not os.path.exists(manifest) or not built` — a condition that never consults
+config. Bump `config.MATHLIB_REV` on a box that already has a built project and
+setup rewrites `lakefile.toml` with the new revision, no `lake update` runs, and
+`lake build` proceeds against the **old** Mathlib the stale manifest still pins.
+The version bump silently does nothing.
+
+It now updates when there is no manifest, or when the manifest's mathlib
+`inputRev` disagrees with `config.MATHLIB_REV`. Otherwise the manifest is
+authoritative.
 
 ---
 
