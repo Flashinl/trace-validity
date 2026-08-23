@@ -22,8 +22,12 @@ from collections import Counter
 
 import re
 
+import os.path as _osp
+sys.path.insert(0, _osp.join(_osp.dirname(_osp.abspath(__file__)), "scripts"))
+
 from config import RESULTS_DIR, VERIFY_TIMEOUT_SECONDS
 from failure_taxonomy import record_failure_fields, summarize
+import env_report
 from stats import pct
 from verifier import (
     LeanVerifier, OUTCOMES, PARSE_FAILURE, COMPILE_ERROR, STATEMENT_ERROR,
@@ -176,6 +180,16 @@ def main():
     if not todo:
         print("nothing to do")
         return
+
+    # Record the environment BEFORE verifying, so a run that dies part-way
+    # still leaves the report that explains which environment it died in
+    # (issue #16). Warnings are surfaced here rather than buried in the file:
+    # an unpinned dependency is worth seeing at the top of a run, not after it.
+    env_path, env_doc = env_report.write_beside(out)
+    if env_doc:
+        print(f"env report : {env_path}")
+        for w in env_doc.get("warnings", []):
+            print(f"  ! {w}")
 
     t_setup = time.perf_counter()
     v = LeanVerifier(timeout=args.timeout, verbose=False)
