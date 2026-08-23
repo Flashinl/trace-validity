@@ -27,11 +27,14 @@ never used at all. Lean will happily certify it, and our verifier will score it
 `valid`, correctly: it *is* a proof of the stated theorem. The theorem is just
 worthless.
 
-This single pattern underwrites the two largest trivial classes:
+Pinning is the substitution *mechanism* behind the two largest trivial classes —
+`4_syntactic_tautology` (8 of the 14) and `3_goal_restates_a_hypothesis` (3 of
+the 14, e.g. `(n : ℕ) (h₀ : n = 6) : (n = 6)`, closed by `assumption`).
 
-- `4_syntactic_tautology` — 8 of the 14, exactly as above.
-- `3_goal_restates_a_hypothesis` — 3 of the 14: `(n : ℕ) (h₀ : n = 6) : (n = 6)`,
-  closed by `assumption`.
+**But pinning alone does not make a statement trivial, and section 4 measures
+exactly that.** A pinned statement can have a goal that substitution does not
+close. The claim this document defends is about the *interaction* between
+pinning and goal shape, not about pinning by itself.
 
 ## 2. Why step-level formalization produces it, necessarily
 
@@ -58,7 +61,64 @@ theorem number_theory_84195 (n : ℕ) : 9 ∣ n^3 + (n + 1)^3 + (n + 2)^3 := by
 There is no `h₀ : n = <literal>` to substitute, so the substitution-to-tautology
 route is **structurally unavailable** — not merely absent from a sample.
 
-## 4. The measurement, across whole datasets
+## 4. Pinning is neither necessary nor sufficient
+
+39% of *all* FormalStep statements carry a pinned hypothesis, but nothing like
+39% of them are trivial. So the pattern alone cannot be the explanation. Measured
+on the 37 passes and 13 failures of the T=0.0 run:
+
+### It does not predict passing
+
+| | pinned | |
+|---|---|---|
+| passes | **20/37 = 54%** | [38%–69%] |
+| failures | **4/13 = 31%** | [13%–58%] |
+
+Two-proportion z = −1.45, **p = 0.148**. Not significant, and the intervals
+overlap heavily. Pinning does not tell you whether the model will succeed.
+
+### It roughly doubles the odds of triviality, and no more
+
+Among the 37 passes:
+
+| | asserts nothing | contentful or ground |
+|---|---|---|
+| **pinned** | 10 | 10 |
+| **not pinned** | 4 | 13 |
+
+- `P(trivial | pinned)` = **10/20 = 50%**
+- `P(trivial | not pinned)` = **4/17 = 24%**
+- `P(pinned | trivial)` = **10/14 = 71%**
+
+**Not sufficient** — half of pinned passes are not trivial. Pinning supplies the
+substitution; whether it *closes* the goal depends on the goal's shape:
+
+```lean
+s0  (n : ℕ) (h₀ : n = 1061520150601) : ∃ a : ℕ, a^6 = n     -- pinned, existential, contentful
+s9  (gold silver : Nat) (h₀ : gold = 4) (h₁ : silver = 4)
+      : Nat.choose (gold + silver) gold = 70                 -- pinned, real computation
+```
+
+**Not necessary** — 4 of the 14 trivial passes carry no pin at all, and they get
+there by different routes entirely:
+
+```lean
+s20  theorem test : (6 / 6 = 1)          -- no binders; closed ground identity
+s47  theorem test : (5 = 5)              -- no binders; literal tautology
+s15  ... : (True)                        -- goal is literally True
+s42  ... contradictory hypotheses        -- False follows, so anything does
+```
+
+**The defensible claim: triviality requires a pinned hypothesis AND a goal
+expressible as a syntactic identity in the pinned variables.** Pinning is the
+dominant single route — 6 of the 8 syntactic tautologies and all 3
+restated-hypothesis cases — but it is one route among several, and on its own it
+is only a doubling of the odds.
+
+The 39% corpus-wide figure below is therefore an **upper bound on the reach of
+the mechanism, not an estimate of how much of FormalStep is trivial.**
+
+## 5. The measurement, across whole datasets
 
 This is the number that generalises. Not the 37 passes we sampled — every
 statement in both corpora.
@@ -83,7 +143,7 @@ carrying the pattern**, and 39% of all statements do.
 **39% versus 1% on the comparable pool** — a ~39× difference, and the residual 1%
 is consistent with a handful of problems that genuinely state a constant.
 
-## 5. The probe comparison
+## 6. The probe comparison
 
 The same six probes, run against both. Each replaces the model's proof entirely,
 so it interrogates the *dataset's goal*, never the model's work.
@@ -105,7 +165,7 @@ unprobed by default.
 will *not* unfold `Nat.factorial 4` to `24`, which is what separates "asserts
 nothing" from "asserts a real computation".
 
-## 6. The selection effect, and how to quote the rate
+## 7. The selection effect, and how to quote the rate
 
 Running the same probes over the **failing** traces (`vacuity_failures.json`):
 
@@ -124,7 +184,7 @@ So the 46% content rate describes **the pass set, not the benchmark**. Say "of
 what we counted as passes, 46% assert something." Do not say "46% of FormalStep
 is contentful" — the failure run is the evidence that would be wrong.
 
-## 7. What follows
+## 8. What follows
 
 1. **The 74% / 46% / 28% ladder is a statement about what our passes were made
    of.** It does not transfer to another dataset, and it is not a capability
@@ -134,7 +194,12 @@ is contentful" — the failure run is the evidence that would be wrong.
    unit differs (one CoT step vs one whole problem) and because the step-level
    number is inflated by a triviality mode the problem-level dataset cannot
    produce. Report them separately, never side by side.
-3. **This is a property of step-level formalization in general**, not a defect
+3. **Pinning is a risk factor, not a diagnosis.** Do not use the 39% figure as a
+   triviality rate. It bounds how often the mechanism is *available*; whether it
+   fires depends on the goal, and measured on the passes it fires about half the
+   time. Screening a candidate eval set on the pattern is cheap and worth doing,
+   but the Lean probes are what settle any individual statement.
+4. **This is a property of step-level formalization in general**, not a defect
    unique to FormalStep. Any dataset that slices solutions into individually
    formalized steps should be expected to carry it, and should be measured for
    it before a pass rate is quoted.
