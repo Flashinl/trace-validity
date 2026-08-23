@@ -5,6 +5,7 @@ import glob
 import matplotlib.pyplot as plt
 
 from config import RESULTS_DIR
+from stats import pct, rate
 
 
 def load_results(temperature):
@@ -14,44 +15,38 @@ def load_results(temperature):
 
 
 def compute_stats(results):
+    """Outcome counts for a `trace_valid.py run` result file.
+
+    ISSUE #5, RESOLVED. This function used to report `valid_accuracy`,
+    `invalid_accuracy` and `overall_accuracy` off an `answer_correct` field that
+    `trace_valid.py` defined as `trace_valid and not has_sorry`. Because
+    answer_correct was DERIVED FROM trace_valid, every row in `invalid_traces`
+    had answer_correct == False by construction, `invalid_accuracy` was
+    identically 0.0, and the 2x2 contingency between "is the trace a valid
+    proof" and "is the answer right" collapsed to a tautology.
+
+    The field is now deleted at source rather than reinterpreted here, so the
+    fake accuracy axis is gone with it. Answer correctness is NOT measured by
+    this pipeline -- see the note in trace_valid.py. What remains below is the
+    only thing this file ever legitimately measured: how many traces were valid.
+
+    Prefer `analyze_runs.py`, which reports the full outcome taxonomy and is the
+    authoritative entry point.
+    """
+    from collections import Counter
+
     valid_traces = [r for r in results if r["trace_valid"]]
-    invalid_traces = [r for r in results if not r["trace_valid"]]
-
-    valid_correct = sum(1 for r in valid_traces if r["answer_correct"])
-    invalid_correct = sum(1 for r in invalid_traces if r["answer_correct"])
-
-    # ISSUE #5 — `invalid_accuracy` below is DEGENERATE, always exactly 0.0.
-    #
-    #   trace_valid.py:  answer_correct = trace_valid and not has_sorry
-    #   here:            invalid_traces = [r for r in results if not r["trace_valid"]]
-    #                    invalid_correct = sum(... if r["answer_correct"])
-    #
-    # Every row in `invalid_traces` has trace_valid == False, so its
-    # answer_correct is `False and ...` == False. invalid_correct is therefore
-    # identically 0 and invalid_accuracy is identically 0.0 — it measures
-    # nothing. The 2x2 contingency between "is the trace a valid proof" and "is
-    # the answer right" collapses because answer_correct is DERIVED FROM
-    # trace_valid instead of being an independent signal.
-    #
-    # Not silently redefined here: the corrected definition is proposed in the
-    # PR body for review. See `outcome_distribution` below for reporting that
-    # does not depend on this metric.
-    assert invalid_correct == 0 or not invalid_traces, (
-        "invalid_correct became non-zero — answer_correct is no longer derived "
-        "from trace_valid, so the issue #5 note above needs updating."
-    )
+    counts = Counter(r.get("outcome", "unknown") for r in results)
 
     return {
         "total": len(results),
         "valid_count": len(valid_traces),
-        "invalid_count": len(invalid_traces),
-        "valid_accuracy": valid_correct / len(valid_traces) if valid_traces else 0.0,
-        "invalid_accuracy": invalid_correct / len(invalid_traces) if invalid_traces else 0.0,
-        "overall_accuracy": (valid_correct + invalid_correct) / len(results) if results else 0.0,
-        "valid_correct": valid_correct,
-        "valid_incorrect": len(valid_traces) - valid_correct,
-        "invalid_correct": invalid_correct,
-        "invalid_incorrect": len(invalid_traces) - invalid_correct,
+        "invalid_count": len(results) - len(valid_traces),
+        "validity_rate": len(valid_traces) / len(results) if results else 0.0,
+        "outcome_counts": dict(counts),
+        # Deliberately absent: valid_accuracy / invalid_accuracy /
+        # overall_accuracy. There is no answer axis to compute them from.
+        "answer_axis": None,
     }
 
 
@@ -86,7 +81,7 @@ def print_outcome_report(path):
     print(f"{'='*60}")
     print(f"  total verified: {dist['total']}")
     for outcome, n in sorted(dist["counts"].items(), key=lambda kv: -kv[1]):
-        print(f"    {outcome:<16} {n:>4}  ({dist['fractions'][outcome]:.1%})")
+        print(f"    {outcome:<16} {n:>4}  ({pct(dist['fractions'][outcome])})")
 
     secs = [r["seconds"] for r in rows if "seconds" in r]
     if secs:
@@ -102,9 +97,12 @@ def print_report(temperature, stats):
     print(f"{'='*60}")
     print(f"  Total samples:    {stats['total']}")
     print(f"  Valid traces:     {stats['valid_count']}  |  Invalid traces: {stats['invalid_count']}")
-    print(f"  Overall accuracy: {stats['overall_accuracy']:.2%}")
-    print(f"  Valid trace accuracy:   {stats['valid_accuracy']:.2%}  ({stats['valid_correct']}/{stats['valid_count']})")
-    print(f"  Invalid trace accuracy: {stats['invalid_accuracy']:.2%}  ({stats['invalid_correct']}/{stats['invalid_count']})")
+    print(f"  Validity rate:    {rate(stats['valid_count'], stats['total'])}")
+    if stats["outcome_counts"]:
+        print("  Outcomes:")
+        for outcome, n in sorted(stats["outcome_counts"].items(), key=lambda kv: -kv[1]):
+            print(f"    {outcome:<18} {n:>4}")
+    print("  Answer correctness: NOT MEASURED — this pipeline has no answer axis.")
     print(f"{'='*60}\n")
 
 
@@ -113,15 +111,22 @@ def plot_single_temperature(temperature):
     stats = compute_stats(results)
     print_report(temperature, stats)
 
-    labels = ["Valid\nCorrect", "Valid\nIncorrect", "Invalid\nCorrect", "Invalid\nIncorrect"]
-    values = [stats["valid_correct"], stats["valid_incorrect"],
-              stats["invalid_correct"], stats["invalid_incorrect"]]
-    colors = ["#2ecc71", "#e74c3c", "#3498db", "#e67e22"]
+    # Was a validity x answer-correctness 2x2. That chart was a picture of a
+    # tautology — answer_correct was derived from trace_valid, so two of its four
+    # bars were structurally zero. Plot the real outcome distribution instead.
+    counts = stats["outcome_counts"]
+    labels = list(counts)
+    values = [counts[k] for k in labels]
+    palette = {"valid": "#2ecc71", "compile_error": "#e74c3c",
+               "statement_error": "#95a5a6", "statement_mismatch": "#8e44ad",
+               "unsound_axioms": "#c0392b", "has_sorry": "#e67e22"}
+    colors = [palette.get(k, "#3498db") for k in labels]
 
     fig, ax = plt.subplots(figsize=(8, 5))
     ax.bar(labels, values, color=colors)
     ax.set_ylabel("Count")
-    ax.set_title(f"Trace Validity vs Answer Correctness (temp={temperature})")
+    ax.set_title(f"Verification outcome distribution (temp={temperature})")
+    plt.xticks(rotation=30, ha="right")
     plt.tight_layout()
     plt.savefig(os.path.join(RESULTS_DIR, f"analysis_temp_{temperature}.png"), dpi=150)
     plt.close()
@@ -134,9 +139,7 @@ def plot_temperature_sweep():
         return
 
     temps = []
-    valid_accs = []
-    invalid_accs = []
-    overall_accs = []
+    validity_rates = []
 
     for path in result_files:
         fname = os.path.basename(path)
@@ -147,17 +150,15 @@ def plot_temperature_sweep():
         print_report(temp, stats)
 
         temps.append(temp)
-        valid_accs.append(stats["valid_accuracy"])
-        invalid_accs.append(stats["invalid_accuracy"])
-        overall_accs.append(stats["overall_accuracy"])
+        validity_rates.append(stats["validity_rate"])
 
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.plot(temps, valid_accs, "o-", label="Valid Trace Accuracy", linewidth=2)
-    ax.plot(temps, invalid_accs, "s-", label="Invalid Trace Accuracy", linewidth=2)
-    ax.plot(temps, overall_accs, "^--", label="Overall Accuracy", linewidth=2, alpha=0.6)
+    # The three "accuracy" series this used to plot were all functions of
+    # trace_valid, so the chart showed one signal drawn three times. One line.
+    ax.plot(temps, validity_rates, "o-", label="Validity rate", linewidth=2)
     ax.set_xlabel("Temperature")
-    ax.set_ylabel("Accuracy")
-    ax.set_title("Trace Validity & Accuracy vs Temperature")
+    ax.set_ylabel("Validity rate")
+    ax.set_title("Trace validity vs temperature (answer correctness not measured)")
     ax.legend()
     ax.set_xticks(temps)
     ax.set_ylim(0, 1.05)

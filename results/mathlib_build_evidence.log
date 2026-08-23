@@ -1,0 +1,26 @@
+[17:39:02] INFO     Windows long paths already enabled             utils.py:126
+           INFO     For optimal use on Windows, configure git for  utils.py:147
+                    long paths by running:                                     
+           INFO     git config --global core.longpaths true        utils.py:148
+Lake version 5.0.0-src+8c9756b (Lean version 4.32.0)
+Current branch: HEAD
+Using cache from origin: (some leanprover-community/mathlib4)
+No files to download
+Already decompressed 8639 file(s)
+Build completed successfully (8656 jobs).
+[setup] verifier ready in 242.0s; base_env=0 source=unpickled in 92.83s
+  A_true_trivial     expect=valid           got=valid            0.447s (wall 0.447s) mode=shared_env  
+  B_real_mathlib     expect=valid           got=valid            0.05s (wall 0.050s) mode=shared_env  
+  C_mathlib_only     expect=valid           got=valid            0.016s (wall 0.016s) mode=shared_env  
+  D_needs_mathlib    expect=either          got=compile_error    0.041s (wall 0.041s) mode=shared_env  invalid `▸` notation, argument   Finset.card_def has type   ∀ (s : Finset ?m.5), s.card = s.val.card equality 
+  E_false            expect=compile_error   got=compile_error    0.107s (wall 0.107s) mode=shared_env  unsolved goals ⊢ False
+  F_unsolved         expect=compile_error   got=compile_error    0.015s (wall 0.016s) mode=shared_env  unsolved goals n : ℕ ⊢ n > 0
+  G_unknown_ident    expect=compile_error   got=compile_error    0.004s (wall 0.004s) mode=shared_env  Unknown identifier `totally_bogus_lemma_xyz`
+  H_sorry            expect=has_sorry       got=has_sorry        0.008s (wall 0.008s) mode=shared_env  
+  I_admit            expect=has_sorry?      got=has_sorry        0.006s (wall 0.006s) mode=shared_env  
+  J_axiom_hatch      expect=??              got=valid            0.009s (wall 0.009s) mode=shared_env  
+  K_no_decl          expect=empty_code      got=empty_code       0.0s (wall 0.000s) mode=none  
+  L_empty            expect=empty_code      got=empty_code       0.0s (wall 0.000s) mode=none  
+  M_timeout          expect=timeout?        got=compile_error    0.1s (wall 0.100s) mode=shared_env  maximum recursion depth has been reached use `set_option maxRecDepth <num>` to increase limit use `set_option 
+
+wrote results/phase1_live_probe.json

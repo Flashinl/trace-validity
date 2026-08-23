@@ -35,12 +35,20 @@ from collections import Counter, defaultdict
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
+from stats import rate, pct, zero_event_upper
 from verifier import (
     OUTCOMES, VALID, TIMEOUT, VERIFIER_CRASH, PARSE_FAILURE, STATEMENT_ERROR,
+    STATEMENT_MISMATCH, UNSOUND_AXIOMS,
 )
 
 # Outcomes that are a verdict about the proof.
-PROOF_VERDICT = ("valid", "compile_error", "has_sorry", "empty_code")
+#
+# UNSOUND_AXIOMS is a verdict, and a damning one: the file compiled, so the
+# model was judged, and it leaned on an axiom outside the trusted set. That is a
+# failed proof attempt, not an untestable sample — counting it as "no verdict"
+# would let a proof of `2 + 2 = 5` quietly leave the denominator.
+PROOF_VERDICT = ("valid", "compile_error", "has_sorry", "empty_code",
+                 UNSOUND_AXIOMS)
 # Outcomes that are the absence of a verdict. Never counted as invalid.
 #
 # STATEMENT_ERROR belongs here: Lean rejected the goal, so the model's proof was
@@ -48,7 +56,14 @@ PROOF_VERDICT = ("valid", "compile_error", "has_sorry", "empty_code")
 # compatibility with our Mathlib version, not the model. Verified per record by
 # re-running the statement with `sorry` as its proof — see
 # verifier.statement_is_broken().
-NO_VERDICT = (TIMEOUT, VERIFIER_CRASH, PARSE_FAILURE, STATEMENT_ERROR)
+#
+# STATEMENT_MISMATCH belongs here too, for the same reason from the other side:
+# something compiled, but it was not the target theorem, so the record says
+# nothing about whether the model can prove the target. It is a pipeline alarm
+# rather than a score — if this is ever non-zero, stop and fix generation before
+# reading any rate. See verify_traces.statement_mismatch().
+NO_VERDICT = (TIMEOUT, VERIFIER_CRASH, PARSE_FAILURE, STATEMENT_ERROR,
+              STATEMENT_MISMATCH)
 
 PROVABLE = "Success of Proof"
 UNPROVABLE = "Failure of Proof"
@@ -166,15 +181,16 @@ def report_run(run):
         n = s["counts"][o]
         if n:
             tag = "   <- not a verdict" if o in NO_VERDICT else ""
-            print(f"    {o:<16}{n:>5}  ({n/s['total']:6.1%}){tag}")
+            print(f"    {o:<16}{n:>5}  ({pct(n/s['total']):>5}){tag}")
 
     print(f"\n  VALIDITY RATE")
+    # Every rate goes through stats.rate(), which attaches the Wilson interval
+    # and refuses to emit one when the underlying records are clustered. Nothing
+    # in this file divides two counts and prints the result itself.
     if s["validity_rate_over_verdicts"] is not None:
-        print(f"    {s['valid']}/{s['verdicts']} = "
-              f"{s['validity_rate_over_verdicts']:.1%}  over traces that got a "
-              f"verdict")
-    print(f"    {s['valid']}/{s['total']} = {s['validity_rate_over_all']:.1%}  "
-          f"over all traces")
+        print(f"    {rate(s['valid'], s['verdicts'], records=rows)}"
+              f"  over traces that got a verdict")
+    print(f"    {rate(s['valid'], s['total'], records=rows)}  over all traces")
     if s["no_verdict"]:
         print(f"    {s['no_verdict']} trace(s) produced no verdict "
               f"({'/'.join(NO_VERDICT)}) and are excluded from the first "
@@ -184,10 +200,27 @@ def report_run(run):
 
     print(f"\n  TRACE VALIDITY x DATASET PROVABILITY (`state`)")
     print("  " + fmt_crosstab(table).replace("\n", "\n  "))
-    fp = table.get("valid", {}).get(UNPROVABLE, 0)
-    print(f"\n    false positives (we said valid, dataset says unprovable): {fp}")
+
+    # NOT "false positives". A false positive needs ground truth about THIS
+    # proof; `state` records whether FormalStep could prove the STATEMENT, which
+    # is a different question about a different object. This is an agreement
+    # measure between two labels, and naming it otherwise smuggles in a claim
+    # the data cannot support.
+    disagree = table.get("valid", {}).get(UNPROVABLE, 0)
+    n_unprov = sum(table.get(b, {}).get(UNPROVABLE, 0)
+                   for b in ("valid", "not_valid"))
+    print(f"\n    DISAGREEMENT — we said valid, dataset says unprovable: "
+          f"{disagree}/{n_unprov}")
+    if disagree == 0 and n_unprov:
+        # Exact one-sided 95% bound. A zero count is not a zero rate, and at
+        # these sample sizes the bound is wide enough to matter.
+        ub = 1 - 0.05 ** (1.0 / n_unprov)
+        print(f"      0 events in n={n_unprov} bounds the true rate at "
+              f"<={ub:.0%} (one-sided 95%), NOT at 0.")
+    n_prov = sum(table.get(b, {}).get(PROVABLE, 0)
+                 for b in ("valid", "not_valid"))
     print(f"    model failed a provable statement: "
-          f"{table.get('not_valid', {}).get(PROVABLE, 0)}")
+          f"{table.get('not_valid', {}).get(PROVABLE, 0)}/{n_prov}")
     print()
     return {"summary": s, "crosstab": table,
             "meta": {k: meta[k] for k in ("sampling", "git", "status")} if meta else None}

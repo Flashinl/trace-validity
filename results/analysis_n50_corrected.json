@@ -1,0 +1,131 @@
+{
+  "runs": [
+    {
+      "summary": {
+        "total": 50,
+        "counts": {
+          "valid": 37,
+          "parse_failure": 0,
+          "empty_code": 0,
+          "has_sorry": 0,
+          "compile_error": 11,
+          "statement_error": 2,
+          "timeout": 0,
+          "verifier_crash": 0
+        },
+        "valid": 37,
+        "verdicts": 48,
+        "no_verdict": 2,
+        "validity_rate_over_verdicts": 0.7708333333333334,
+        "validity_rate_over_all": 0.74
+      },
+      "crosstab": {
+        "valid": {
+          "Success of Proof": 37
+        },
+        "not_valid": {
+          "Failure of Proof": 10,
+          "Success of Proof": 1
+        },
+        "no_verdict": {
+          "Success of Proof": 1,
+          "Failure of Proof": 1
+        }
+      },
+      "meta": {
+        "sampling": {
+          "temperature": 0.0,
+          "do_sample": false,
+          "top_p": null,
+          "seed": 0,
+          "greedy_deterministic": true,
+          "num_samples": 50,
+          "num_trajectories_per_sample": 1
+        },
+        "git": {
+          "sha": null,
+          "branch": null,
+          "dirty": null
+        },
+        "status": "complete"
+      },
+      "path": "results/verify2_temp0.0.jsonl"
+    },
+    {
+      "summary": {
+        "total": 50,
+        "counts": {
+          "valid": 37,
+          "parse_failure": 0,
+          "empty_code": 0,
+          "has_sorry": 0,
+          "compile_error": 11,
+          "statement_error": 2,
+          "timeout": 0,
+          "verifier_crash": 0
+        },
+        "valid": 37,
+        "verdicts": 48,
+        "no_verdict": 2,
+        "validity_rate_over_verdicts": 0.7708333333333334,
+        "validity_rate_over_all": 0.74
+      },
+      "crosstab": {
+        "not_valid": {
+          "Success of Proof": 1,
+          "Failure of Proof": 10
+        },
+        "valid": {
+          "Success of Proof": 37
+        },
+        "no_verdict": {
+          "Success of Proof": 1,
+          "Failure of Proof": 1
+        }
+      },
+      "meta": {
+        "sampling": {
+          "temperature": 0.2,
+          "do_sample": true,
+          "top_p": 0.95,
+          "seed": 0,
+          "greedy_deterministic": false,
+          "num_samples": 50,
+          "num_trajectories_per_sample": 1
+        },
+        "git": {
+          "sha": null,
+          "branch": null,
+          "dirty": null
+        },
+        "status": "complete"
+      },
+      "path": "results/verify2_temp0.2.jsonl"
+    }
+  ],
+  "comparison": {
+    "labels": [
+      "T=0.0",
+      "T=0.2"
+    ],
+    "shared_keys": 50,
+    "valid_both": 36,
+    "valid_only_first": 1,
+    "valid_only_second": 1,
+    "valid_neither": 12,
+    "changed": [
+      {
+        "sample_index": 0,
+        "trajectory_index": 0,
+        "from": "valid",
+        "to": "compile_error"
+      },
+      {
+        "sample_index": 35,
+        "trajectory_index": 0,
+        "from": "compile_error",
+        "to": "valid"
+      }
+    ]
+  }
+}

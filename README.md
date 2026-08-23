@@ -199,17 +199,46 @@ python -c "import json,subprocess as s; print(json.dumps({
 
 ```bash
 python verify_traces.py --traces traces/temp0.0_n50_1each/traces.jsonl \
-    --out results/verify_temp0.0.jsonl --all
+    --out results/verify3_temp0.0.jsonl --all
 ```
 
 Outcomes are `valid`, `compile_error`, `has_sorry`, `empty_code`,
-`parse_failure`, `timeout`, `verifier_crash`. Only `valid` means a proved
-theorem; the rest are distinct failures and are never collapsed into a boolean.
+`parse_failure`, `statement_error`, `statement_mismatch`, `unsound_axioms`,
+`timeout`, `verifier_crash`. Only `valid` means a proved theorem; the rest are
+distinct failures and are never collapsed into a boolean.
+
+Three of those are not verdicts on the model's proof and never count as invalid:
+
+- **`statement_error`** — Lean rejected the *goal*, so the proof was never
+  judged. Confirmed per record by re-verifying the statement alone with `sorry`
+  as its proof (`verifier.statement_is_broken()`), not by matching error text.
+- **`statement_mismatch`** — something compiled, but it was not the dataset's
+  statement, or the file declared more than one theorem. This is a pipeline
+  alarm: if it is ever non-zero, fix generation before reading any rate.
+- **`parse_failure`** — nothing usable reached Lean at all.
+
+**`unsound_axioms` is a verdict, and a damning one.** The file compiled but the
+theorem depends on an axiom outside `{propext, Classical.choice, Quot.sound}` —
+most importantly one the generation declared itself. Checked by asking Lean
+(`#print axioms`), so it also catches an axiom pulled in through a lemma.
+
+### Which verification file is canonical
+
+Three passes exist for the n50 runs and they are **not interchangeable**:
+
+| file | verifier state | T=0.0 result |
+|---|---|---|
+| `results/verify_temp0.{0,2}.jsonl` | before the `maxRecDepth` and `statement_error` fixes | 36/50 — **superseded** |
+| `results/verify2_temp0.{0,2}.jsonl` | after those two fixes | 37/50 |
+| `results/verify3_temp0.{0,2}.jsonl` | **current** — adds the axiom audit, the statement-fidelity check and fail-closed classification | see `results/SUMMARY_n50_distinct.md` |
+
+Always analyse the newest pass. `results/SUMMARY_n50_distinct.md` names the one
+its numbers come from.
 
 ### Analyse
 
 ```bash
-python analyze_runs.py results/verify_temp0.0.jsonl results/verify_temp0.2.jsonl \
+python analyze_runs.py results/verify3_temp0.0.jsonl results/verify3_temp0.2.jsonl \
     --out results/analysis.json
 ```
 

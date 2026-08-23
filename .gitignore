@@ -7,6 +7,11 @@ __pycache__/
 lean_project/*
 !lean_project/lakefile.toml
 !lean_project/lean-toolchain
+# The RESOLVED dependency SHAs. lakefile.toml pins Mathlib by TAG, but seven
+# transitive deps (batteries, aesop, Qq, proofwidgets, importGraph, plausible,
+# LeanSearchClient) are pinned to floating main/master. Without this manifest a
+# fresh `lake update` resolves them differently and issue #6 reopens. 3 KB.
+!lean_project/lake-manifest.json
 lean_project.lock
 
 # Bulk per-run result dumps stay out, but the debugging analysis outputs are
@@ -16,6 +21,14 @@ results/*.json
 !results/crosscheck.json
 !results/pipeline_trace.json
 !results/reference_proofs.json
+!results/analysis_n50_corrected.json
+!results/recomputed_stats.json
+!results/phase2_positives.json
+!results/phase1_live_probe.json
+!results/analysis_n50_hardened.json
+!results/phase1_deadbranches.json
+!results/vacuity_scan.json
+!results/denominators.json
 results/*.png
 .lake/
 *.olean
