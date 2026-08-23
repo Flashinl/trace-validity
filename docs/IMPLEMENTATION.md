@@ -281,18 +281,28 @@ what keeps all three aligned. The same argument rules out `-rc` toolchains.
 
 ### Transitive Lean dependencies — pinned, and how
 
+> **Retracted claim.** It was asserted — in the 2026-08-20 notes, in issue #16 as
+> originally filed, and in an earlier draft of this document — that Mathlib's
+> transitive Lean dependencies float, that `lake update` re-resolves them on
+> every fresh clone, and that this explains two machines producing different
+> results. **That was investigated and disproven.** It is false. The dependencies
+> do not float. If you have seen that claim anywhere, this section supersedes it.
+
 Mathlib pulls seven transitive Lean dependencies whose `inputRev` is a **branch**
 rather than a tag: `aesop` and `Qq` on `master`; `batteries`, `plausible`,
-`proofwidgets`, `importGraph` and `LeanSearchClient` on `main`.
+`proofwidgets`, `importGraph` and `LeanSearchClient` on `main`. That is what made
+the claim plausible.
 
-**This looks like a drift vector and is not one.** Mathlib is required at an
+**It looks like a drift vector and is not one.** Mathlib is required at an
 **immutable tag**, and mathlib4 commits its own `lake-manifest.json`; lake
 resolves a transitive dependency from *that* manifest rather than by
 re-resolving the branch name. The `inputRev` you see is a record of how Mathlib
 *declares* the requirement, not a live resolution target for this project.
 
 Measured on a clean clone (issue #16), which is the only reason this is stated
-as fact rather than as reasoning:
+as fact rather than as reasoning. Note that `aesop`'s `master` genuinely **had**
+moved between the pinned revision and the test, so this was a real test of the
+hypothesis and not a vacuous one:
 
 | | |
 |---|---|
