@@ -77,6 +77,18 @@ verbatim and declares exactly one theorem. It has never fired.
 > without the statement. It does not. See the closing comment on #11 for the
 > evidence.
 
+### A note on issue numbers in comments
+
+Comments throughout the code cite `issue #2` through `issue #6` — the dataset
+field, the prompt template, the token budget, the outcome taxonomy, the Lean
+pinning. **Those issue numbers never existed in this repository.** GitHub
+numbers issues and pull requests from one sequence, and #8, #9 and #10 were
+taken by pull requests; #2–#6 were never created. Do not go hunting for them.
+The comments that cite them explain themselves in full — the citation is the
+only part that dangles.
+
+Issue numbers cited from #11 onward are real.
+
 ### Outcome vs. failure kind
 
 Two levels of classification, easy to confuse:
