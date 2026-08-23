@@ -25,7 +25,7 @@ PROBLEM_STRIDE = 10          # 500 problems / stride 10 -> 50 selected
 STEP_SELECTION = "first"     # "first" | "median" step within each problem
 
 # ---------------------------------------------------------------------------
-# Lean pinning (issue #6) — these three MUST move together
+# Lean pinning — these three MUST move together
 # ---------------------------------------------------------------------------
 # mathlib4 tag vX.Y.Z always declares leanprover/lean4:vX.Y.Z in its
 # lean-toolchain, and lean_interact's REPL (augustepoiroux/repl @ v1.3.18)
@@ -83,11 +83,12 @@ set_option maxHeartbeats 400000
 """
 
 # ---------------------------------------------------------------------------
-# FormalStep dataset fields (issue #2)
+# FormalStep dataset fields
 # ---------------------------------------------------------------------------
 # FormalStep rows carry BOTH natural-language prose and Lean 4 source. Feeding
-# the prose to a Lean prover is issue #2. Verified against the real dataset
-# (liuchengwu/FormalStep, train, 30809 rows) — the schema is:
+# the prose to a Lean prover is the bug this section exists to prevent. Verified
+# against the real dataset (liuchengwu/FormalStep, train, 30809 rows) — the
+# schema is:
 #
 #   problem           str   NL problem prose      e.g. "Determine $\\sqrt[6]{...}$
 #                                                       without a calculator."
@@ -109,7 +110,7 @@ REFERENCE_PROOF_FIELD = "proof"
 REQUIRED_DATASET_FIELDS = (FORMAL_STATEMENT_FIELD,)
 
 # ---------------------------------------------------------------------------
-# Goedel-Prover-SFT prompt template (issue #3)
+# Goedel-Prover-SFT prompt template
 # ---------------------------------------------------------------------------
 # VERBATIM from the official evaluation script:
 #   https://github.com/Goedel-LM/Goedel-Prover  ->  eval/step1_inference.py
@@ -143,7 +144,7 @@ LEAN4_BLOCK_PATTERN = r"```lean4\n(.*?)\n```"
 TOP_P = 0.95
 
 # ---------------------------------------------------------------------------
-# Token budget (issue #4)
+# Token budget
 # ---------------------------------------------------------------------------
 # From the model's own config.json (Goedel-LM/Goedel-Prover-SFT):
 #   max_position_embeddings = 4096

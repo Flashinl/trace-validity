@@ -96,7 +96,7 @@ def run_experiment(temperature, num_samples=NUM_SAMPLES, num_trajectories=NUM_TR
 
         sample_result["trace_valid"] = best_traj["trace_valid"]
         sample_result["outcome"] = best_traj["outcome"]
-        # `answer_correct` REMOVED (issue #5, audit finding 13).
+        # `answer_correct` REMOVED (audit finding 13).
         #
         # It was `trace_valid and not has_sorry` — derived entirely from
         # trace_valid, so the valid/invalid x correct/incorrect cross-tab it

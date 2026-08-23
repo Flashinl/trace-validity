@@ -1,15 +1,15 @@
-"""Lean 4 verification with an explicit outcome taxonomy (issues #5, #6).
+"""Lean 4 verification with an explicit outcome taxonomy.
 
 Design notes
 ------------
-Pinning (issue #6). Lean toolchain, Mathlib rev and the REPL must agree. We pin
+Pinning. Lean toolchain, Mathlib rev and the REPL must agree. We pin
 a Mathlib *tag* whose name equals the Lean version (mathlib4 tag vX.Y.Z always
 declares leanprover/lean4:vX.Y.Z), and lean_interact's REPL publishes a matching
 `{repl_rev}_lean-toolchain-{lean_version}` tag. The historical failure was
 Mathlib v4.32.2 against a REPL with no v4.32.2 tag -> "unexpected token" /
 "unknown constant".
 
-Speed (issue #5 / step 5). Importing Mathlib is the dominant cost by orders of
+Speed. Importing Mathlib is the dominant cost by orders of
 magnitude -- measured at >300s on this Windows box, versus seconds to elaborate
 a single theorem. We import it ONCE into a base environment, snapshot that
 environment to disk so later processes restore it instead of re-importing, and
@@ -48,7 +48,7 @@ from config import (
     GOEDEL_LEAN4_HEADER,
 )
 
-# The outcome taxonomy. Never collapse these into a bare boolean (issue #5).
+# The outcome taxonomy. Never collapse these into a bare boolean.
 VALID = "valid"
 PARSE_FAILURE = "parse_failure"
 EMPTY_CODE = "empty_code"
