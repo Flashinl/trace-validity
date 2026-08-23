@@ -1,0 +1,666 @@
+{
+  "baseline_50step_1problem": {
+    "source": "results/verification_temp_0.jsonl",
+    "title": "baseline -- 50 consecutive steps of ONE problem",
+    "summary": {
+      "total_records": 50,
+      "total_failures": 29,
+      "kinds": {
+        "unsolved_goals": {
+          "n": 12,
+          "pct": "41%"
+        },
+        "tactic_no_progress": {
+          "n": 2,
+          "pct": "7%"
+        },
+        "tactic_failed": {
+          "n": 4,
+          "pct": "14%"
+        },
+        "rewrite_failed": {
+          "n": 3,
+          "pct": "10%"
+        },
+        "type_mismatch": {
+          "n": 1,
+          "pct": "3%"
+        },
+        "no_goals": {
+          "n": 1,
+          "pct": "3%"
+        },
+        "unknown_identifier": {
+          "n": 1,
+          "pct": "3%"
+        },
+        "rfl_failed": {
+          "n": 2,
+          "pct": "7%"
+        },
+        "goal_is_false": {
+          "n": 3,
+          "pct": "10%"
+        }
+      },
+      "arithmetic": {
+        "statement_arithmetic": {
+          "n": 18,
+          "pct": "62%"
+        },
+        "not_arithmetic": {
+          "n": 11,
+          "pct": "38%"
+        }
+      },
+      "table": "FAILURE TAXONOMY  (29 failures of 50 records)\n\n  failure_kind              n   share of failures\n  ---------------------------  ------------------\n  goal_is_false             3                 10%\n  unknown_identifier        1                  3%\n  type_mismatch             1                  3%\n  rewrite_failed            3                 10%\n  rfl_failed                2                  7%\n  no_goals                  1                  3%\n  tactic_no_progress        2                  7%\n  tactic_failed             4                 14%\n  unsolved_goals           12                 41%\n\n  arithmetic                n   share of failures\n  ---------------------------  ------------------\n  statement_arithmetic     18                 62%\n  not_arithmetic           11                 38%"
+    },
+    "records": [
+      {
+        "sample_index": 2,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "unsolved goals\nn : ℝ\nh₀ : n = 1061520150601\n⊢ False"
+        ]
+      },
+      {
+        "sample_index": 3,
+        "outcome": "compile_error",
+        "failure_kind": "tactic_no_progress",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "`ring_nf` made no progress on the goal"
+        ]
+      },
+      {
+        "sample_index": 4,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "unsolved goals\nx : ℝ\nh₀ : x = 10303 * 103\n⊢ False"
+        ]
+      },
+      {
+        "sample_index": 6,
+        "outcome": "compile_error",
+        "failure_kind": "tactic_failed",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "unsolved goals\nx : ℕ\nh₀ : x = 101 ^ 2\n⊢ False",
+          "linarith failed to find a contradiction\ncase h1\nx : ℕ\nh₀ : x = 10301\na✝ : x < 10303\n⊢ False\nfailed"
+        ]
+      },
+      {
+        "sample_index": 7,
+        "outcome": "compile_error",
+        "failure_kind": "rewrite_failed",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  1061520.150601\nin the target expression\n  x = 1061520.150601\n\nx : ℝ\nh₀ : 1061520.150601 = (101 ^ 2 * 103) ^ 3\n⊢ x = 1061520.150601"
+        ]
+      },
+      {
+        "sample_index": 11,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "unsolved goals\na b : ℝ\nh₀ : a = 103 ^ 3\nh₁ : b = 10 ^ 2\n⊢ √√√109272700 = √√√1092727 * √√10"
+        ]
+      },
+      {
+        "sample_index": 12,
+        "outcome": "compile_error",
+        "failure_kind": "tactic_failed",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "linarith failed to find a contradiction\ncase h1\nx : ℝ\nh₀ : x = 103 ^ 3\na✝ : √√√1092727 < √√√103 * 103\n⊢ False\nfailed"
+        ]
+      },
+      {
+        "sample_index": 13,
+        "outcome": "compile_error",
+        "failure_kind": "tactic_failed",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "linarith failed to find a contradiction\ncase h1\nx : ℝ\na✝ : x ^ 6 < x ^ 2\n⊢ False\nfailed",
+          "linarith failed to find a contradiction\ncase hx\nx : ℝ\na✝ : x ^ 6 < 0\n⊢ False\nfailed",
+          "linarith failed to find a contradiction\ncase hy\nx : ℝ\na✝ : x < 0\n⊢ False\nfailed"
+        ]
+      },
+      {
+        "sample_index": 14,
+        "outcome": "compile_error",
+        "failure_kind": "type_mismatch",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "Type mismatch: After simplification, term\n  h₁ 101 103 10 10 10\n has type\n  1061520150601 = 101 ^ 6 * 103 ^ 3 * 10 ^ 2 * 10 ^ 6 * 10 ^ 6\nbut is expected to have type\n  √√√1061520150601 = 101 * 103 * √√√103 * 10 * √√√10"
+        ]
+      },
+      {
+        "sample_index": 15,
+        "outcome": "compile_error",
+        "failure_kind": "no_goals",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "noop_tactic",
+        "errors": [
+          "No goals to be solved"
+        ]
+      },
+      {
+        "sample_index": 16,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "unsolved goals\ncase h\nx : ℝ\nh₀ : x = 1061520150601\nh₁ : ∀ (y : ℝ), y ^ 6 = x → y = 101 * 103 * 10 * (2 * 515) ^ (1 / 6)\n⊢ (101 * 103 * 10) ^ 6 = 1061520150601"
+        ]
+      },
+      {
+        "sample_index": 19,
+        "outcome": "compile_error",
+        "failure_kind": "rewrite_failed",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  √?m.37 * √?y\nin the target expression\n  √(a * b) ^ 6 = √a ^ 6 * √b ^ 6\n\na b : ℝ\nh₀ : a ≥ 0\nh₁ : b ≥ 0\n⊢ √(a * b) ^ 6 = √a ^ 6 * √b ^ 6"
+        ]
+      },
+      {
+        "sample_index": 20,
+        "outcome": "compile_error",
+        "failure_kind": "unknown_identifier",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "Unknown constant `Real.sqrt_eq_iff_sq_eq`",
+          "simp_all made no progress"
+        ]
+      },
+      {
+        "sample_index": 21,
+        "outcome": "compile_error",
+        "failure_kind": "tactic_no_progress",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "`ring_nf` made no progress on the goal"
+        ]
+      },
+      {
+        "sample_index": 23,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "unsolved goals\n⊢ √6 = √√2 * √√3 * (√√2 * √√3) * (√√2 * √√3 * (√√2 * √√3))"
+        ]
+      },
+      {
+        "sample_index": 24,
+        "outcome": "compile_error",
+        "failure_kind": "rfl_failed",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "Tactic `rfl` failed: The left-hand side\n  √√√3\nis not definitionally equal to the right-hand side\n  3\n\nx : ℝ\nh₀ : x = 3\n⊢ √√√3 = 3"
+        ]
+      },
+      {
+        "sample_index": 27,
+        "outcome": "compile_error",
+        "failure_kind": "rewrite_failed",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  1061520150601\nin the target expression\n  a = 1061520150601\n\na : ℝ\nh₀ : 1061520150601 = 1 * (100 + 6) ^ 3\n⊢ a = 1061520150601"
+        ]
+      },
+      {
+        "sample_index": 31,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "unsolved goals\n⊢ False"
+        ]
+      },
+      {
+        "sample_index": 32,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "unsolved goals\n⊢ False"
+        ]
+      },
+      {
+        "sample_index": 34,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "unsolved goals\n⊢ False"
+        ]
+      },
+      {
+        "sample_index": 35,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "unsolved goals\na b c : ℕ\nh₀ : 100 ^ 3 = a\nh₁ : 3 * 100 ^ 2 * 6 = b\nh₂ : 10800 = c\nh₃ : 1061520150601 = a + b + c\n⊢ 1061520150601 = a + b + c"
+        ]
+      },
+      {
+        "sample_index": 36,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "unsolved goals\n⊢ False"
+        ]
+      },
+      {
+        "sample_index": 37,
+        "outcome": "compile_error",
+        "failure_kind": "rfl_failed",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "Tactic `rfl` failed: Expected the goal to be a binary relation\n\nHint: Reflexivity tactics can only be used on goals of the form `x ~ x` or `R x x`\n\n⊢ False"
+        ]
+      },
+      {
+        "sample_index": 38,
+        "outcome": "compile_error",
+        "failure_kind": "goal_is_false",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "Tactic `decide` proved that the proposition\n  1061520150601 = (100 + 6) ^ 6\nis false"
+        ]
+      },
+      {
+        "sample_index": 39,
+        "outcome": "compile_error",
+        "failure_kind": "goal_is_false",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "Tactic `decide` proved that the proposition\n  1061520150601 = (100 + 6) ^ 6\nis false"
+        ]
+      },
+      {
+        "sample_index": 42,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "unsolved goals\n⊢ False"
+        ]
+      },
+      {
+        "sample_index": 44,
+        "outcome": "compile_error",
+        "failure_kind": "tactic_failed",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "linarith failed to find a contradiction\ncase h2\nx : ℝ\nh₀ : x = 1000000 + 180000 + 10800 + 216\nh₁ : 1061520150601 = 1061520150601\na✝ : 1 * (100 ^ 3 + 3 * 100 ^ 2 * 6 + 10800) < 1061520150601\n⊢ False\nfailed"
+        ]
+      },
+      {
+        "sample_index": 46,
+        "outcome": "compile_error",
+        "failure_kind": "goal_is_false",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "Tactic `decide` proved that the proposition\n  1061520150601 = (100 + 6) ^ 6\nis false"
+        ]
+      },
+      {
+        "sample_index": 49,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "unsolved goals\n⊢ False"
+        ]
+      }
+    ]
+  },
+  "n50_distinct_T0.0": {
+    "source": "results/verify3_temp0.0.jsonl",
+    "title": "n50 distinct problems, T=0.0",
+    "summary": {
+      "total_records": 50,
+      "total_failures": 11,
+      "kinds": {
+        "unsolved_goals": {
+          "n": 3,
+          "pct": "27%"
+        },
+        "tactic_no_progress": {
+          "n": 2,
+          "pct": "18%"
+        },
+        "tactic_failed": {
+          "n": 3,
+          "pct": "27%"
+        },
+        "elaboration_error": {
+          "n": 2,
+          "pct": "18%"
+        },
+        "rfl_failed": {
+          "n": 1,
+          "pct": "9%"
+        }
+      },
+      "arithmetic": {
+        "statement_arithmetic": {
+          "n": 4,
+          "pct": "36%"
+        },
+        "not_arithmetic": {
+          "n": 7,
+          "pct": "64%"
+        }
+      },
+      "table": "FAILURE TAXONOMY  (11 failures of 50 records)\n\n  failure_kind              n   share of failures\n  ---------------------------  ------------------\n  elaboration_error         2                 18%\n  rfl_failed                1                  9%\n  tactic_no_progress        2                 18%\n  tactic_failed             3                 27%\n  unsolved_goals            3                 27%\n\n  arithmetic                n   share of failures\n  ---------------------------  ------------------\n  statement_arithmetic      4                 36%\n  not_arithmetic            7                 64%"
+    },
+    "records": [
+      {
+        "sample_index": 5,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "unsolved goals\n⊢ False"
+        ]
+      },
+      {
+        "sample_index": 7,
+        "outcome": "compile_error",
+        "failure_kind": "tactic_no_progress",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "`ring_nf` made no progress on the goal"
+        ]
+      },
+      {
+        "sample_index": 10,
+        "outcome": "compile_error",
+        "failure_kind": "tactic_failed",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "linarith failed to find a contradiction\ncase h1\nP_W P_L : ℚ\nh₀ : P_L = 4 / 9\na✝ : P_W + 4 / 9 < 1\n⊢ False\nfailed"
+        ]
+      },
+      {
+        "sample_index": 16,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "unsolved goals\n⊢ False"
+        ]
+      },
+      {
+        "sample_index": 18,
+        "outcome": "compile_error",
+        "failure_kind": "elaboration_error",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "parse_skew",
+        "errors": [
+          "Expected type must not contain free variables\n  shorts_colors.card * jersey_colors.card = 6\n\nHint: Use the `+revert` option to automatically clean up and revert free variables"
+        ]
+      },
+      {
+        "sample_index": 24,
+        "outcome": "compile_error",
+        "failure_kind": "elaboration_error",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "parse_skew",
+        "errors": [
+          "Expected type must not contain free variables\n  tamika_greater.length / ((0 + 1 + 1 + 1) * (0 + 1 + 1 + 1)) = 1 / 2\n\nHint: Use the `+revert` option to automatically clean up and revert free variables"
+        ]
+      },
+      {
+        "sample_index": 30,
+        "outcome": "compile_error",
+        "failure_kind": "rfl_failed",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "Tactic `rfl` failed: The left-hand side\n  P_2\nis not definitionally equal to the right-hand side\n  1 / 2\n\nP_2 : ℕ\n⊢ P_2 = 1 / 2"
+        ]
+      },
+      {
+        "sample_index": 35,
+        "outcome": "compile_error",
+        "failure_kind": "tactic_failed",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "linarith failed to find a contradiction\ncase left\ntotal_ways spade_ways : ℕ\nh₀ : total_ways = choose 52 3\nh₁ : spade_ways = choose 13 3\na✝ : total_ways ≤ 0\n⊢ False\nfailed",
+          "linarith failed to find a contradiction\ncase right\ntotal_ways spade_ways : ℕ\nh₀ : total_ways = choose 52 3\nh₁ : spade_ways = choose 13 3\na✝ : spade_ways ≤ 0\n⊢ False\nfailed"
+        ]
+      },
+      {
+        "sample_index": 36,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "unsolved goals\n⊢ False"
+        ]
+      },
+      {
+        "sample_index": 39,
+        "outcome": "compile_error",
+        "failure_kind": "tactic_no_progress",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "`simp` made no progress"
+        ]
+      },
+      {
+        "sample_index": 46,
+        "outcome": "compile_error",
+        "failure_kind": "tactic_failed",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "omega could not prove the goal:\nNo usable constraints found. You may need to unfold definitions so `omega` can see linear arithmetic facts about `Nat` and `Int`, which may also involve multiplication, division, and modular remainder by constants."
+        ]
+      }
+    ]
+  },
+  "n50_distinct_T0.2": {
+    "source": "results/verify3_temp0.2.jsonl",
+    "title": "n50 distinct problems, T=0.2",
+    "summary": {
+      "total_records": 50,
+      "total_failures": 11,
+      "kinds": {
+        "unsolved_goals": {
+          "n": 4,
+          "pct": "36%"
+        },
+        "tactic_no_progress": {
+          "n": 1,
+          "pct": "9%"
+        },
+        "tactic_failed": {
+          "n": 3,
+          "pct": "27%"
+        },
+        "elaboration_error": {
+          "n": 2,
+          "pct": "18%"
+        },
+        "type_mismatch": {
+          "n": 1,
+          "pct": "9%"
+        }
+      },
+      "arithmetic": {
+        "not_arithmetic": {
+          "n": 6,
+          "pct": "55%"
+        },
+        "statement_arithmetic": {
+          "n": 4,
+          "pct": "36%"
+        },
+        "unknown": {
+          "n": 1,
+          "pct": "9%"
+        }
+      },
+      "table": "FAILURE TAXONOMY  (11 failures of 50 records)\n\n  failure_kind              n   share of failures\n  ---------------------------  ------------------\n  elaboration_error         2                 18%\n  type_mismatch             1                  9%\n  tactic_no_progress        1                  9%\n  tactic_failed             3                 27%\n  unsolved_goals            4                 36%\n\n  arithmetic                n   share of failures\n  ---------------------------  ------------------\n  statement_arithmetic      4                 36%\n  not_arithmetic            6                 55%\n  unknown                   1                  9%"
+    },
+    "records": [
+      {
+        "sample_index": 0,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "unsolved goals\ncase h\nn : ℕ\nh₀ : n = 1061520150601\n⊢ False"
+        ]
+      },
+      {
+        "sample_index": 5,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "unsolved goals\n⊢ False"
+        ]
+      },
+      {
+        "sample_index": 7,
+        "outcome": "compile_error",
+        "failure_kind": "tactic_no_progress",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "`ring_nf` made no progress on the goal"
+        ]
+      },
+      {
+        "sample_index": 10,
+        "outcome": "compile_error",
+        "failure_kind": "tactic_failed",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "linarith failed to find a contradiction\ncase h1\nP_W P_L : ℚ\nh₀ : P_L = 4 / 9\na✝ : P_W + 4 / 9 < 1\n⊢ False\nfailed"
+        ]
+      },
+      {
+        "sample_index": 16,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "unsolved goals\n⊢ False"
+        ]
+      },
+      {
+        "sample_index": 18,
+        "outcome": "compile_error",
+        "failure_kind": "elaboration_error",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "parse_skew",
+        "errors": [
+          "Expected type must not contain free variables\n  shorts_colors.card * jersey_colors.card = 6\n\nHint: Use the `+revert` option to automatically clean up and revert free variables"
+        ]
+      },
+      {
+        "sample_index": 24,
+        "outcome": "compile_error",
+        "failure_kind": "elaboration_error",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "parse_skew",
+        "errors": [
+          "Expected type must not contain free variables\n  tamika_greater.length / ((0 + 1 + 1 + 1) * (0 + 1 + 1 + 1)) = 1 / 2\n\nHint: Use the `+revert` option to automatically clean up and revert free variables"
+        ]
+      },
+      {
+        "sample_index": 30,
+        "outcome": "compile_error",
+        "failure_kind": "tactic_failed",
+        "arithmetic": "unknown",
+        "provenance_label": "UNKNOWN",
+        "errors": [
+          "Tactic `apply` failed: could not unify the conclusion of `@Eq.refl`\n  ?a = ?a\nwith the goal\n  P_2 = 1 / 2\n\nNote: The full type of `@Eq.refl` is\n  ∀ {α : Sort ?u.12} (a : α), a = a\n\nP_2 : ℕ\n⊢ P_2 = 1 / 2"
+        ]
+      },
+      {
+        "sample_index": 36,
+        "outcome": "compile_error",
+        "failure_kind": "unsolved_goals",
+        "arithmetic": "statement_arithmetic",
+        "provenance_label": "statement_false",
+        "errors": [
+          "unsolved goals\n⊢ False"
+        ]
+      },
+      {
+        "sample_index": 39,
+        "outcome": "compile_error",
+        "failure_kind": "type_mismatch",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "Type mismatch\n  lt_succ_self ?m.23\nhas type\n  ?m.23 < succ ?m.23\nbut is expected to have type\n  r < n"
+        ]
+      },
+      {
+        "sample_index": 46,
+        "outcome": "compile_error",
+        "failure_kind": "tactic_failed",
+        "arithmetic": "not_arithmetic",
+        "provenance_label": "tactic_mismatch",
+        "errors": [
+          "linarith failed to find a contradiction\ncase h2\nn : ℕ\nh₀ : 40320 = 288 * n\na✝ : 7 < n\n⊢ False\nfailed"
+        ]
+      }
+    ]
+  }
+}

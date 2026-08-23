@@ -26,6 +26,7 @@ import os.path as _osp
 sys.path.insert(0, _osp.join(_osp.dirname(_osp.abspath(__file__)), "scripts"))
 
 from config import RESULTS_DIR, VERIFY_TIMEOUT_SECONDS
+from failure_taxonomy import record_failure_fields, summarize
 import env_report
 from stats import pct
 from verifier import (
@@ -76,6 +77,35 @@ def statement_mismatch(full_code, formal_statement):
         return True, f"compiled file declares {n_decl} theorems; expected exactly 1"
 
     return False, "statement present verbatim, exactly one declaration"
+
+def render_taxonomy(written, n_verified):
+    """The end-of-run failure breakdown (issue #14).
+
+    A FUNCTION rather than an inline block because the inline version shipped
+    broken: the summary was guarded on a `written` list that the main loop never
+    appended to, so `if written:` was always False and the table silently never
+    printed. Every unit test passed -- they covered `summarize()`, and nothing
+    covered the wiring. Only an n=3 live run caught it.
+
+    So this now states the mismatch out loud instead of rendering nothing:
+    "collected 0 of 3" is a bug report, an empty string is not.
+
+    The arithmetic axis reads `unknown` here by design -- the provenance labels
+    come from tests/audit/provenance.py and are joined in afterwards by
+    classify_results.py.
+    """
+    if len(written) != n_verified:
+        return (f"\n[warn] failure taxonomy unavailable: collected "
+                f"{len(written)} record(s) for {n_verified} verification(s). "
+                f"This is a bug in the run loop, not an empty result.")
+    if not written:
+        return ""
+
+    summary = summarize(written)
+    if not summary["total_failures"]:
+        return f"\nFAILURE TAXONOMY  no failures among {len(written)} records"
+    return "\n" + summary["table"]
+
 
 DEFAULT_TRACES = [
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "traces", "temp_0.jsonl"),
@@ -167,6 +197,7 @@ def main():
           f"(Mathlib env {v.base_env_seconds:.1f}s)")
 
     counts = Counter()
+    written = []
     t0 = time.perf_counter()
     with open(out, "a", encoding="utf-8") as fh:
         for i, r in enumerate(todo, 1):
@@ -228,10 +259,19 @@ def main():
                 "level": r.get("level"),
                 "outcome": res["outcome"],
                 "trace_valid": res["valid"],
-                "num_errors": res["num_errors"],
                 "num_sorries": res["num_sorries"],
-                "errors": res["errors"][:5],
-                "warnings": res["warnings"][:3],
+                # LOSSLESS, and sub-classified (issue #14). `errors`/`warnings`
+                # were truncated to [:5]/[:3] while `num_errors` was written
+                # from the full list, so a record could claim 9 errors and carry
+                # 5. record_failure_fields() supplies errors, warnings,
+                # num_errors, failure_kind and arithmetic together, with the
+                # count derived from what is actually carried.
+                #
+                # `arithmetic` is `unknown` here by design: the provenance
+                # labels come from tests/audit/provenance.py, which substitutes
+                # hypotheses before evaluating and runs over committed
+                # artifacts. classify_results.py fills the axis in afterwards.
+                **record_failure_fields(res, provenance_label=None),
                 "seconds": res["seconds"],
                 "mode": res["mode"],
                 "statement_error_detail": res.get("statement_error_detail"),
@@ -244,6 +284,7 @@ def main():
                 "gen_truncated": r.get("truncated"),
                 "generated_tokens": r.get("generated_tokens"),
             }
+            written.append(rec)
             fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
             fh.flush()
             os.fsync(fh.fileno())
@@ -259,6 +300,8 @@ def main():
     for o in OUTCOMES:
         if counts[o]:
             print(f"  {o:<16} {counts[o]:>4}  ({pct(counts[o]/len(todo))})")
+
+    print(render_taxonomy(written, len(todo)))
     print(f"\nwrote {out}")
 
 
