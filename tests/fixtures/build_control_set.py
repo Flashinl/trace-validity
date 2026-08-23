@@ -2,7 +2,7 @@
 
 Ground truth for the verifier, independent of any model. Every snippet below was
 hand-written and hand-labelled. `expected` uses the outcome taxonomy from
-issue #5. `confidence` is honest: "high" means I am sure of the label, "medium"
+verifier.py. `confidence` is honest: "high" means I am sure of the label, "medium"
 means the label is right in principle but the exact Lean behaviour could differ
 by version and should be reviewed against actual output.
 
@@ -206,8 +206,8 @@ add("timeout_01", "timeout", "timeout",
 add("parse_01", "parse_failure", "empty_code",
     "The sixth root of 1061520150601 is 101, since 101^6 expands to exactly "
     "that value.\n",
-    "Pure natural-language prose, no Lean at all. This is what issue #2 was "
-    "feeding the prover. Must never be `valid`; the verifier reports "
+    "Pure natural-language prose, no Lean at all. This is what the pipeline "
+    "used to feed the prover. Must never be `valid`; the verifier reports "
     "empty_code (no declaration). verify_traces reports parse_failure when "
     "fence extraction produced nothing at all.")
 

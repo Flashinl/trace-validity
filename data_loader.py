@@ -211,7 +211,7 @@ class FormalStepDataset:
             "informal_step": item.get(INFORMAL_STEP_FIELD) or "",
             "reference_proof": item.get(REFERENCE_PROOF_FIELD) or "",
             # Metadata only. `problem` is NL prose and must never reach the model
-            # as the thing to prove (issue #2); `ground_truth` is a final numeric
+            # as the thing to prove; `ground_truth` is a final numeric
             # answer, not a proof.
             "problem": item.get("problem") or "",
             "ground_truth": item.get("ground_truth") or "",

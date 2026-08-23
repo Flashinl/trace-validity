@@ -26,7 +26,7 @@ from collections import Counter
 
 Z95 = 1.96
 
-# Fields whose definition makes any derived rate meaningless. See issue #5.
+# Fields whose definition makes any derived rate meaningless.
 DEGENERATE_FIELDS = {"answer_correct", "invalid_accuracy", "valid_accuracy",
                      "overall_accuracy"}
 

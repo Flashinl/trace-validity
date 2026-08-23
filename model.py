@@ -206,7 +206,7 @@ class GoedelProver:
                         "stopped_on_eos": stopped_on_eos,
                         "hit_token_limit": hit_token_limit,
                         "closed_fence": closed_fence,
-                        # Loud, explicit truncation signal (issue #4).
+                        # Loud, explicit truncation signal.
                         "truncated": hit_token_limit or not closed_fence,
                         "batch_seconds": elapsed,
                         "seconds": elapsed / k,
