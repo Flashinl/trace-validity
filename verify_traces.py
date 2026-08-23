@@ -45,6 +45,39 @@ def _strip_comments(code):
     return re.sub(r"--[^\n]*", "", code)
 
 
+# Start of the first declaration: everything before it is preamble.
+_DECL_START_RE = re.compile(
+    r"^[ \t]*(?:@\[[^\]]*\]\s*)?"
+    r"(?:private\s+|protected\s+|noncomputable\s+)*"
+    r"(?:theorem|lemma|example)\b", re.M)
+
+
+def _declaration_part(text):
+    """Drop everything before the first declaration keyword.
+
+    Why this exists. The check below asks whether the compiled file carries the
+    dataset's statement, and it did that by substring match on the WHOLE
+    statement. That silently assumed the dataset's statement carries no preamble
+    of its own.
+
+    FormalStep statements are bare `theorem ... := by`, so the assumption held
+    and the check ran clean for 100 records. NuminaMath statements open with
+    their own `import Mathlib` and a `/- ... -/` doc comment. Our header is
+    inserted between that import and the theorem line, so the statement is no
+    longer a CONTIGUOUS substring of the compiled file even though the theorem
+    is present verbatim -- and 28 of 90 genuine passes were rejected as
+    `statement_mismatch`.
+
+    Comparing from the declaration keyword onward removes the preamble from both
+    sides. It does NOT weaken the guard: the entire theorem -- name, binders,
+    goal -- must still appear verbatim, and the one-declaration check is
+    unchanged. Only import/open/set_option/comment noise ahead of the
+    declaration is ignored, none of which is part of what is being proved.
+    """
+    m = _DECL_START_RE.search(text or "")
+    return text[m.start():] if m else (text or "")
+
+
 def _norm(s):
     return re.sub(r"\s+", " ", (s or "")).strip()
 
@@ -65,11 +98,11 @@ def statement_mismatch(full_code, formal_statement):
 
     Returns (mismatched: bool, detail: str).
     """
-    stmt = _norm(formal_statement)
+    stmt = _norm(_declaration_part(formal_statement))
     if not stmt:
         return False, "no formal_statement on the record; cannot check"
 
-    if stmt not in _norm(full_code):
+    if stmt not in _norm(_declaration_part(full_code)):
         return True, "compiled file does not contain the dataset's formal_statement"
 
     n_decl = len(_DECL_COUNT_RE.findall(_strip_comments(full_code or "")))

@@ -209,7 +209,29 @@ def analyse(stmt, dom):
 # An earlier version matched only `show`/`have`, which checked ONE claim across
 # all 55 failing samples. A denominator of 1 cannot support a "zero proof_false"
 # finding, so the scan is now over every equality in the body.
-_BODY_EQ = re.compile(r"([\w!.^*/+\-() ]{1,90}?)\s*=\s*([\w!.^*/+\-() ]{1,90}?)"
+#
+# `%` IS IN THE CHARACTER CLASS DELIBERATELY. Without it the lazy left-hand
+# match cannot cross a modulo, so it starts AFTER the `%` and captures only the
+# modulus:
+#
+#     a^2 % 3 = 1     ->  captured as `3 = 1`   -> flagged FALSE
+#     x^2 % 8 = 4     ->  captured as `8 = 4`   -> flagged FALSE
+#     n % 7 = 6       ->  captured as `7 = 6`   -> flagged FALSE
+#
+# Every one of those is a correct modular case split. On FormalStep this never
+# surfaced -- its Counting & Probability content barely uses `%` -- but on
+# Number Theory it produced 9 `proof_false` labels of which 9 were spurious,
+# i.e. no demonstrated precision at all on modular arithmetic.
+#
+# With `%` included, the operand is captured whole (`a^2 % 3`), which then fails
+# to evaluate -- free variable, or `%` outside lean_arith's token set -- and the
+# claim is SKIPPED rather than flagged. Skipping is the right failure direction:
+# a missed false claim understates proof_false, a spurious one invents it.
+#
+# Modular claims are therefore NOT CHECKED, only not-misread. Checking them
+# needs `%` in lean_arith, and that needs Nat.mod vs Int.emod handled properly
+# (they differ on negatives), which is not done here.
+_BODY_EQ = re.compile(r"([\w!.^*/+\-()% ]{1,90}?)\s*=\s*([\w!.^*/+\-()% ]{1,90}?)"
                       r"(?=\s*(?:[,;\]\)\n]|$|by\b|from\b|:=))")
 # Numeric literals the proof writes down at all, used as the Phase 3 denominator.
 _BODY_LIT = re.compile(r"(?<![\w.])\d{2,}(?![\w.])")
