@@ -1,0 +1,14 @@
+{
+  "formalstep": {
+    "rows": 30809,
+    "rows_with_pinned": 11884,
+    "problems": 500,
+    "problems_with_pinned": 496
+  },
+  "numinamath": {
+    "rows": 104155,
+    "rows_with_pinned": 4760,
+    "nt_proof_pool": 2232,
+    "nt_proof_pool_with_pinned": 25
+  }
+}

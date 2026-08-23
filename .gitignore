@@ -29,6 +29,8 @@ results/*.json
 !results/analysis_n50_hardened.json
 !results/phase1_deadbranches.json
 !results/vacuity_scan.json
+!results/pinned_hypothesis_scan.json
+!results/stage_b_evalset.json
 !results/vacuity_failures.json
 !results/denominators.json
 !results/failure_taxonomy.json
