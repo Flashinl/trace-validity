@@ -159,8 +159,29 @@ def setup_lean_project(project_dir=LEAN_PROJECT_DIR, verbose=True):
             print(f"[setup] $ {' '.join(args)}")
         return subprocess.run(args, cwd=project_dir, check=check)
 
-    if not os.path.exists(manifest) or not built:
+    # Run `lake update` ONLY when there is no manifest to honour (issue #16).
+    #
+    # This used to be `not os.path.exists(manifest) or not built`, and `built`
+    # is False on every fresh clone, so `lake update` ran even though
+    # lake-manifest.json is committed. `lake update` RE-RESOLVES every
+    # dependency and rewrites the manifest — and seven of Mathlib's transitive
+    # deps carry a floating inputRev (`main`/`master`): aesop, batteries, Qq,
+    # plausible, proofwidgets, importGraph, LeanSearchClient. Two machines
+    # cloning a week apart therefore got different `aesop` — which the prompt
+    # header imports and which changes tactic behaviour — with an identical
+    # requirements.txt, lean-toolchain and Mathlib tag. That is the drift.
+    #
+    # With a manifest present, `lake build` fetches dependencies at the
+    # revisions the manifest records, so nothing is needed here to populate a
+    # fresh clone.
+    if not os.path.exists(manifest):
+        if verbose:
+            print("[setup] no lake-manifest.json; resolving dependencies")
         run(["lake", "update"])
+    elif not built:
+        if verbose:
+            print("[setup] manifest present; honouring its pinned revisions "
+                  "(not running `lake update`)")
 
     # NEVER build Mathlib from source. Non-fatal: a project without Mathlib has
     # no `cache` executable.
