@@ -29,6 +29,7 @@ results/*.json
 !results/phase1_deadbranches.json
 !results/vacuity_scan.json
 !results/denominators.json
+!results/statement_truth_scan.json
 results/*.png
 .lake/
 *.olean
