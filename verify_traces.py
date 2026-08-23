@@ -22,7 +22,12 @@ from collections import Counter
 
 import re
 
+import os.path as _osp
+sys.path.insert(0, _osp.join(_osp.dirname(_osp.abspath(__file__)), "scripts"))
+
 from config import RESULTS_DIR, VERIFY_TIMEOUT_SECONDS
+from failure_taxonomy import record_failure_fields, summarize
+import env_report
 from stats import pct
 from verifier import (
     LeanVerifier, OUTCOMES, PARSE_FAILURE, COMPILE_ERROR, STATEMENT_ERROR,
@@ -38,6 +43,39 @@ _DECL_COUNT_RE = re.compile(
 def _strip_comments(code):
     code = re.sub(r"/-.*?-/", "", code, flags=re.S)
     return re.sub(r"--[^\n]*", "", code)
+
+
+# Start of the first declaration: everything before it is preamble.
+_DECL_START_RE = re.compile(
+    r"^[ \t]*(?:@\[[^\]]*\]\s*)?"
+    r"(?:private\s+|protected\s+|noncomputable\s+)*"
+    r"(?:theorem|lemma|example)\b", re.M)
+
+
+def _declaration_part(text):
+    """Drop everything before the first declaration keyword.
+
+    Why this exists. The check below asks whether the compiled file carries the
+    dataset's statement, and it did that by substring match on the WHOLE
+    statement. That silently assumed the dataset's statement carries no preamble
+    of its own.
+
+    FormalStep statements are bare `theorem ... := by`, so the assumption held
+    and the check ran clean for 100 records. NuminaMath statements open with
+    their own `import Mathlib` and a `/- ... -/` doc comment. Our header is
+    inserted between that import and the theorem line, so the statement is no
+    longer a CONTIGUOUS substring of the compiled file even though the theorem
+    is present verbatim -- and 28 of 90 genuine passes were rejected as
+    `statement_mismatch`.
+
+    Comparing from the declaration keyword onward removes the preamble from both
+    sides. It does NOT weaken the guard: the entire theorem -- name, binders,
+    goal -- must still appear verbatim, and the one-declaration check is
+    unchanged. Only import/open/set_option/comment noise ahead of the
+    declaration is ignored, none of which is part of what is being proved.
+    """
+    m = _DECL_START_RE.search(text or "")
+    return text[m.start():] if m else (text or "")
 
 
 def _norm(s):
@@ -60,11 +98,11 @@ def statement_mismatch(full_code, formal_statement):
 
     Returns (mismatched: bool, detail: str).
     """
-    stmt = _norm(formal_statement)
+    stmt = _norm(_declaration_part(formal_statement))
     if not stmt:
         return False, "no formal_statement on the record; cannot check"
 
-    if stmt not in _norm(full_code):
+    if stmt not in _norm(_declaration_part(full_code)):
         return True, "compiled file does not contain the dataset's formal_statement"
 
     n_decl = len(_DECL_COUNT_RE.findall(_strip_comments(full_code or "")))
@@ -72,6 +110,35 @@ def statement_mismatch(full_code, formal_statement):
         return True, f"compiled file declares {n_decl} theorems; expected exactly 1"
 
     return False, "statement present verbatim, exactly one declaration"
+
+def render_taxonomy(written, n_verified):
+    """The end-of-run failure breakdown (issue #14).
+
+    A FUNCTION rather than an inline block because the inline version shipped
+    broken: the summary was guarded on a `written` list that the main loop never
+    appended to, so `if written:` was always False and the table silently never
+    printed. Every unit test passed -- they covered `summarize()`, and nothing
+    covered the wiring. Only an n=3 live run caught it.
+
+    So this now states the mismatch out loud instead of rendering nothing:
+    "collected 0 of 3" is a bug report, an empty string is not.
+
+    The arithmetic axis reads `unknown` here by design -- the provenance labels
+    come from tests/audit/provenance.py and are joined in afterwards by
+    classify_results.py.
+    """
+    if len(written) != n_verified:
+        return (f"\n[warn] failure taxonomy unavailable: collected "
+                f"{len(written)} record(s) for {n_verified} verification(s). "
+                f"This is a bug in the run loop, not an empty result.")
+    if not written:
+        return ""
+
+    summary = summarize(written)
+    if not summary["total_failures"]:
+        return f"\nFAILURE TAXONOMY  no failures among {len(written)} records"
+    return "\n" + summary["table"]
+
 
 DEFAULT_TRACES = [
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "traces", "temp_0.jsonl"),
@@ -147,12 +214,23 @@ def main():
         print("nothing to do")
         return
 
+    # Record the environment BEFORE verifying, so a run that dies part-way
+    # still leaves the report that explains which environment it died in
+    # (issue #16). Warnings are surfaced here rather than buried in the file:
+    # an unpinned dependency is worth seeing at the top of a run, not after it.
+    env_path, env_doc = env_report.write_beside(out)
+    if env_doc:
+        print(f"env report : {env_path}")
+        for w in env_doc.get("warnings", []):
+            print(f"  ! {w}")
+
     t_setup = time.perf_counter()
     v = LeanVerifier(timeout=args.timeout, verbose=False)
     print(f"verifier ready in {time.perf_counter()-t_setup:.1f}s "
           f"(Mathlib env {v.base_env_seconds:.1f}s)")
 
     counts = Counter()
+    written = []
     t0 = time.perf_counter()
     with open(out, "a", encoding="utf-8") as fh:
         for i, r in enumerate(todo, 1):
@@ -214,10 +292,19 @@ def main():
                 "level": r.get("level"),
                 "outcome": res["outcome"],
                 "trace_valid": res["valid"],
-                "num_errors": res["num_errors"],
                 "num_sorries": res["num_sorries"],
-                "errors": res["errors"][:5],
-                "warnings": res["warnings"][:3],
+                # LOSSLESS, and sub-classified (issue #14). `errors`/`warnings`
+                # were truncated to [:5]/[:3] while `num_errors` was written
+                # from the full list, so a record could claim 9 errors and carry
+                # 5. record_failure_fields() supplies errors, warnings,
+                # num_errors, failure_kind and arithmetic together, with the
+                # count derived from what is actually carried.
+                #
+                # `arithmetic` is `unknown` here by design: the provenance
+                # labels come from tests/audit/provenance.py, which substitutes
+                # hypotheses before evaluating and runs over committed
+                # artifacts. classify_results.py fills the axis in afterwards.
+                **record_failure_fields(res, provenance_label=None),
                 "seconds": res["seconds"],
                 "mode": res["mode"],
                 "statement_error_detail": res.get("statement_error_detail"),
@@ -230,6 +317,7 @@ def main():
                 "gen_truncated": r.get("truncated"),
                 "generated_tokens": r.get("generated_tokens"),
             }
+            written.append(rec)
             fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
             fh.flush()
             os.fsync(fh.fileno())
@@ -245,6 +333,8 @@ def main():
     for o in OUTCOMES:
         if counts[o]:
             print(f"  {o:<16} {counts[o]:>4}  ({pct(counts[o]/len(todo))})")
+
+    print(render_taxonomy(written, len(todo)))
     print(f"\nwrote {out}")
 
 

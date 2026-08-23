@@ -17,6 +17,7 @@ lean_project.lock
 # Bulk per-run result dumps stay out, but the debugging analysis outputs are
 # deliverables and are small (~40KB total) — keep them.
 results/*.json
+!results/statement_truth_scan.json
 !results/control_set_run.json
 !results/crosscheck.json
 !results/pipeline_trace.json
@@ -28,7 +29,13 @@ results/*.json
 !results/analysis_n50_hardened.json
 !results/phase1_deadbranches.json
 !results/vacuity_scan.json
+!results/stage_b_verified.jsonl
+!results/stage_b_traces.jsonl
+!results/pinned_hypothesis_scan.json
+!results/stage_b_evalset.json
+!results/vacuity_failures.json
 !results/denominators.json
+!results/failure_taxonomy.json
 results/*.png
 .lake/
 *.olean

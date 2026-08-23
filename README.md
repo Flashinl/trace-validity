@@ -28,6 +28,13 @@ traces/              # one directory per run: traces.jsonl + run_meta.json
 results/             # verification JSONL, analysis JSON, plots
 ```
 
+## Implementation
+
+`docs/IMPLEMENTATION.md` is the end-to-end walkthrough: the pipeline step by
+step, a glossary separating the **theorem statement** (the goal, from the
+dataset) from the **proof object / tactic block** (what the model generates),
+the exact model and Lean versions in use, and where generation actually ran.
+
 ## Setup
 
 ### 1. Python dependencies

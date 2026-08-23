@@ -17,7 +17,7 @@ def load_results(temperature):
 def compute_stats(results):
     """Outcome counts for a `trace_valid.py run` result file.
 
-    ISSUE #5, RESOLVED. This function used to report `valid_accuracy`,
+    RESOLVED. This function used to report `valid_accuracy`,
     `invalid_accuracy` and `overall_accuracy` off an `answer_correct` field that
     `trace_valid.py` defined as `trace_valid and not has_sorry`. Because
     answer_correct was DERIVED FROM trace_valid, every row in `invalid_traces`
@@ -61,7 +61,7 @@ def load_verification(path):
 
 
 def outcome_distribution(rows):
-    """Distinct outcomes, never collapsed into a single boolean (issue #5)."""
+    """Distinct outcomes, never collapsed into a single boolean."""
     from collections import Counter
 
     counts = Counter(r["outcome"] for r in rows)
