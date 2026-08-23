@@ -35,12 +35,20 @@ from collections import Counter, defaultdict
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-from verifier import OUTCOMES, VALID, TIMEOUT, VERIFIER_CRASH, PARSE_FAILURE
+from verifier import (
+    OUTCOMES, VALID, TIMEOUT, VERIFIER_CRASH, PARSE_FAILURE, STATEMENT_ERROR,
+)
 
 # Outcomes that are a verdict about the proof.
 PROOF_VERDICT = ("valid", "compile_error", "has_sorry", "empty_code")
 # Outcomes that are the absence of a verdict. Never counted as invalid.
-NO_VERDICT = (TIMEOUT, VERIFIER_CRASH, PARSE_FAILURE)
+#
+# STATEMENT_ERROR belongs here: Lean rejected the goal, so the model's proof was
+# never judged. Scoring it against the prover would be measuring the dataset's
+# compatibility with our Mathlib version, not the model. Verified per record by
+# re-running the statement with `sorry` as its proof — see
+# verifier.statement_is_broken().
+NO_VERDICT = (TIMEOUT, VERIFIER_CRASH, PARSE_FAILURE, STATEMENT_ERROR)
 
 PROVABLE = "Success of Proof"
 UNPROVABLE = "Failure of Proof"
@@ -169,7 +177,7 @@ def report_run(run):
           f"over all traces")
     if s["no_verdict"]:
         print(f"    {s['no_verdict']} trace(s) produced no verdict "
-              f"(timeout/crash/parse_failure) and are excluded from the first "
+              f"({'/'.join(NO_VERDICT)}) and are excluded from the first "
               f"rate — NOT counted as invalid")
     else:
         print(f"    0 traces produced no verdict, so both rates coincide")

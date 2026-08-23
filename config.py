@@ -44,6 +44,21 @@ LEAN_PROJECT_DIR = os.path.join(os.path.dirname(__file__), "lean_project")
 # (`timeout`), never silently folded into "invalid".
 VERIFY_TIMEOUT_SECONDS = 60
 
+# Elaboration recursion budget, applied by the VERIFIER at verification time.
+#
+# The prompt header sets `maxHeartbeats 0` but says nothing about maxRecDepth,
+# so a statement like `Nat.choose 1996 4` exhausts Lean's default depth (512)
+# while unfolding and is reported as `compile_error` — an environment limit
+# dressed up as a failed proof. Measured: the identical statement and proof goes
+# compile_error -> valid with nothing changed but this option
+# (tests/diagnose_statement_failures.py, cases 12a/12b).
+#
+# This is deliberately NOT added to GOEDEL_LEAN4_HEADER. That header is copied
+# verbatim from the model's official eval script and goes into the prompt;
+# changing it changes what the model generates, which would make new traces
+# incomparable with existing ones. Verification config belongs on the verifier.
+LEAN_MAX_REC_DEPTH = 10000
+
 # Building the base environment means `import Mathlib`, which is enormously
 # more expensive than any single verification. Measured >300s on Windows, where
 # Defender inspects each of ~8.6k .olean files as they are read. This is a
