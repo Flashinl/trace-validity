@@ -23,6 +23,7 @@ from collections import Counter
 import re
 
 from config import RESULTS_DIR, VERIFY_TIMEOUT_SECONDS
+from failure_taxonomy import record_failure_fields, summarize
 from stats import pct
 from verifier import (
     LeanVerifier, OUTCOMES, PARSE_FAILURE, COMPILE_ERROR, STATEMENT_ERROR,
@@ -153,6 +154,7 @@ def main():
           f"(Mathlib env {v.base_env_seconds:.1f}s)")
 
     counts = Counter()
+    written = []
     t0 = time.perf_counter()
     with open(out, "a", encoding="utf-8") as fh:
         for i, r in enumerate(todo, 1):
@@ -214,10 +216,19 @@ def main():
                 "level": r.get("level"),
                 "outcome": res["outcome"],
                 "trace_valid": res["valid"],
-                "num_errors": res["num_errors"],
                 "num_sorries": res["num_sorries"],
-                "errors": res["errors"][:5],
-                "warnings": res["warnings"][:3],
+                # LOSSLESS, and sub-classified (issue #14). `errors`/`warnings`
+                # were truncated to [:5]/[:3] while `num_errors` was written
+                # from the full list, so a record could claim 9 errors and carry
+                # 5. record_failure_fields() supplies errors, warnings,
+                # num_errors, failure_kind and arithmetic together, with the
+                # count derived from what is actually carried.
+                #
+                # `arithmetic` is `unknown` here by design: the provenance
+                # labels come from tests/audit/provenance.py, which substitutes
+                # hypotheses before evaluating and runs over committed
+                # artifacts. classify_results.py fills the axis in afterwards.
+                **record_failure_fields(res, provenance_label=None),
                 "seconds": res["seconds"],
                 "mode": res["mode"],
                 "statement_error_detail": res.get("statement_error_detail"),
@@ -245,6 +256,14 @@ def main():
     for o in OUTCOMES:
         if counts[o]:
             print(f"  {o:<16} {counts[o]:>4}  ({pct(counts[o]/len(todo))})")
+
+    # Issue #14: `compile_error` on its own does not say what went wrong. Break
+    # it down by what the compiler actually reported. The arithmetic axis reads
+    # `unknown` here and is filled in by classify_results.py, which joins the
+    # provenance labels; see the note on the record fields above.
+    if written:
+        print()
+        print(summarize(written)["table"])
     print(f"\nwrote {out}")
 
 

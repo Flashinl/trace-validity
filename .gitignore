@@ -29,6 +29,7 @@ results/*.json
 !results/phase1_deadbranches.json
 !results/vacuity_scan.json
 !results/denominators.json
+!results/failure_taxonomy.json
 results/*.png
 .lake/
 *.olean
