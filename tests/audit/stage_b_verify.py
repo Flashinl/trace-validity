@@ -4,7 +4,7 @@ Mirrors verify_traces.py's decision sequence exactly so the verdicts mean the
 same thing as the committed runs: fence-extraction check, compile, statement
 fidelity on a pass, statement re-test on a compile_error, then failure_kind.
 """
-import io, json, os, sys, time, collections
+import argparse, io, json, os, sys, time, collections
 
 REPO = r"C:\Users\vkris\trace-validity"
 sys.path.insert(0, REPO)
@@ -12,17 +12,19 @@ os.chdir(REPO)
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 from verifier import (LeanVerifier, PARSE_FAILURE, COMPILE_ERROR,
-                      STATEMENT_ERROR, STATEMENT_MISMATCH, has_declaration)
+                      STATEMENT_ERROR, STATEMENT_MISMATCH, has_declaration,
+                      BROKEN, UNKNOWN)
 from verify_traces import statement_mismatch
 from failure_taxonomy import record_failure_fields, summarize
 
-SP = os.path.dirname(os.path.abspath(__file__))
-IN = os.path.join(SP, "stage_b_traces.jsonl")
-OUT = os.path.join(SP, "stage_b_verified.jsonl")
-TIMEOUT = 60
-
-
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--traces", required=True)
+    ap.add_argument("--out", required=True)
+    ap.add_argument("--timeout", type=int, default=60)
+    args = ap.parse_args()
+    IN, OUT, TIMEOUT = args.traces, args.out, args.timeout
+
     rows = [json.loads(l) for l in io.open(IN, encoding="utf-8") if l.strip()]
     print(f"{len(rows)} traces to verify\n", flush=True)
 
@@ -47,11 +49,15 @@ def main():
                         res = dict(res, outcome=STATEMENT_MISMATCH, valid=False,
                                    statement_mismatch_detail=why)
                 if res["outcome"] == COMPILE_ERROR:
-                    broken, detail = v.statement_is_broken(
+                    verdict, detail = v.statement_is_broken(
                         r.get("formal_statement"), timeout=TIMEOUT)
-                    if broken:
+                    # Explicit comparison: "not_broken" is a truthy string.
+                    if verdict == BROKEN:
                         res = dict(res, outcome=STATEMENT_ERROR, valid=False,
                                    statement_error_detail=detail)
+                    elif verdict == UNKNOWN:
+                        res = dict(res, statement_probe="unknown",
+                                   statement_probe_detail=detail)
 
             rec = {"uuid": r["uuid"], "band": r["band"], "wr": r["wr"],
                    "source": r["source"], "outcome": res["outcome"],
@@ -60,6 +66,8 @@ def main():
                    "generated_tokens": r.get("generated_tokens"),
                    "axioms": res.get("axioms"),
                    "statement_error_detail": res.get("statement_error_detail"),
+                   "statement_probe": res.get("statement_probe"),
+                   "statement_probe_detail": res.get("statement_probe_detail"),
                    **record_failure_fields(res, provenance_label=None)}
             out.append(rec)
             fh.write(json.dumps(rec, ensure_ascii=False) + "\n"); fh.flush()

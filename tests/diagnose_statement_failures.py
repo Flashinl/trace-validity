@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import verifier as verifier_mod
 from config import GOEDEL_LEAN4_HEADER
-from verifier import LeanVerifier
+from verifier import LeanVerifier, BROKEN
 
 # Sample 19's statement, verbatim from FormalStep. Note `∑ n in Finset.range 6`:
 # Mathlib retired `in` for `∈` in big operators, so this does not parse on
@@ -86,10 +86,10 @@ def main():
         # 19a reaches statement_error only through verify_traces, which runs the
         # statement probe; verify() alone reports the underlying compile_error.
         if expected == "statement_error" and res["outcome"] == "compile_error":
-            broken, detail = v.statement_is_broken(
+            verdict, detail = v.statement_is_broken(
                 code.split("Rat\n\n", 1)[-1].replace("\n  sorry\n", "")
             )
-            if broken:
+            if verdict == BROKEN:  # "not_broken" is a truthy string
                 res = dict(res, outcome="statement_error",
                            statement_error_detail=detail)
         ok = res["outcome"] == expected

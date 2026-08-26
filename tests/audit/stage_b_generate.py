@@ -31,34 +31,63 @@ def build_prompt(row):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--evalset", default="stage_b_evalset.json")
-    ap.add_argument("--out", default="stage_b_traces.jsonl")
-    ap.add_argument("--temp", type=float, default=0.0)
+    ap.add_argument("--evalset", default="results/stage_b_evalset.json")
+    # One file per temperature. `{temp}` is substituted; keeping the runs in
+    # separate files is what makes the uuid-keyed resume below correct.
+    ap.add_argument("--out", default="results/stage_b_traces_temp{temp}.jsonl")
+    # nargs="+": every temperature runs inside ONE process, so the ~7B model is
+    # loaded once for the whole sweep instead of once per temperature.
+    ap.add_argument("--temp", type=float, nargs="+", default=[0.0])
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
 
     rows = json.load(open(args.evalset, encoding="utf-8"))
-    print(f"{len(rows)} problems  |  temp={args.temp}  seed={args.seed}", flush=True)
+    temps = list(args.temp)
+    print(f"{len(rows)} problems  |  temps={temps}  seed={args.seed}", flush=True)
+
+    # Load the model ONCE, before the temperature loop.
+    prover = GoedelProver(MODEL_NAME)
+    t_all = time.perf_counter()
+
+    for temp in temps:
+        out_path = args.out.format(temp=temp)
+        os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
+        run_one(prover, rows, temp, args.seed, out_path)
+
+    print(f"\nsweep done in {(time.perf_counter()-t_all)/60:.1f} min", flush=True)
+
+
+def run_one(prover, rows, temp, seed, out_path):
+    """One temperature -> one file. Resume is keyed on uuid WITHIN this file."""
+    print(f"\n=== temp={temp} seed={seed} -> {out_path} ===", flush=True)
 
     done = set()
-    if os.path.exists(args.out):
-        for l in open(args.out, encoding="utf-8"):
+    if os.path.exists(out_path):
+        for l in open(out_path, encoding="utf-8"):
             if l.strip():
-                done.add(json.loads(l)["uuid"])
+                rec = json.loads(l)
+                # Guard the invariant the filename asserts: if a file ever ends
+                # up holding a different temperature, stop rather than resume
+                # against records that are not comparable.
+                if float(rec.get("temperature", temp)) != float(temp):
+                    raise SystemExit(
+                        f"{out_path} holds temperature {rec.get('temperature')} "
+                        f"but this run is temp={temp}; refusing to append.")
+                done.add(rec["uuid"])
         print(f"resuming: {len(done)} already generated", flush=True)
 
-    prover = GoedelProver(MODEL_NAME)
+    args_temp, args_seed = temp, seed
     t0 = time.perf_counter()
 
-    with open(args.out, "a", encoding="utf-8") as fh:
+    with open(out_path, "a", encoding="utf-8") as fh:
         for i, r in enumerate(rows, 1):
             if r["uuid"] in done:
                 continue
             prompt = build_prompt(r)
             t = time.perf_counter()
             # generate() returns a LIST of trajectory dicts; one trajectory here.
-            gen = prover.generate(prompt, temperature=args.temp,
-                                  num_trajectories=1, seed=args.seed)[0]
+            gen = prover.generate(prompt, temperature=args_temp,
+                                  num_trajectories=1, seed=args_seed)[0]
             completion = gen["text"]
             full = extract_lean4_block(prompt, completion)
             rec = {
@@ -69,7 +98,7 @@ def main():
                 "full_code": full,
                 "extract_status": "ok" if full else "no_fence",
                 "seconds": round(gen.get("seconds", time.perf_counter() - t), 2),
-                "temperature": args.temp, "seed": args.seed,
+                "temperature": args_temp, "seed": args_seed,
                 "model": MODEL_NAME,
             }
             for k in ("generated_tokens", "truncated", "hit_token_limit",
@@ -83,7 +112,7 @@ def main():
                   f"{'ok' if full else 'NO-FENCE'}", flush=True)
 
     el = time.perf_counter() - t0
-    print(f"\ndone in {el/60:.1f} min -> {args.out}", flush=True)
+    print(f"done in {el/60:.1f} min -> {out_path}", flush=True)
 
 
 if __name__ == "__main__":

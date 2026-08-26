@@ -63,6 +63,12 @@ STATEMENT_ERROR = "statement_error"
 # from compile_error: nothing was wrong with the Lean, it just proved the wrong
 # thing. See verify_traces.py and audit finding 1-A.
 STATEMENT_MISMATCH = "statement_mismatch"
+
+# statement_is_broken() verdicts. UNKNOWN exists so that "Lean did not finish"
+# can never be read as "the statement is bad" -- see statement_is_broken().
+BROKEN = "broken"
+NOT_BROKEN = "not_broken"
+UNKNOWN = "unknown"
 # The proof compiled but depends on an axiom outside the Lean/Mathlib trusted
 # set -- most importantly one the generation declared itself. A proof standing
 # on `axiom cheat : 2 + 2 = 5` is not a proof. See audit finding 1-F.
@@ -475,10 +481,22 @@ class LeanVerifier:
         big-operator syntax, and binder-level `Finset` defaults) to any
         statement Lean will not accept.
 
-        Returns (broken: bool, detail: str).
+        THREE outcomes, not two. The original returned a bare bool, so a probe
+        that TIMED OUT -- absence of evidence -- came back as `broken=True`,
+        evidence of a broken statement. That is how two Stage B rows came to
+        carry `outcome=statement_error` with the detail "verification exceeded
+        60s". A timeout says Lean did not finish, not that the goal is bad, and
+        `statement_error` feeds the autoformalization-noise rate, so a timeout
+        silently inflated that rate.
+
+        Returns (verdict, detail) where verdict is one of:
+          BROKEN      Lean reached a verdict and rejected the goal.
+          NOT_BROKEN  the statement elaborates; the failure is in the proof.
+          UNKNOWN     no verdict was reached (timeout / probe failure).
+                      Callers must NOT score this as either one.
         """
         if not (formal_statement or "").strip():
-            return False, "no formal_statement on the record"
+            return NOT_BROKEN, "no formal_statement on the record"
 
         stmt = formal_statement.rstrip()
         if not re.search(r"\bby\s*\Z", stmt):
@@ -487,13 +505,17 @@ class LeanVerifier:
 
         res = self.verify(probe, timeout=timeout)
         if res["outcome"] == HAS_SORRY:
-            return False, "statement elaborates; the failure is in the proof"
+            return NOT_BROKEN, "statement elaborates; the failure is in the proof"
         if res["outcome"] == VALID:
             # `sorry` was not needed: the statement is closed by its own
             # elaboration. Unusual, but it is not a broken statement.
-            return False, "statement closes without a proof"
+            return NOT_BROKEN, "statement closes without a proof"
+        if res["outcome"] in (TIMEOUT, EMPTY_CODE, PARSE_FAILURE):
+            # Lean never returned a verdict on the goal. Not evidence either
+            # way; the caller must leave the original outcome in place.
+            return UNKNOWN, f"statement probe returned {res['outcome']}; no verdict on the goal"
         detail = res["errors"][0].strip().splitlines()[0][:200] if res["errors"] else res["outcome"]
-        return True, detail
+        return BROKEN, detail
 
     def _restart(self):
         """A timed-out REPL is killed by lean_interact; rebuild the session."""

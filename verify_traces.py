@@ -31,8 +31,7 @@ import env_report
 from stats import pct
 from verifier import (
     LeanVerifier, OUTCOMES, PARSE_FAILURE, COMPILE_ERROR, STATEMENT_ERROR,
-    STATEMENT_MISMATCH, has_declaration,
-)
+    STATEMENT_MISMATCH, has_declaration, BROKEN, UNKNOWN,)
 
 _DECL_COUNT_RE = re.compile(
     r"^[ \t]*(?:@\[[^\]]*\]\s*)?"
@@ -267,16 +266,27 @@ def main():
                 # goal and never judged the model, so the outcome becomes
                 # statement_error instead of being scored against the prover.
                 if res["outcome"] == COMPILE_ERROR:
-                    broken, detail = v.statement_is_broken(
+                    verdict, detail = v.statement_is_broken(
                         r.get("formal_statement"), timeout=args.timeout
                     )
-                    if broken:
+                    # Compare explicitly. `if verdict:` would be true for
+                    # "not_broken" as well, and a truthy-string test here would
+                    # relabel every compile_error as a statement_error.
+                    if verdict == BROKEN:
                         res = dict(
                             res,
                             outcome=STATEMENT_ERROR,
                             valid=False,
                             statement_error_detail=detail,
                         )
+                    elif verdict == UNKNOWN:
+                        # No verdict on the goal. The outcome stays
+                        # compile_error, but the record carries the fact that
+                        # we could not rule the statement in or out, so the
+                        # noise rate can report it as unresolved rather than
+                        # counting it on either side.
+                        res = dict(res, statement_probe="unknown",
+                                   statement_probe_detail=detail)
             counts[res["outcome"]] += 1
 
             rec = {
@@ -308,6 +318,9 @@ def main():
                 "seconds": res["seconds"],
                 "mode": res["mode"],
                 "statement_error_detail": res.get("statement_error_detail"),
+                # Set only when the statement probe reached no verdict.
+                "statement_probe": res.get("statement_probe"),
+                "statement_probe_detail": res.get("statement_probe_detail"),
                 "statement_mismatch_detail": res.get("statement_mismatch_detail"),
                 # What the proof actually stands on. `valid` is only evidence if
                 # this is a subset of the trusted set (audit finding 1-F).
