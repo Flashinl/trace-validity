@@ -12,7 +12,13 @@ So the informal prefix is taken from the row rather than injected.
 """
 import argparse, json, os, re, sys, time
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+_HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _HERE)
+# Repo root too: this script imports config/prompting/model from the top
+# level, and sys.path[0] is the SCRIPT's directory, not the cwd. Running
+# it as `python3 tests/audit/stage_b_generate.py` from the repo root died
+# with ModuleNotFoundError: No module named 'config'.
+sys.path.insert(0, os.path.dirname(os.path.dirname(_HERE)))
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 from config import GOEDEL_LEAN4_HEADER, PROMPT_TEMPLATE, MODEL_NAME
