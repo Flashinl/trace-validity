@@ -39,3 +39,10 @@ results/*.json
 results/*.png
 .lake/
 *.olean
+# 2026-08-26 temperature sweep and the two paper-facing measurements.
+!results/contentless_rates.json
+!results/STAGE_B_SWEEP.json
+!results/stage_b_traces_temp0.0.jsonl
+!results/stage_b_traces_temp0.7.jsonl
+!results/stage_b_verified_temp0.0.jsonl
+!results/stage_b_verified_temp0.7.jsonl
