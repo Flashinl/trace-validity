@@ -15,9 +15,9 @@ syntactic, no Lean, no GPU, runs in seconds over the whole split.
 | class | k/n | rate | 95% CI |
 |---|---|---|---|
 | **proof** | 252/500 | **50.4%** | [46.0–54.8] |
-| calculation | 240/500 | 48.0% | [43.6–52.4] |
-| mixed | 2/500 | 0.4% | [0.1–1.5] |
-| UNKNOWN | 6/500 | 1.2% | [0.6–2.6] |
+| calculation | 226/500 | 45.2% | [40.9–49.6] |
+| mixed | 2/500 | 0.4% | [0.1–1.4] |
+| UNKNOWN | 20/500 | 4.0% | [2.6–6.1] |
 
 **proof + mixed = 254/500 = 50.8% [46.4–55.2].**
 
@@ -99,7 +99,8 @@ the same idioms appear elsewhere in the repo.
    so the goal came out as `ℕ, a^6 = n` and was filed as a plain equation. The
    separator is the **first** depth-0 colon, not the last.
 
-After both fixes UNKNOWN fell from 45.1% to 2.0%.
+After both fixes UNKNOWN fell from 45.1% to 2.0% across the whole split
+(4.0% on the 500 first-steps, which skew shorter).
 
 ---
 
