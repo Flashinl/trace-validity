@@ -1,0 +1,2526 @@
+{
+ "summary": {
+  "0.0": {
+   "n_failures": 62,
+   "n_judged": 52,
+   "excluded": {
+    "parse_failure": 4,
+    "timeout": 6
+   },
+   "counts": {
+    "tactic_mismatch": 40,
+    "budget": 2,
+    "parse_skew": 2,
+    "UNKNOWN": 6,
+    "noop_tactic": 2
+   },
+   "statement_claims_checked": 0,
+   "proof_claims_checked": 0,
+   "crosstab": {
+    "elaboration_error": {
+     "tactic_mismatch": 0,
+     "parse_skew": 1,
+     "budget": 0,
+     "noop_tactic": 0,
+     "UNKNOWN": 0
+    },
+    "no_goals": {
+     "tactic_mismatch": 0,
+     "parse_skew": 0,
+     "budget": 0,
+     "noop_tactic": 1,
+     "UNKNOWN": 0
+    },
+    "tactic_failed": {
+     "tactic_mismatch": 22,
+     "parse_skew": 0,
+     "budget": 2,
+     "noop_tactic": 0,
+     "UNKNOWN": 2
+    },
+    "tactic_no_progress": {
+     "tactic_mismatch": 3,
+     "parse_skew": 0,
+     "budget": 0,
+     "noop_tactic": 0,
+     "UNKNOWN": 3
+    },
+    "type_mismatch": {
+     "tactic_mismatch": 0,
+     "parse_skew": 0,
+     "budget": 0,
+     "noop_tactic": 0,
+     "UNKNOWN": 1
+    },
+    "unknown_identifier": {
+     "tactic_mismatch": 7,
+     "parse_skew": 1,
+     "budget": 0,
+     "noop_tactic": 1,
+     "UNKNOWN": 0
+    },
+    "unsolved_goals": {
+     "tactic_mismatch": 8,
+     "parse_skew": 0,
+     "budget": 0,
+     "noop_tactic": 0,
+     "UNKNOWN": 0
+    }
+   }
+  },
+  "0.7": {
+   "n_failures": 64,
+   "n_judged": 58,
+   "excluded": {
+    "timeout": 5,
+    "parse_failure": 1
+   },
+   "counts": {
+    "tactic_mismatch": 45,
+    "UNKNOWN": 8,
+    "parse_skew": 2,
+    "budget": 1,
+    "noop_tactic": 2
+   },
+   "statement_claims_checked": 0,
+   "proof_claims_checked": 0,
+   "crosstab": {
+    "elaboration_error": {
+     "tactic_mismatch": 0,
+     "parse_skew": 2,
+     "budget": 0,
+     "noop_tactic": 0,
+     "UNKNOWN": 0
+    },
+    "goal_is_false": {
+     "tactic_mismatch": 1,
+     "parse_skew": 0,
+     "budget": 0,
+     "noop_tactic": 0,
+     "UNKNOWN": 0
+    },
+    "no_goals": {
+     "tactic_mismatch": 0,
+     "parse_skew": 0,
+     "budget": 0,
+     "noop_tactic": 1,
+     "UNKNOWN": 0
+    },
+    "other": {
+     "tactic_mismatch": 0,
+     "parse_skew": 0,
+     "budget": 0,
+     "noop_tactic": 0,
+     "UNKNOWN": 3
+    },
+    "tactic_failed": {
+     "tactic_mismatch": 20,
+     "parse_skew": 0,
+     "budget": 1,
+     "noop_tactic": 0,
+     "UNKNOWN": 2
+    },
+    "tactic_no_progress": {
+     "tactic_mismatch": 6,
+     "parse_skew": 0,
+     "budget": 0,
+     "noop_tactic": 0,
+     "UNKNOWN": 2
+    },
+    "type_mismatch": {
+     "tactic_mismatch": 1,
+     "parse_skew": 0,
+     "budget": 0,
+     "noop_tactic": 0,
+     "UNKNOWN": 1
+    },
+    "unknown_identifier": {
+     "tactic_mismatch": 7,
+     "parse_skew": 0,
+     "budget": 0,
+     "noop_tactic": 1,
+     "UNKNOWN": 0
+    },
+    "unsolved_goals": {
+     "tactic_mismatch": 10,
+     "parse_skew": 0,
+     "budget": 0,
+     "noop_tactic": 0,
+     "UNKNOWN": 0
+    }
+   }
+  },
+  "combined": {
+   "n": 110,
+   "counts": {
+    "tactic_mismatch": 85,
+    "budget": 3,
+    "parse_skew": 4,
+    "UNKNOWN": 14,
+    "noop_tactic": 4
+   },
+   "statement_false": 0,
+   "wilson": [
+    0.0,
+    0.03374513358912735
+   ]
+  }
+ },
+ "rows": [
+  {
+   "uuid": "002d9130-a6e7-56cc-9c79-3a98babe9589",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unknown_identifier",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 5. Prove that there do not exist odd natural numbers $a$ and $b$ whose product and sum are squares of some two natural numbers. The use of a pocket calculator or any reference materi",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Unknown constant `Nat.odd_iff_not_even` Type mismatch: After simplification, term ha has type Odd a but is expected to have type Odd (a * b) Unknown constant `Nat.odd_iff_not_even` Type mismatch: Afte"
+   }
+  },
+  {
+   "uuid": "002f1a09-fd13-5476-9b7b-38384737b2a7",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "budget",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 36. Let's say we have two three-digit numbers that give the same remainder when divided by 7. By appending one number to the other, we get a six-digit number. Show that the resulting",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Tactic `simp` failed with a nested error: maximum recursion depth has been reached use `set_option maxRecDepth <num>` to increase limit use `set_option diagnostics true` to get diagnostic information"
+   }
+  },
+  {
+   "uuid": "003d391a-9eae-50cf-bcf8-52a7068f276b",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unknown_identifier",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Let $p$ be a prime and $n$ a natural number. Show that either $p$ divides $n$, or $p$ and $n$ are coprime. ## Euclid's Lemma Lemma 3 (Euclid's Let $p$ be a prime and $a, b$ be natura",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Unknown constant `Nat.coprime_of_dvd_of_dvd`"
+   }
+  },
+  {
+   "uuid": "009e6379-699b-548c-aea0-fddb8d857d87",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unsolved_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 9. [5] Show that the converse of the previous statement is false by providing a non-juggling sequence $j(0) j(1) j(2)$ of length 3 where the average $\\frac{1}{3}(j(0)+j(1)+j(2))$ is ",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals case h x : Equiv.Perm (Fin 3) a : 1 = ↑(x 0) a_1 : 2 = ↑(x 1) a_2 : 3 = ↑(x 2) ⊢ False"
+   }
+  },
+  {
+   "uuid": "01334d04-5a77-57f7-9186-6b4250da421a",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 2. Prove that 19 is a divisor of the number $$ A_{k}=5^{2 k+1} \\cdot 2^{k+2}+3^{k+2} \\cdot 2^{2 k+1} $$ -/ theorem number_theory_249938 (A : ℕ → ℕ) (hA : ∀ k, A k = 5^(2*k + 1) * 2^(",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints d ≥ 0 0 ≤ d - 19*e ≤ 18 0 ≤ d - 19*e - 19*f ≤ 18 a ≥ 0 0 ≤ a - 19*b ≤ 18 0 ≤ a - 19*b - 19*c ≤ 18 1 ≤ a - 19*b - 1"
+   }
+  },
+  {
+   "uuid": "0145b833-1c5c-572d-ae4e-c99d03115a01",
+   "temp": "0.0",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- ## Task 21/88 Show that the product of three consecutive natural numbers (except for the trivial case $0 ; 1 ; 2$) is not equal to the cube of a natural number! -/ theorem number_the",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "linarith failed to find a contradiction n : ℕ h : n > 0 m : ℕ hm : n * (n + 1) * (n + 2) = m ^ 3 a✝ : m ≤ n ⊢ False failed linarith failed to find a contradiction n : ℕ h : n > 0 m : ℕ hm : n * (n + 1"
+   }
+  },
+  {
+   "uuid": "015c4f53-c1a0-5a27-9054-c4e64aea860d",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- $\\underline{\\text { Andjans } A .}$ A numerical sequence is defined by the conditions: $a_{1}=1, a_{n+1}=a_{n}+\\left[\\sqrt{a_{n}}\\right]$. Prove that there are infinitely many perfec",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "linarith failed to find a contradiction case h.h1 a : ℕ → ℤ h₀ : a 1 = 1 h₁ : ∀ (n : ℕ), a (n + 1) = a n + ⌊√↑(a n)⌋ N : ℕ a✝ : a N + ⌊√↑(a N)⌋ < 1 ⊢ False failed"
+   }
+  },
+  {
+   "uuid": "017fd168-d272-5d64-a884-6cb3a244ab40",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unsolved_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Lemma 11.2. If $x, y, z$ is a primitive Pythagorean triple, then $x$ is even and $y$ is odd or $x$ is odd and $y$ is even. -/ theorem number_theory_5313 (x y z : ℤ) (h : x^2 + y^2 = ",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals case pos x y z : ℤ h : x ^ 2 + y ^ 2 = z ^ 2 h1 : x.gcd y = 1 hx : Even x hy : Even y ⊢ Odd y ∨ Odd x case neg x y z : ℤ h : x ^ 2 + y ^ 2 = z ^ 2 h1 : x.gcd y = 1 hx : Odd x hy : Odd y"
+   }
+  },
+  {
+   "uuid": "0198ec43-06e4-5dbb-b988-823ec2910a76",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "parse_skew",
+   "old_kind": "elaboration_error",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 672*. Prove that the sum of the squares of any 10 consecutive natural numbers is not a perfect square. -/ theorem number_theory_114295 (n : ℕ) : ¬ ∃ m, m^2 = ∑ i ∈ Finset.range 10, (",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [
+     "10",
+     "20"
+    ],
+    "error_head": "unexpected token 'in'; expected ',' unsolved goals case inr.inr.inr.inr.inl n m : ℕ hm : m ^ 2 = ∑ i ∈ Finset.range 10, (n + i) ^ 2 h : m % 10 = 4 ⊢ False case inr.inr.inr.inr.inr.inl n m : ℕ hm : m ^"
+   }
+  },
+  {
+   "uuid": "019949dc-998c-50e2-8a4c-e52b3bc714bf",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 4. It is known that the sum of the squares of two natural numbers is divisible by 7. Is it true that their product is divisible by 49? Justify your answer. # -/ theorem number_theory",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints c ≥ 0 1 ≤ c - 49*d ≤ 48 b ≥ 0 a ≥ 0 where a := ↑n / 7 b := ↑m / 7 c := ↑(n % 49 % 49) * ↑(m % 49 % 49) d := ↑(n % "
+   }
+  },
+  {
+   "uuid": "01d5682f-c132-5783-bb54-9bb2b13abd56",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "UNKNOWN",
+   "old_kind": "tactic_no_progress",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 99. Let $a$ be an arbitrary $p$-adic integer, the last digit of which is not zero. Prove that the last digit of the number $a^{p-1}-1$ is 0. (For the case when $a$ is a finite number",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "simp_all made no progress"
+   }
+  },
+  {
+   "uuid": "01f553d0-b84e-53f7-9e53-1030ae9d0a40",
+   "temp": "0.0",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "UNKNOWN",
+   "old_kind": "tactic_no_progress",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- [ Evenness and Oddness ] Let $m$ and $n$ be integers. Prove that $mn(m+n)$ is an even number. # -/ theorem number_theory_188210 (m n : ℤ) : Even (m * n * (m + n)) := by",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "simp_all made no progress"
+   }
+  },
+  {
+   "uuid": "021f5889-2f54-564a-aaa4-ea238818a002",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Let $n \\in \\mathbb{N}$. Show that $8n-1$ is not a sum of three non-zero squares. ## Divisibility criteria -/ theorem number_theory_126343 (n : ℕ) : ¬∃ a b c : ℕ, a ≠ 0 ∧ b ≠ 0 ∧ c ≠ ",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints i ≥ 1 g ≥ 1 f ≥ 1 e ≥ 0 d ≥ 0 d + e ≤ 0 where d := ↑(b ^ 2) / 8 e := ↑(a ^ 2) / 8 f := ↑c g := ↑b i := ↑a"
+   }
+  },
+  {
+   "uuid": "022e6a2f-1c07-50e7-9403-fc59f8add495",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- A sequence of positive integers $a_1, a_2, \\ldots$ satisfies $a_k + a_l = a_m + a_n$ for all positive integers $k,l,m,n$ satisfying $kl = mn$. Prove that if $p$ divides $q$ then $a_p",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "linarith failed to find a contradiction a : ℕ → ℕ ha : ∀ (k l m n : ℕ), 0 < a k ∧ 0 < a l ∧ 0 < a m ∧ 0 < a n h : ∀ (k l m n : ℕ), k * l = m * n → a k + a l = a m + a n p q : ℕ hp : 0 < p hq : 0 < q r"
+   }
+  },
+  {
+   "uuid": "024ee395-5fa4-574a-9186-24273ee91aaf",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 5. Let $a_{1}, a_{2}, \\cdots$ be any infinite sequence of positive integers with the property $a_{k}<a_{k+1}(k \\geqslant 1)$. Prove that infinitely many $a_{m}$ in this sequence can ",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "linarith failed to find a contradiction case h.left.h1 a : ℕ → ℕ ha : ∀ (k : ℕ), 0 < a k hinc : ∀ (k : ℕ), a k < a (k + 1) n : ℕ a✝ : a (n + 1) < 0 * a (n + 1) + 1 * a (n + 2) ⊢ False failed"
+   }
+  },
+  {
+   "uuid": "02f5af73-2087-50cd-a1b4-81c9c049b08f",
+   "temp": "0.0",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- ## Task 3 - 250813 Prove the following statement: The sum of two consecutive natural numbers, neither of which is divisible by 3, is always divisible by 3. -/ theorem number_theory_1",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints a ≥ 0 1 ≤ a - 3*b ≤ 2 0 ≤ a - 3*b - 3*c ≤ 2 0 ≤ a - 3*b - 3*c - 3*d ≤ 1 -1 ≤ a - 3*b - 3*c - 3*d - 3*e ≤ 1 0 ≤ 2*a"
+   }
+  },
+  {
+   "uuid": "0313f21a-9207-5788-8e5f-06348ff85b69",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- To be proven: in every number system whose base is at least 6, the fourth power of the number that is one less than the base has two digits that are independent of the base. What can",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints a ≥ 6 where a := ↑b omega could not prove the goal: a possible counterexample may satisfy the constraints a ≥ 6 wh"
+   }
+  },
+  {
+   "uuid": "0315147e-d2be-5ec8-9d58-d675e90601a2",
+   "temp": "0.0",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "budget",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 5. Let $k$ be a positive integer, prove $$\\left(F_{4 k}, F_{4 k+2}\\right)=1$$ -/ theorem number_theory_7282 (F : ℕ → ℕ) (hF : ∀ n, F n = F (n - 1) + F (n - 2)) (hF0 : F 0 = 0) (hF1 :",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Tactic `simp` failed with a nested error: maximum recursion depth has been reached use `set_option maxRecDepth <num>` to increase limit use `set_option diagnostics true` to get diagnostic information"
+   }
+  },
+  {
+   "uuid": "036ec521-f5dc-52d0-a0dd-affab5723066",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "UNKNOWN",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 9. (20 points) The sequence of positive integers $\\left\\{a_{n}\\right\\}$ satisfies $$ a_{1}=2, a_{n+1}=a_{n}^{2}-a_{n}+1 \\text {. } $$ Prove: Any two terms of the sequence are coprime",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Tactic `induction` failed: major premise type is not an inductive type m = n → False Explanation: the `induction` tactic is for constructor-based reasoning as well as for applying custom induction pri"
+   }
+  },
+  {
+   "uuid": "03bc6582-3f57-5041-8992-53d278fa74f5",
+   "temp": "0.0",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "UNKNOWN",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- a) Prove that there do not exist integers $a$, $b$ such that $a^{2}-3 b^{2}=8$. b) Prove that there do not exist strictly positive integers $a, b$ such that $a^{2}+b^{2}=3 c^{2}$. -/",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Tactic `rcases` failed: `right✝ : (∃ a b c, a > 0 ∧ b > 0 ∧ a ^ 2 + b ^ 2 = 3 * c ^ 2) → False` is not an inductive datatype"
+   }
+  },
+  {
+   "uuid": "03e184cb-e882-5042-a3c4-e65adacf1d4f",
+   "temp": "0.0",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Show that for any integer $n$ the fraction $\\frac{21 n+4}{14 n+3}$ is irreducible. -/ theorem number_theory_139375 (n : ℤ) : IsCoprime (21*n + 4) (14*n + 3) := by",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: No usable constraints found. You may need to unfold definitions so `omega` can see linear arithmetic facts about `Nat` and `Int`, which may also involve multiplication,"
+   }
+  },
+  {
+   "uuid": "04565238-2805-5cad-98a9-cc6ae94ac48d",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unknown_identifier",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- ## Task 28/78 Prove: Every odd natural number $n \\geq 3$ can be represented as the harmonic mean of two different natural numbers. -/ theorem number_theory_157213 (n : ℕ) (hn : Odd n",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Unknown constant `Nat.odd_iff_not_even` Unknown constant `Nat.odd_iff_not_even` omega could not prove the goal: a possible counterexample may satisfy the constraints a ≥ 3 a - b ≤ -1 where a := ↑n b :"
+   }
+  },
+  {
+   "uuid": "04abbfcd-cd56-5072-9d3e-9afc80e96ce2",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_no_progress",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib.Tactic /- 14th Putnam 1954 Problem B1 Show that for any positive integer r, we can find integers m, n such that m 2 - n 2 = r 3 . -/ theorem number_theory_150630 (r : ℤ) (_ : r > 0) : ∃",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "`simp` made no progress"
+   }
+  },
+  {
+   "uuid": "0551bfa6-80b7-554b-afef-991c1ef522d8",
+   "temp": "0.0",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unsolved_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Example 10 Prove: the indeterminate equation $$x^{2}+y^{2}-8 z^{3}=6$$ has no integer solutions. -/ theorem number_theory_7789 : ¬∃ x y z : ℤ, x^2+y^2-8*z^3=6 := by",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals case inr.inr.inr.inl x y z : ℤ h✝ : x ^ 2 + y ^ 2 - 8 * z ^ 3 = 6 this✝¹ : (x ^ 2 + y ^ 2) % 8 = 6 this✝ : x ^ 2 % 8 = 0 ∨ x ^ 2 % 8 = 1 ∨ x ^ 2 % 8 = 4 this : y ^ 2 % 8 = 0 ∨ y ^ 2 % 8"
+   }
+  },
+  {
+   "uuid": "0560e7d8-b615-5571-81a5-5d73b522e30b",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unknown_identifier",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib open Real open scoped BigOperators /- A fractional number $x$ is called [i][b]pretty[/b][/i] if it has finite expression in base$-b$ numeral system, $b$ is a positive integer in $[2;202",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Unknown identifier `div_lt_iff` unsolved goals case h.right.left m : ℕ hm : m ∈ Set.Ioo (2 * 4 / 3) 4 ⊢ 1 < (↑4 - ↑m) / ↑m case h.right.right m : ℕ hm : m ∈ Set.Ioo (2 * 4 / 3) 4 ⊢ ⌊1 * ↑(-↑2)⌋₊ % 2 ="
+   }
+  },
+  {
+   "uuid": "059d3fbd-e23e-519a-b6f0-e6573b465df1",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unsolved_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 199. Irreducible Fractions. Let $n$ be a positive integer greater than 2. Show that among the fractions $\\frac{1}{n}, \\frac{2}{n}, \\frac{3}{n}, \\ldots, \\frac{n-1}{n}$, there is an ev",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals n : ℕ hn : 2 < n k : ℕ a : 1 ≤ k a_1 : k ≤ n - 1 a_2 : k.gcd n = 1 ⊢ False unsolved goals n : ℕ hn : 2 < n h : {k | ∃ i ∈ Finset.Icc 1 (n - 1), i.Coprime n ∧ k = i} = ∅ ⊢ {k | (1 ≤ k ∧ "
+   }
+  },
+  {
+   "uuid": "05a8cfb9-5abe-5216-9c19-27bb0d495914",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Let's prove that if a five-digit number is divisible by 271, then all numbers obtained by moving a segment of any length from the end of the number to the beginning are also divisibl",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints d ≥ 0 1 ≤ c + d - 271*e ≤ 270 b ≥ 0 1 ≤ a ≤ 5 where a := ↑k b := ↑n / 271 c := ↑n / ↑(10 ^ k) d := ↑(n % 10 ^ k) *"
+   }
+  },
+  {
+   "uuid": "05c894e4-97a2-506f-ab92-1a3c85122249",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Given are positive integers $a, b$ for which $5a + 3b$ is divisible by $a + b$. Prove that $a = b$. -/ theorem number_theory_50110 (a b : ℕ) (ha : 0 < a) (hb : 0 < b) (h₁ : (a + b) ∣",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints e ≥ 0 d ≥ 1 c ≥ 1 5*c + 3*d - e ≥ 0 where c := ↑a d := ↑b e := ↑b * ↑k"
+   }
+  },
+  {
+   "uuid": "05d6dafa-4626-5fe8-9a96-326e04fc2472",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib.Tactic /- 2nd CaMO 1970 Problem 7 Given any sequence of five integers, show that three terms have sum divisible by 3. -/ theorem number_theory_149153 (a : Fin 5 → ℤ) : ∃ b c d, b ≠ c ∧ ",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints 1 ≤ b + c + d - 3*e ≤ 2 where b := a 0 c := a 1 d := a 2 e := (a 0 + a 1 + a 2) / 3"
+   }
+  },
+  {
+   "uuid": "05e87a03-b7db-57dd-9233-9284c35f7feb",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib open Finset Real Nat /-Show that any number in row n (for n > 0) is at most2 ^ (n−1) Remark: any number in row (n+1) can be written as sum of two numbers in row n-/ theorem number_theor",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints d ≥ 0 c ≥ 0 c + d ≥ 0 c + d - 2*e ≥ 1 where c := ↑a d := ↑b e := ↑2 ^ n"
+   }
+  },
+  {
+   "uuid": "0699130e-8867-5efa-8de8-0f18ed2c3707",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Let $\\left ( a_{n} \\right )_{n \\geq 1}$ be an increasing sequence of positive integers such that $a_1=1$, and for all positive integers $n$, $a_{n+1}\\leq 2n$. Prove that for every po",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints b ≥ 1 where b := ↑n"
+   }
+  },
+  {
+   "uuid": "07068959-ab9a-5a74-a304-aaa58dbb0577",
+   "temp": "0.0",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "UNKNOWN",
+   "old_kind": "type_mismatch",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib open Finset /- $n$ is called [i]diamond 2005[/i] if $n=\\overline{...ab999...99999cd...}$, e.g. $2005 \\times 9$. Let $\\{a_n\\}:a_n< C\\cdot n,\\{a_n\\}$ is increasing. Prove that $\\{a_n\\}$ c",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Application type mismatch: The argument rfl has type ?m.65 = ?m.65 but is expected to have type a n = 2005 * 10 ^ n in the application Exists.intro n rfl"
+   }
+  },
+  {
+   "uuid": "074fb3b4-c1b2-53c2-9a8c-a958514e232a",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "UNKNOWN",
+   "old_kind": "tactic_no_progress",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib open Nat /- (Wilson's Theorem) Let $p$ be a prime number. Show that: $$ (p-1)!\\equiv-1 \\quad(\\bmod p) $$ -/ theorem number_theory_101218 (p : ℕ) (hp : p.Prime) : ((p - 1)! : ZMod p) = -",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "simp_all made no progress"
+   }
+  },
+  {
+   "uuid": "075cfac6-425b-5a3a-a05d-6be869d37e67",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unknown_identifier",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- The sequence of natural numbers $\\left\\{x_{n}\\right\\}$ is constructed according to the following rule: $x_{1}=2, x_{n+1}=\\left[1.5 x_{n}\\right]$. Prove that in the sequence $\\left\\{x",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Unknown constant `Nat.odd_iff_not_even` simp_all made no progress Unknown constant `Nat.odd_iff_not_even` unsolved goals case right x : ℕ → ℕ hx1 : x 1 = 2 hxn : ∀ (n : ℕ), ↑(x (n + 1)) = ⌊1.5 * ↑(x n"
+   }
+  },
+  {
+   "uuid": "076e5357-9507-5775-b951-4af80bf2d409",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "parse_skew",
+   "old_kind": "unknown_identifier",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib open Real open scoped BigOperators /- 19.2.9 ** Let $a_{n}$ be the unit digit of $1^{2}+2^{2}+\\cdots+n^{2}$, $n=1,2,3, \\cdots$, prove that: $0 . a_{1} a_{2} \\cdots a_{n} \\cdots$ is a ra",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Unknown identifier `use` unexpected token '∑''; expected command"
+   }
+  },
+  {
+   "uuid": "07d6e0a0-6bcb-5ed7-b93f-33ca061b4bfb",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "noop_tactic",
+   "old_kind": "unknown_identifier",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 2. The sum of the factorials of three consecutive natural numbers is divisible by 61. Prove that the last of these numbers is no less than 61. (The factorial of a number $n$ is the p",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [
+     "59"
+    ],
+    "error_head": "Unknown identifier `le_of_not_lt` No goals to be solved"
+   }
+  },
+  {
+   "uuid": "08b73585-3d83-57aa-bee1-380d14011bfa",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unsolved_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 12.30 Prove that for any positive integer $a$, the equation $x^{2}-y^{2}=a^{3}$ always has integer solutions. (14th Annual William Lowell Putnam Mathematical Competition, 1954) -/ th",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals case h a : ℕ ha : 0 < a ⊢ -↑a ^ 2 = ↑a ^ 3"
+   }
+  },
+  {
+   "uuid": "08e7648a-a9e2-5b35-a6ff-ac1150733c18",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unknown_identifier",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib open Nat Filter Function open scoped Topology /- 14.4.65 For a positive integer $n$, let $q_{n}$ denote the smallest prime that does not divide $n$. Prove: as $n \\rightarrow+\\infty$, th",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Unknown identifier `refine'`"
+   }
+  },
+  {
+   "uuid": "092c450d-7982-549c-b49f-07a012d9d992",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Prove that $2551 \\cdot 543^n -2008\\cdot 7^n$ is never a perfect square, where $n$ varies over the set of positive integers -/ theorem number_theory_28840 (n : ℕ) (hn : n > 0) : ¬ ∃ m",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints 10*b + 21*c ≥ 0 51*b + 107*c ≥ 0 92*b + 143*c ≤ 0 a ≥ 1 where a := ↑n b := Lean.Omega.bmod_div_term 81 [0, 0, 0, 0"
+   }
+  },
+  {
+   "uuid": "094d2d3b-a20e-519a-b85a-a2311fdecd8b",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unsolved_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Question 1 Define the sequence $\\left\\{a_{n}\\right\\}$: (1) $a_{1}=p, a_{2}=q(p, q$ are prime numbers, and $p \\neq q)$; (2) For any $n \\in \\mathbf{Z}_{+}$, if there exists $m \\in$ $\\m",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals case h p q : ℕ a : ℕ → ℕ hp : Irreducible p hq : Irreducible q hne : ¬p = q ha1 : a 1 = p ha2 : a 2 = q han : ∀ (n : ℕ), 0 < n → ∃ m, 0 < m ∧ (a n + a (n + 1) = 2 ^ m → a (n + 2) = 2) h"
+   }
+  },
+  {
+   "uuid": "096cb1ad-142c-5d9e-9517-12f848368ea0",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Jancsi received the following task: Prove that there are infinitely many integers that cannot be expressed as the sum of three perfect cubes. After trying in vain to solve it, he ask",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: No usable constraints found. You may need to unfold definitions so `omega` can see linear arithmetic facts about `Nat` and `Int`, which may also involve multiplication,"
+   }
+  },
+  {
+   "uuid": "099e05f5-bc0d-594c-82db-a56dc7e2c01d",
+   "temp": "0.0",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Let's prove that the sum of the squares of any five consecutive integers is divisible by 5, but not by 25! -/ theorem number_theory_250249 (n : ℤ) : 5 ∣ ∑ i ∈ Finset.range 5, (n + i)",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: No usable constraints found. You may need to unfold definitions so `omega` can see linear arithmetic facts about `Nat` and `Int`, which may also involve multiplication,"
+   }
+  },
+  {
+   "uuid": "09d9ca38-5855-5edd-bd29-08d6c7c73412",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "noop_tactic",
+   "old_kind": "no_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib open Finset /- Let $n$ be a positive integer number. Define $S(n)$ to be the least positive integer such that $S(n) \\equiv n \\pmod{2}$, $S(n) \\geq n$, and such that there are [b]not[/b]",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals S : ℕ → ℕ hS : ∀ (n : ℕ), IsLeast {x | 0 < x ∧ x ≡ n [MOD 2] ∧ x ≥ n ∧ ¬∃ k > 0, ∃ x', (∀ (i : Fin k), 0 < x' i) ∧ n = ∑ i, x' i ∧ x = ∑ i, x' i ^ 2} (S n) ⊢ ∃ n0, ∀ (n : ℕ), n0 ≤ n → ↑"
+   }
+  },
+  {
+   "uuid": "0a0adf86-ce66-5a1c-a0c1-b4d9f1f4f0ca",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 225. Prove that the sum $$ 2^{n+2} \\cdot 3^{n}+5 n-4 $$ is divisible by 25 for any natural number $n$. -/ theorem number_theory_112326 (n : ℕ) : 25 ∣ 2^(n + 2) * 3^n + 5 * n - 4 := b",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints d ≥ 0 c ≥ 0 c + 5*d ≥ -6 -18 ≤ 25*b - c - 5*d ≤ 5 a ≥ 0 a ≥ 0 5*a - d ≥ 1 where a := ↑((2 ^ n + 2 ^ n + (2 ^ n + 2"
+   }
+  },
+  {
+   "uuid": "0a5ddd4c-bc24-5ef7-b68c-8b69a8ec4373",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unsolved_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 1.42 Prove that for any integer $n, \\quad \\frac{n^{5}}{5}+\\frac{n^{3}}{3}+\\frac{7 n}{15}$ is an integer. (Kyiv Mathematical Olympiad, 1971) -/ theorem number_theory_123107 (n : ℤ) : ",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [
+     "15"
+    ],
+    "error_head": "unsolved goals n : ℤ ⊢ n * ((21 + n ^ 2 * 15) * 5 + n ^ 4 * 15 * 3) = 225 * (n ^ 5 / 5 + n ^ 3 / 3 + n * 7 / 15)"
+   }
+  },
+  {
+   "uuid": "0a7bd2c7-e0d5-518e-91e6-2d95bf54f188",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unsolved_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib theorem number_theory_297671 {x y : ℤ} {k n : ℤ}(hx : ∃ a b, x = a^2 + k * a * b + n * b^2) (hy : ∃ c d, y = c^2 + k * c * d + n * d^2) : ∃ g h, x * y = g^2 + k * g * h + n * h^2 := by",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals case h k n a b c d : ℤ ⊢ a * k * b * n * d ^ 2 + a * k * b * c ^ 2 + a * k ^ 2 * b * c * d + a ^ 2 * k * c * d + a ^ 2 * n * d ^ 2 + a ^ 2 * c ^ 2 + k * b ^ 2 * n * c * d + b ^ 2 * n * "
+   }
+  },
+  {
+   "uuid": "0aa28db3-f6dc-5257-8288-306338cb6680",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Prove that there are no positive integers $x, y$ such that: $(x + 1)^2 + (x + 2)^2 +...+ (x + 9)^2 = y^2$ -/ theorem number_theory_88299 : ¬∃ x y : ℤ, 0 < x ∧ 0 < y ∧ ∑ i ∈ Finset.ra",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals case inr.inr.inr.inl x y : ℤ hx : 0 < x hy : 0 < y h✝ : (x + 1) ^ 2 + (x + 1 + 1) ^ 2 + (x + 2 + 1) ^ 2 + (x + 3 + 1) ^ 2 + (x + 4 + 1) ^ 2 + (x + 5 + 1) ^ 2 + (x + 6 + 1) ^ 2 + (x + 7 "
+   }
+  },
+  {
+   "uuid": "0aa40026-6273-5617-a0fe-7b49320dab0c",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unknown_identifier",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Example 3 Proof: The indeterminate equation $$ x^{2}+y^{2}-z^{2}=1997 $$ has infinitely many integer solutions. ${ }^{[2]}$ (1997, Global City Mathematics Competition (Junior Group))",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "failed to synthesize instance of type class HMod (ℤ × ℤ × ℤ) ℕ (ℤ × ℤ × ℤ) Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command. f"
+   }
+  },
+  {
+   "uuid": "0b498ff9-b0ad-5dd6-a931-401128daf3b6",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_no_progress",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 2.Show that the equation $$ [x] \\cdot\\{x\\}=\\frac{2013}{2014} $$ has an infinite number of solutions in the set of rational numbers. -/ theorem number_theory_119976 : Set.Infinite {x ",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "`simp` made no progress"
+   }
+  },
+  {
+   "uuid": "0c2f5e47-6574-5456-b66d-1c87b0706e2a",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Let $a \\geq 1$ and $n$ be integers such that $a \\mid n+2$ and $a \\mid n^{2}+n+5$. Show that $a=1$ or $a=7$. -/ theorem number_theory_159620 (a n : ℤ) (_ : 1 ≤ a) (h₀ : a ∣ n + 2) (h₁",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "linarith failed to find a contradiction a n : ℤ x✝ : 1 ≤ a h₀ : a ∣ n + 2 h₁ : a ∣ n ^ 2 + n + 5 a✝ : 7 < a ⊢ False failed unsolved goals case «2» a n : ℤ h₀ : 2 ∣ n h₁ : 2 ∣ n ^ 2 + n + 5 ⊢ False cas"
+   }
+  },
+  {
+   "uuid": "0c66929e-53ad-5810-982f-69da65bc7d58",
+   "temp": "0.0",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_no_progress",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib theorem number_theory_158062 : ∃ n > 0, (Nat.digits 10 n).all (fun d => d = 1) ∧ 2019 ∣ n := by",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [
+     "111111"
+    ],
+    "error_head": "`simp` made no progress"
+   }
+  },
+  {
+   "uuid": "0c92610a-3699-502f-81b3-a2bb972062c2",
+   "temp": "0.0",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Theorem 1 Let the binary linear indeterminate equation be $$a x+b y=c$$ (where $a, b, c$ are all positive integers and $(a, b)=1$) have a set of integer solutions $x=$ $x_{0}, y=y_{0",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints i - j - k ≥ 1 f + g ≥ 1 e ≥ 1 d ≥ 1 where d := a e := b f := a * x g := b * y i := x₀ j := b * ((x₀ - x) / b) k :="
+   }
+  },
+  {
+   "uuid": "002d9130-a6e7-56cc-9c79-3a98babe9589",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_no_progress",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 5. Prove that there do not exist odd natural numbers $a$ and $b$ whose product and sum are squares of some two natural numbers. The use of a pocket calculator or any reference materi",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "`simp` made no progress `simp` made no progress unsolved goals a b : ℕ ha : Odd a hb : Odd b m n : ℕ h₁ : a * b = m ^ 2 h₂ : a + b = n ^ 2 h₃ : Even m h₄ : Even n ⊢ False"
+   }
+  },
+  {
+   "uuid": "002f1a09-fd13-5476-9b7b-38384737b2a7",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 36. Let's say we have two three-digit numbers that give the same remainder when divided by 7. By appending one number to the other, we get a six-digit number. Show that the resulting",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints 100 ≤ b ≤ 999 0 ≤ b - 7*c ≤ 6 100 ≤ 7*a + b - 7*c ≤ 999 where a := ↑n / 7 b := ↑m c := ↑m / 7"
+   }
+  },
+  {
+   "uuid": "003d391a-9eae-50cf-bcf8-52a7068f276b",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "UNKNOWN",
+   "old_kind": "tactic_no_progress",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Let $p$ be a prime and $n$ a natural number. Show that either $p$ divides $n$, or $p$ and $n$ are coprime. ## Euclid's Lemma Lemma 3 (Euclid's Let $p$ be a prime and $a, b$ be natura",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "simp_all made no progress"
+   }
+  },
+  {
+   "uuid": "00e28de7-faf3-50d3-b2a5-1b75ecf3c4a2",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unsolved_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Show that for any $n\\geq 2$, $2^{2^n}+1$ ends with 7 -/ theorem number_theory_46069 (n : ℕ) (h : 2 ≤ n) : (2^(2^n) + 1) % 10 = 7 := by",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals n✝ n : ℕ h : 2 ≤ n + 5 ⊢ (2 ^ (2 ^ n * 2 * 2 * 2 * 2 * 2) % 10 % 10 + 1 % 10) % 10 = 7"
+   }
+  },
+  {
+   "uuid": "01334d04-5a77-57f7-9186-6b4250da421a",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unsolved_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 2. Prove that 19 is a divisor of the number $$ A_{k}=5^{2 k+1} \\cdot 2^{k+2}+3^{k+2} \\cdot 2^{2 k+1} $$ -/ theorem number_theory_249938 (A : ℕ → ℕ) (hA : ∀ k, A k = 5^(2*k + 1) * 2^(",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals A : ℕ → ℕ hA : ∀ (k : ℕ), A k = 5 ^ (2 * k + 1) * 2 ^ (k + 2) + 3 ^ (k + 2) * 2 ^ (2 * k + 1) k : ℕ ⊢ ((5 % 19) ^ (2 * k + 1) % 19 % 19 * ((2 % 19) ^ (k + 2) % 19 % 19) % 19 % 19 + (3 %"
+   }
+  },
+  {
+   "uuid": "0145b833-1c5c-572d-ae4e-c99d03115a01",
+   "temp": "0.7",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- ## Task 21/88 Show that the product of three consecutive natural numbers (except for the trivial case $0 ; 1 ; 2$) is not equal to the cube of a natural number! -/ theorem number_the",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "linarith failed to find a contradiction n : ℕ h : n > 0 m : ℕ hm : n * (n + 1) * (n + 2) = m ^ 3 a✝ : m ≤ n ⊢ False failed linarith failed to find a contradiction n : ℕ h : n > 0 m : ℕ hm : n * (n + 1"
+   }
+  },
+  {
+   "uuid": "015c4f53-c1a0-5a27-9054-c4e64aea860d",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unsolved_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- $\\underline{\\text { Andjans } A .}$ A numerical sequence is defined by the conditions: $a_{1}=1, a_{n+1}=a_{n}+\\left[\\sqrt{a_{n}}\\right]$. Prove that there are infinitely many perfec",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals case h a : ℕ → ℤ h₀ : a 1 = 1 h₁ : ∀ (n : ℕ), a (n + 1) = a n + ⌊√↑(a n)⌋ N : ℕ ⊢ a N + ⌊√↑(a N)⌋ = 1"
+   }
+  },
+  {
+   "uuid": "017fd168-d272-5d64-a884-6cb3a244ab40",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unsolved_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Lemma 11.2. If $x, y, z$ is a primitive Pythagorean triple, then $x$ is even and $y$ is odd or $x$ is odd and $y$ is even. -/ theorem number_theory_5313 (x y z : ℤ) (h : x^2 + y^2 = ",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals case inl.inl.inl x y z : ℤ h : x ^ 2 + y ^ 2 = z ^ 2 h1 : x.gcd y = 1 hx : Even x hy : Even y hz : Even z ⊢ Odd y ∨ Odd x case inl.inl.inr x y z : ℤ h : x ^ 2 + y ^ 2 = z ^ 2 h1 : x.gcd"
+   }
+  },
+  {
+   "uuid": "0198ec43-06e4-5dbb-b988-823ec2910a76",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "parse_skew",
+   "old_kind": "elaboration_error",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 672*. Prove that the sum of the squares of any 10 consecutive natural numbers is not a perfect square. -/ theorem number_theory_114295 (n : ℕ) : ¬ ∃ m, m^2 = ∑ i ∈ Finset.range 10, (",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [
+     "10"
+    ],
+    "error_head": "unexpected token 'in'; expected ',' failed to synthesize instance of type class AddCommMonoid (Sort ?u.104) Hint: Type class instance resolution failures can be inspected with the `set_option trace.Me"
+   }
+  },
+  {
+   "uuid": "019949dc-998c-50e2-8a4c-e52b3bc714bf",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 4. It is known that the sum of the squares of two natural numbers is divisible by 7. Is it true that their product is divisible by 49? Justify your answer. # -/ theorem number_theory",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints c ≥ 0 1 ≤ c - 49*d ≤ 48 b ≥ 0 a ≥ 0 where a := ↑m / 7 b := ↑n / 7 c := ↑(n % 49 % 49) * ↑(m % 49 % 49) d := ↑(n % "
+   }
+  },
+  {
+   "uuid": "01d5682f-c132-5783-bb54-9bb2b13abd56",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unknown_identifier",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 99. Let $a$ be an arbitrary $p$-adic integer, the last digit of which is not zero. Prove that the last digit of the number $a^{p-1}-1$ is 0. (For the case when $a$ is a finite number",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Unknown identifier `pow_card_sub_one_eq_one`"
+   }
+  },
+  {
+   "uuid": "021f5889-2f54-564a-aaa4-ea238818a002",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Let $n \\in \\mathbb{N}$. Show that $8n-1$ is not a sum of three non-zero squares. ## Divisibility criteria -/ theorem number_theory_126343 (n : ℕ) : ¬∃ a b c : ℕ, a ≠ 0 ∧ b ≠ 0 ∧ c ≠ ",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints i ≥ 1 g ≥ 1 f ≥ 1 e ≥ 0 d ≥ 0 d + e ≤ 0 where d := ↑(b ^ 2) / 8 e := ↑(a ^ 2) / 8 f := ↑c g := ↑b i := ↑a"
+   }
+  },
+  {
+   "uuid": "022e6a2f-1c07-50e7-9403-fc59f8add495",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unknown_identifier",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- A sequence of positive integers $a_1, a_2, \\ldots$ satisfies $a_k + a_l = a_m + a_n$ for all positive integers $k,l,m,n$ satisfying $kl = mn$. Prove that if $p$ divides $q$ then $a_p",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Unknown identifier `m` Unknown identifier `m`"
+   }
+  },
+  {
+   "uuid": "02524791-794b-5f48-8502-68e4bc99234f",
+   "temp": "0.7",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unknown_identifier",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 5. Prove that if the sum of three numbers is an odd number, then at least one of the addends is an odd number. -/ theorem number_theory_275357 (a b c : ℤ) (h₀ : Odd (a + b + c)) : Od",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Unknown constant `Int.odd_iff_not_even` `simp` made no progress"
+   }
+  },
+  {
+   "uuid": "0313f21a-9207-5788-8e5f-06348ff85b69",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "parse_skew",
+   "old_kind": "elaboration_error",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- To be proven: in every number system whose base is at least 6, the fourth power of the number that is one less than the base has two digits that are independent of the base. What can",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Expected type must not contain free variables ((b + 1).digits (b * (b * (b * b))))[0]? = some 1 ∧ ((b + 1).digits (b * (b * (b * b))))[2]? = some 5 Hint: Use the `+revert` option to automatically clea"
+   }
+  },
+  {
+   "uuid": "0315147e-d2be-5ec8-9d58-d675e90601a2",
+   "temp": "0.7",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "budget",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 5. Let $k$ be a positive integer, prove $$\\left(F_{4 k}, F_{4 k+2}\\right)=1$$ -/ theorem number_theory_7282 (F : ℕ → ℕ) (hF : ∀ n, F n = F (n - 1) + F (n - 2)) (hF0 : F 0 = 0) (hF1 :",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Tactic `simp` failed with a nested error: maximum recursion depth has been reached use `set_option maxRecDepth <num>` to increase limit use `set_option diagnostics true` to get diagnostic information "
+   }
+  },
+  {
+   "uuid": "036ec521-f5dc-52d0-a0dd-affab5723066",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 9. (20 points) The sequence of positive integers $\\left\\{a_{n}\\right\\}$ satisfies $$ a_{1}=2, a_{n+1}=a_{n}^{2}-a_{n}+1 \\text {. } $$ Prove: Any two terms of the sequence are coprime",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints c ≥ 0 b ≥ 1 where b := ↑n c := ↑(a 0) omega could not prove the goal: a possible counterexample may satisfy the co"
+   }
+  },
+  {
+   "uuid": "03b3688d-534c-576b-8263-330e07ccb8aa",
+   "temp": "0.7",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 1. (51st Moscow Mathematical Olympiad, 1988) Prove that when the prime $p \\geqslant 7$, $p^{4}-1$ is divisible by 240. -/ theorem number_theory_115316 (p : ℕ) (hp : Nat.Prime p) (h :",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [
+     "11",
+     "13",
+     "17",
+     "19",
+     "23",
+     "240",
+     "29",
+     "31",
+     "37",
+     "41",
+     "43",
+     "47",
+     "53",
+     "59",
+     "61",
+     "67",
+     "71",
+     "73",
+     "79",
+     "83",
+     "89",
+     "97"
+    ],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints a ≥ 1 where a := ↑p / 240 omega could not prove the goal: a possible counterexample may satisfy the constraints b "
+   }
+  },
+  {
+   "uuid": "03e184cb-e882-5042-a3c4-e65adacf1d4f",
+   "temp": "0.7",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "noop_tactic",
+   "old_kind": "unknown_identifier",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Show that for any integer $n$ the fraction $\\frac{21 n+4}{14 n+3}$ is irreducible. -/ theorem number_theory_139375 (n : ℤ) : IsCoprime (21*n + 4) (14*n + 3) := by",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Unknown identifier `isCoprime_iff_gcd_eq_one.mpr` No goals to be solved"
+   }
+  },
+  {
+   "uuid": "04565238-2805-5cad-98a9-cc6ae94ac48d",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unknown_identifier",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- ## Task 28/78 Prove: Every odd natural number $n \\geq 3$ can be represented as the harmonic mean of two different natural numbers. -/ theorem number_theory_157213 (n : ℕ) (hn : Odd n",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Unknown constant `Nat.odd_iff_not_even` Unknown constant `Nat.odd_iff_not_even` omega could not prove the goal: No usable constraints found. You may need to unfold definitions so `omega` can see linea"
+   }
+  },
+  {
+   "uuid": "04abbfcd-cd56-5072-9d3e-9afc80e96ce2",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib.Tactic /- 14th Putnam 1954 Problem B1 Show that for any positive integer r, we can find integers m, n such that m 2 - n 2 = r 3 . -/ theorem number_theory_150630 (r : ℤ) (_ : r > 0) : ∃",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "linarith failed to find a contradiction case h r : ℤ x✝ : r > 0 ⊢ False failed"
+   }
+  },
+  {
+   "uuid": "04f77b5a-761d-5f60-b904-40d296227afc",
+   "temp": "0.7",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Four, (Full marks 24 points) The board is initially written with the numbers 11 and 13. Now, perform the following operations: i) Rewrite a number once; ii) Add the two numbers and w",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: No usable constraints found. You may need to unfold definitions so `omega` can see linear arithmetic facts about `Nat` and `Int`, which may also involve multiplication,"
+   }
+  },
+  {
+   "uuid": "0551bfa6-80b7-554b-afef-991c1ef522d8",
+   "temp": "0.7",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unsolved_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Example 10 Prove: the indeterminate equation $$x^{2}+y^{2}-8 z^{3}=6$$ has no integer solutions. -/ theorem number_theory_7789 : ¬∃ x y z : ℤ, x^2+y^2-8*z^3=6 := by",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals case inr.inr.inr.inl x y z : ℤ h✝ : x ^ 2 + y ^ 2 - 8 * z ^ 3 = 6 this✝ : x ^ 2 % 8 = 0 ∨ x ^ 2 % 8 = 1 ∨ x ^ 2 % 8 = 4 this : y ^ 2 % 8 = 0 ∨ y ^ 2 % 8 = 1 ∨ y ^ 2 % 8 = 4 h : z % 8 = "
+   }
+  },
+  {
+   "uuid": "0560e7d8-b615-5571-81a5-5d73b522e30b",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unsolved_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib open Real open scoped BigOperators /- A fractional number $x$ is called [i][b]pretty[/b][/i] if it has finite expression in base$-b$ numeral system, $b$ is a positive integer in $[2;202",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals case h.right.left m : ℕ hm : m ∈ Set.Ioo (2 * 4 / 3) 4 ⊢ 1 / 2 < (4 - ↑m) / ↑m case h.right.right m : ℕ hm : m ∈ Set.Ioo (2 * 4 / 3) 4 ⊢ ⌊1 / 2 * ↑(-↑2)⌋₊ % 2 = 0"
+   }
+  },
+  {
+   "uuid": "059d3fbd-e23e-519a-b6f0-e6573b465df1",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "UNKNOWN",
+   "old_kind": "tactic_no_progress",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 199. Irreducible Fractions. Let $n$ be a positive integer greater than 2. Show that among the fractions $\\frac{1}{n}, \\frac{2}{n}, \\frac{3}{n}, \\ldots, \\frac{n-1}{n}$, there is an ev",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Tactic `aesop` failed, made no progress Initial goal: case h n : ℕ hn : 2 < n ⊢ {k | k ∈ LocallyFiniteOrder.finsetIcc 1 (n - 1) ∧ k.gcd n = 1}.ncard = 4"
+   }
+  },
+  {
+   "uuid": "05a8cfb9-5abe-5216-9c19-27bb0d495914",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Let's prove that if a five-digit number is divisible by 271, then all numbers obtained by moving a segment of any length from the end of the number to the beginning are also divisibl",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints d ≥ 0 1 ≤ c + d - 271*e ≤ 270 1 ≤ b ≤ 5 a ≥ 0 where a := ↑n / 271 b := ↑k c := ↑n / ↑(10 ^ k) d := ↑(n % 10 ^ k) *"
+   }
+  },
+  {
+   "uuid": "05c894e4-97a2-506f-ab92-1a3c85122249",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Given are positive integers $a, b$ for which $5a + 3b$ is divisible by $a + b$. Prove that $a = b$. -/ theorem number_theory_50110 (a b : ℕ) (ha : 0 < a) (hb : 0 < b) (h₁ : (a + b) ∣",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "linarith failed to find a contradiction case h₁ a b : ℕ ha : 0 < a hb : 0 < b k : ℕ hk : a * 5 + b * 3 = a * k + b * k a✝ : b < a ⊢ False failed linarith failed to find a contradiction case h₂ a b : ℕ"
+   }
+  },
+  {
+   "uuid": "05d6dafa-4626-5fe8-9a96-326e04fc2472",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_no_progress",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib.Tactic /- 2nd CaMO 1970 Problem 7 Given any sequence of five integers, show that three terms have sum divisible by 3. -/ theorem number_theory_149153 (a : Fin 5 → ℤ) : ∃ b c d, b ≠ c ∧ ",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "`simp` made no progress"
+   }
+  },
+  {
+   "uuid": "05e87a03-b7db-57dd-9233-9284c35f7feb",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib open Finset Real Nat /-Show that any number in row n (for n > 0) is at most2 ^ (n−1) Remark: any number in row (n+1) can be written as sum of two numbers in row n-/ theorem number_theor",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "linarith failed to find a contradiction case succ.succ row : ℕ → Finset ℕ h0 : row 0 = ∅ h1 : row 1 = {1} x n : ℕ h : ∀ (n : ℕ), 0 < n → ∀ x ∈ row (n + 1), ∃ a ∈ row n, ∃ x_1 ∈ row n, x = a + x_1 ih :"
+   }
+  },
+  {
+   "uuid": "064daf4b-f9f1-5360-8a32-3aef7f0e6a30",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "UNKNOWN",
+   "old_kind": "type_mismatch",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib theorem number_theory_165209 : ¬∃ q : ℚ, Real.sqrt 2 = q := by",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Application type mismatch: The argument hq has type √2 = ↑q but is expected to have type ↑q = √2 in the application Ne.symm (Irrational.ne_rat irrational_sqrt_two q) hq"
+   }
+  },
+  {
+   "uuid": "0699130e-8867-5efa-8de8-0f18ed2c3707",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Let $\\left ( a_{n} \\right )_{n \\geq 1}$ be an increasing sequence of positive integers such that $a_1=1$, and for all positive integers $n$, $a_{n+1}\\leq 2n$. Prove that for every po",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints b ≥ 1 where b := ↑n"
+   }
+  },
+  {
+   "uuid": "06d5e171-d03c-579e-977f-aeceaad2818b",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_no_progress",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Every four times the square of a prime number greater than 3, minus 100, results in a number that is divisible by 96. (ld) -/ theorem number_theory_245231 (p : ℕ) (hp : Nat.Prime p) ",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [
+     "12",
+     "96"
+    ],
+    "error_head": "unsolved goals p : ℕ hp : Nat.Prime p h : 3 < p h1 : p % 2 = 1 ⊢ 3 ∣ p Tactic `assumption` failed case inr p : ℕ hp : Nat.Prime p h : 3 < p h1 : p % 2 = 1 h3 : 3 = p ⊢ p % 3 = 1 `simp` made no progres"
+   }
+  },
+  {
+   "uuid": "07068959-ab9a-5a74-a304-aaa58dbb0577",
+   "temp": "0.7",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "type_mismatch",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib open Finset /- $n$ is called [i]diamond 2005[/i] if $n=\\overline{...ab999...99999cd...}$, e.g. $2005 \\times 9$. Let $\\{a_n\\}:a_n< C\\cdot n,\\{a_n\\}$ is increasing. Prove that $\\{a_n\\}$ c",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Type mismatch: After simplification, term ha' (?m.64 (ha 0)) has type a ?m.51 < a ?m.52 but is expected to have type {n | ∃ k, a n = 2005 * 10 ^ k}.Infinite"
+   }
+  },
+  {
+   "uuid": "074fb3b4-c1b2-53c2-9a8c-a958514e232a",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_no_progress",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib open Nat /- (Wilson's Theorem) Let $p$ be a prime number. Show that: $$ (p-1)!\\equiv-1 \\quad(\\bmod p) $$ -/ theorem number_theory_101218 (p : ℕ) (hp : p.Prime) : ((p - 1)! : ZMod p) = -",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals case inl p : ℕ hp : Nat.Prime p h : p = 2 ⊢ 1 = -1 `simp` made no progress"
+   }
+  },
+  {
+   "uuid": "075cfac6-425b-5a3a-a05d-6be869d37e67",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unknown_identifier",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- The sequence of natural numbers $\\left\\{x_{n}\\right\\}$ is constructed according to the following rule: $x_{1}=2, x_{n+1}=\\left[1.5 x_{n}\\right]$. Prove that in the sequence $\\left\\{x",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Unknown constant `Nat.odd_iff_not_even` simp_all made no progress Unknown constant `Nat.odd_iff_not_even` unsolved goals case right x : ℕ → ℕ hx1 : x 1 = 2 hxn : ∀ (n : ℕ), ↑(x (n + 1)) = ⌊1.5 * ↑(x n"
+   }
+  },
+  {
+   "uuid": "076e5357-9507-5775-b951-4af80bf2d409",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unknown_identifier",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib open Real open scoped BigOperators /- 19.2.9 ** Let $a_{n}$ be the unit digit of $1^{2}+2^{2}+\\cdots+n^{2}$, $n=1,2,3, \\cdots$, prove that: $0 . a_{1} a_{2} \\cdots a_{n} \\cdots$ is a ra",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Unknown identifier `refine'`"
+   }
+  },
+  {
+   "uuid": "07aae92f-384a-5a81-981e-066e83ee80c3",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_no_progress",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Example 2 Proof: There do not exist positive integers $x, y$ satisfying $x^{3}+y^{3}=2^{2009}$. [2] $(2009$, Brazilian Mathematical Olympiad) -/ theorem number_theory_296673 (x y : ℕ",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "`simp` made no progress `simp` made no progress `simp` made no progress `simp` made no progress `simp` made no progress `simp` made no progress `simp` made no progress `simp` made no progress `simp` m"
+   }
+  },
+  {
+   "uuid": "07d6e0a0-6bcb-5ed7-b93f-33ca061b4bfb",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "UNKNOWN",
+   "old_kind": "other",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 2. The sum of the factorials of three consecutive natural numbers is divisible by 61. Prove that the last of these numbers is no less than 61. (The factorial of a number $n$ is the p",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "interval_cases failed: could not find upper bound on n"
+   }
+  },
+  {
+   "uuid": "082c0e7e-1ef1-5760-aa48-8a9e73a8a778",
+   "temp": "0.7",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 1. Let a and b be non-zero natural numbers. (a) If $7 \\mid (2a + 5b)$, show that $7 \\mid (5a + 2b)$. (b) If $7 \\mid (5a + 2b)$, and $a = 2^0 + 2^1 + 2^2 + \\ldots + 2^{2012}$, show th",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints c ≥ 0 c ≥ 0 3*c - 2*d ≥ 1 4*c - 5*d ≤ -1 17*c - 21*d ≥ 1 where c := ↑(2 * a + 5 * b) / 7 d := Lean.Omega.bmod_div_"
+   }
+  },
+  {
+   "uuid": "08b73585-3d83-57aa-bee1-380d14011bfa",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unsolved_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 12.30 Prove that for any positive integer $a$, the equation $x^{2}-y^{2}=a^{3}$ always has integer solutions. (14th Annual William Lowell Putnam Mathematical Competition, 1954) -/ th",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals case h a : ℕ ha : 0 < a ⊢ ↑a * ↑a = ↑a ^ 3"
+   }
+  },
+  {
+   "uuid": "08e7648a-a9e2-5b35-a6ff-ac1150733c18",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unknown_identifier",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib open Nat Filter Function open scoped Topology /- 14.4.65 For a positive integer $n$, let $q_{n}$ denote the smallest prime that does not divide $n$. Prove: as $n \\rightarrow+\\infty$, th",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Unknown identifier `exact` Type mismatch: After simplification, term h₀ 0 has type IsLeast ∅ (q 0) but is expected to have type Tendsto (fun n => ↑(q n) / ↑n) atTop (𝓝 0)"
+   }
+  },
+  {
+   "uuid": "092c450d-7982-549c-b49f-07a012d9d992",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Prove that $2551 \\cdot 543^n -2008\\cdot 7^n$ is never a perfect square, where $n$ varies over the set of positive integers -/ theorem number_theory_28840 (n : ℕ) (hn : n > 0) : ¬ ∃ m",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [
+     "2008",
+     "2551",
+     "543"
+    ],
+    "error_head": "unsolved goals n : ℕ hn : n > 0 m : ℕ hm : m ^ 2 = 2551 * 543 ^ n - 2008 * 7 ^ n ⊢ 7 ∣ 2551 * 543 ^ n - 2008 * 7 ^ n unsolved goals case inl n : ℕ hn : n > 0 m : ℕ hm : m ^ 2 = 2551 * 543 ^ n - 2008 *"
+   }
+  },
+  {
+   "uuid": "094d2d3b-a20e-519a-b85a-a2311fdecd8b",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unsolved_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Question 1 Define the sequence $\\left\\{a_{n}\\right\\}$: (1) $a_{1}=p, a_{2}=q(p, q$ are prime numbers, and $p \\neq q)$; (2) For any $n \\in \\mathbf{Z}_{+}$, if there exists $m \\in$ $\\m",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals case h p q : ℕ hp : Nat.Prime p hq : Nat.Prime q hne : p ≠ q a : ℕ → ℕ ha1 : a 1 = p ha2 : a 2 = q han : ∀ n > 0, ∃ m > 0, a n + a (n + 1) = 2 ^ m → a (n + 2) = 2 han' : ∀ n > 0, ¬∃ m >"
+   }
+  },
+  {
+   "uuid": "096cb1ad-142c-5d9e-9517-12f848368ea0",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Jancsi received the following task: Prove that there are infinitely many integers that cannot be expressed as the sum of three perfect cubes. After trying in vain to solve it, he ask",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: No usable constraints found. You may need to unfold definitions so `omega` can see linear arithmetic facts about `Nat` and `Int`, which may also involve multiplication,"
+   }
+  },
+  {
+   "uuid": "0978a628-0de7-5174-a465-1b2b6b9e8f0a",
+   "temp": "0.7",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_no_progress",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 2. Does there exist an infinite sequence of natural numbers which are all perfect squares, and each term of which, starting from the third, is equal to the sum of the previous two? -",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "linarith failed to find a contradiction case h2 hn : 0 + 1 + 1 ≥ 2 a✝ : 0 * 0 + (0 + 1) * (0 + 1) < (0 + 1 + 1) * (0 + 1 + 1) ⊢ False failed `simp` made no progress"
+   }
+  },
+  {
+   "uuid": "099e05f5-bc0d-594c-82db-a56dc7e2c01d",
+   "temp": "0.7",
+   "band": "easy",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Let's prove that the sum of the squares of any five consecutive integers is divisible by 5, but not by 25! -/ theorem number_theory_250249 (n : ℤ) : 5 ∣ ∑ i ∈ Finset.range 5, (n + i)",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: No usable constraints found. You may need to unfold definitions so `omega` can see linear arithmetic facts about `Nat` and `Int`, which may also involve multiplication,"
+   }
+  },
+  {
+   "uuid": "09d9ca38-5855-5edd-bd29-08d6c7c73412",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "noop_tactic",
+   "old_kind": "no_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib open Finset /- Let $n$ be a positive integer number. Define $S(n)$ to be the least positive integer such that $S(n) \\equiv n \\pmod{2}$, $S(n) \\geq n$, and such that there are [b]not[/b]",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals S : ℕ → ℕ hS : ∀ (n : ℕ), IsLeast {x | 0 < x ∧ x ≡ n [MOD 2] ∧ x ≥ n ∧ ¬∃ k > 0, ∃ x', (∀ (i : Fin k), 0 < x' i) ∧ n = ∑ i, x' i ∧ x = ∑ i, x' i ^ 2} (S n) ⊢ ∃ n0, ∀ (n : ℕ), n0 ≤ n → ↑"
+   }
+  },
+  {
+   "uuid": "0a0adf86-ce66-5a1c-a0c1-b4d9f1f4f0ca",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 225. Prove that the sum $$ 2^{n+2} \\cdot 3^{n}+5 n-4 $$ is divisible by 25 for any natural number $n$. -/ theorem number_theory_112326 (n : ℕ) : 25 ∣ 2^(n + 2) * 3^n + 5 * n - 4 := b",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints d ≥ 0 c ≥ 0 c + 5*d ≥ -1 -23 ≤ 25*b - c - 5*d ≤ 0 a ≥ 0 a ≥ 0 5*a - d ≥ 0 where a := ↑((2 ^ n + 2 ^ n + (2 ^ n + 2"
+   }
+  },
+  {
+   "uuid": "0a5ddd4c-bc24-5ef7-b68c-8b69a8ec4373",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unsolved_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 1.42 Prove that for any integer $n, \\quad \\frac{n^{5}}{5}+\\frac{n^{3}}{3}+\\frac{7 n}{15}$ is an integer. (Kyiv Mathematical Olympiad, 1971) -/ theorem number_theory_123107 (n : ℤ) : ",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [
+     "15"
+    ],
+    "error_head": "unsolved goals n : ℤ ⊢ ↑n ^ 5 / 5 + ↑n ^ 3 / 3 + 7 * ↑n / 15 = ↑(n ^ 5 / 5) + ↑(n ^ 3 / 3) + ↑(7 * n / 15)"
+   }
+  },
+  {
+   "uuid": "0a7bd2c7-e0d5-518e-91e6-2d95bf54f188",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "unsolved_goals",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib theorem number_theory_297671 {x y : ℤ} {k n : ℤ}(hx : ∃ a b, x = a^2 + k * a * b + n * b^2) (hy : ∃ c d, y = c^2 + k * c * d + n * d^2) : ∃ g h, x * y = g^2 + k * g * h + n * h^2 := by",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "unsolved goals case h k n a b c d : ℤ ⊢ k * n * a * b * d ^ 2 + k * n * b ^ 2 * d * c + k * a * b * c ^ 2 + k * a ^ 2 * d * c + k ^ 2 * a * b * d * c + n * a ^ 2 * d ^ 2 + n * b ^ 2 * c ^ 2 + n ^ 2 * "
+   }
+  },
+  {
+   "uuid": "0a9eb410-7a31-52c8-8c8f-4331c4de8a84",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "UNKNOWN",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- [ Residue arithmetic (other).] Let $k a \\equiv k b(\\bmod k n)$. Then $a \\equiv b(\\bmod n)$. -/ theorem number_theory_195420 (k n a b : ℤ) (h₀ : k ≠ 0) (h₁ : n ≠ 0) (h₂ : k * a ≡ k * ",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Tactic `apply` failed: could not unify the conclusion of `@Int.emod_eq_of_lt` ?a % ?b = ?a with the goal n ∣ a - b Note: The full type of `@Int.emod_eq_of_lt` is ∀ {a b : ℤ}, 0 ≤ a → a < b → a % b = a"
+   }
+  },
+  {
+   "uuid": "0aa28db3-f6dc-5257-8288-306338cb6680",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Prove that there are no positive integers $x, y$ such that: $(x + 1)^2 + (x + 2)^2 +...+ (x + 9)^2 = y^2$ -/ theorem number_theory_88299 : ¬∃ x y : ℤ, 0 < x ∧ 0 < y ∧ ∑ i ∈ Finset.ra",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "linarith failed to find a contradiction x y : ℤ hx : 0 < x hy : 0 < y hxy : ∑ i ∈ Finset.range 9, (x + ↑i + 1) ^ 2 = y ^ 2 h1 : 0 ≤ (x + 1) ^ 2 h2 : 0 ≤ (x + 2) ^ 2 h3 : 0 ≤ (x + 3) ^ 2 h4 : 0 ≤ (x + "
+   }
+  },
+  {
+   "uuid": "0aa40026-6273-5617-a0fe-7b49320dab0c",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "UNKNOWN",
+   "old_kind": "other",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Example 3 Proof: The indeterminate equation $$ x^{2}+y^{2}-z^{2}=1997 $$ has infinitely many integer solutions. ${ }^{[2]}$ (1997, Global City Mathematics Competition (Junior Group))",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "typeclass instance problem is stuck OfNat (↑{x | x.1 ^ 2 + x.2.1 ^ 2 - x.2.2 ^ 2 = 1997}ᶜ → Fin ?n) 0 Note: Lean will not try to resolve this typeclass instance problem because the first type argument"
+   }
+  },
+  {
+   "uuid": "0b498ff9-b0ad-5dd6-a931-401128daf3b6",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "UNKNOWN",
+   "old_kind": "other",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- 2.Show that the equation $$ [x] \\cdot\\{x\\}=\\frac{2013}{2014} $$ has an infinite number of solutions in the set of rational numbers. -/ theorem number_theory_119976 : Set.Infinite {x ",
+   "evidence": {
+    "domain": "field",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "typeclass instance problem is stuck Infinite ?m.29 Note: Lean will not try to resolve this typeclass instance problem because the type argument to `Infinite` is a metavariable. This argument must be f"
+   }
+  },
+  {
+   "uuid": "0b58d370-52eb-5043-b4c6-31cada82030f",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- ## Subject II Prove that there do not exist $x, y, z \\in Z$ such that $$ x y(x-y)+y z(y-z)+z x(z-x)=-1 $$ -/ theorem number_theory_115544 (x y z : ℤ) : ¬(x*y*(x-y) + y*z*(y-z) + z*x*",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: No usable constraints found. You may need to unfold definitions so `omega` can see linear arithmetic facts about `Nat` and `Int`, which may also involve multiplication,"
+   }
+  },
+  {
+   "uuid": "0c2f5e47-6574-5456-b66d-1c87b0706e2a",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "UNKNOWN",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Let $a \\geq 1$ and $n$ be integers such that $a \\mid n+2$ and $a \\mid n^{2}+n+5$. Show that $a=1$ or $a=7$. -/ theorem number_theory_159620 (a n : ℤ) (_ : 1 ≤ a) (h₀ : a ∣ n + 2) (h₁",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "Tactic `apply` failed: could not unify the conclusion of `@le_of_dvd` ?m ≤ ?n with the goal a ≤ n ^ 2 + n + 5 Note: The full type of `@le_of_dvd` is ∀ {m n : ℕ}, 0 < n → m ∣ n → m ≤ n a n : ℤ x✝ : 1 ≤"
+   }
+  },
+  {
+   "uuid": "0c66929e-53ad-5810-982f-69da65bc7d58",
+   "temp": "0.7",
+   "band": "medium",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "goal_is_false",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib theorem number_theory_158062 : ∃ n > 0, (Nat.digits 10 n).all (fun d => d = 1) ∧ 2019 ∣ n := by",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [
+     "158062"
+    ],
+    "error_head": "Tactic `decide` proved that the proposition False is false"
+   }
+  },
+  {
+   "uuid": "0c92610a-3699-502f-81b3-a2bb972062c2",
+   "temp": "0.7",
+   "band": "hard",
+   "outcome": "compile_error",
+   "label": "tactic_mismatch",
+   "old_kind": "tactic_failed",
+   "has_kimina_proof": true,
+   "statement": "import Mathlib /- Theorem 1 Let the binary linear indeterminate equation be $$a x+b y=c$$ (where $a, b, c$ are all positive integers and $(a, b)=1$) have a set of integer solutions $x=$ $x_{0}, y=y_{0",
+   "evidence": {
+    "domain": "nat",
+    "bindings": {},
+    "statement_claims_checked": 0,
+    "proof_claims_checked": 0,
+    "false_hypotheses": [],
+    "false_goal": [],
+    "false_proof_literals": [],
+    "proof_written_literals": [],
+    "error_head": "omega could not prove the goal: a possible counterexample may satisfy the constraints i - j - k ≥ 1 f + g ≥ 1 e ≥ 1 d ≥ 1 where d := a e := b f := a * x g := b * y i := x₀ j := b * ((x₀ - x) / b) k :="
+   }
+  }
+ ]
+}

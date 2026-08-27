@@ -47,3 +47,4 @@ results/*.png
 !results/stage_b_verified_temp0.0.jsonl
 !results/stage_b_verified_temp0.7.jsonl
 !results/goal_shape.json
+!results/stage_b_provenance.json
