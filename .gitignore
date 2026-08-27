@@ -48,3 +48,4 @@ results/*.png
 !results/stage_b_verified_temp0.7.jsonl
 !results/goal_shape.json
 !results/stage_b_provenance.json
+!results/corroboration.json

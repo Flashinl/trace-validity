@@ -1,0 +1,241 @@
+{
+ "rows": [
+  {
+   "run": "baseline_50step_1problem",
+   "sample": 2,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "goal `n = 1.061520150601 * 10^9` is FALSE: 1061520150601 vs 1061520150601/1000"
+  },
+  {
+   "run": "baseline_50step_1problem",
+   "sample": 3,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "goal `x = (1061520.150601)^3 * 10^2` is FALSE: 1061520150601 vs 11961474756866648607810499"
+  },
+  {
+   "run": "baseline_50step_1problem",
+   "sample": 4,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "goal `1061520.150601 = x` is FALSE: 1061520150601/1000000 vs 1061209"
+  },
+  {
+   "run": "baseline_50step_1problem",
+   "sample": 6,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "goal `x = 10303` is FALSE: 10201 vs 10303"
+  },
+  {
+   "run": "baseline_50step_1problem",
+   "sample": 7,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "hypothesis `1061520.150601 = (101^2 * 103)^3` is FALSE: 1061520150601/1000000 vs 115995172"
+  },
+  {
+   "run": "baseline_50step_1problem",
+   "sample": 27,
+   "state": "Success of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": false,
+   "why": "hypothesis `1061520150601 = 1 * (100 + 6) ^ 3` is FALSE: 1061520150601 vs 1191016"
+  },
+  {
+   "run": "baseline_50step_1problem",
+   "sample": 31,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "goal `1061520150601 = (100^3 + 3 * 100^2 * 6 + 3 * 100 * 6^2 + 6^3)` is FALSE: 10615201506"
+  },
+  {
+   "run": "baseline_50step_1problem",
+   "sample": 32,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "goal `100^3 + 3 * (100^2) * 6 + 3 * 100 * (6^2) = 1061520150601` is FALSE: 1190800 vs 1061"
+  },
+  {
+   "run": "baseline_50step_1problem",
+   "sample": 34,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "goal `100^3 + 3 * 100^2 * 6 + 108 * 100 = 1061520150601` is FALSE: 1190800 vs 106152015060"
+  },
+  {
+   "run": "baseline_50step_1problem",
+   "sample": 35,
+   "state": "Success of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": false,
+   "why": "goal `1061520150601 = 1 * (a + b + c)` is FALSE: 1061520150601 vs 1190800"
+  },
+  {
+   "run": "baseline_50step_1problem",
+   "sample": 36,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "goal `1061520150601 = (100^3 + 3 * 100^2 * 6 + 10800)` is FALSE: 1061520150601 vs 1190800"
+  },
+  {
+   "run": "baseline_50step_1problem",
+   "sample": 37,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "goal `1 * (1 * 100^3 + 3 * 100^2 * 6 + 10800) = 1061520150601` is FALSE: 1190800 vs 106152"
+  },
+  {
+   "run": "baseline_50step_1problem",
+   "sample": 38,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "goal `1061520150601 = (100 + 6)^6` is FALSE: 1061520150601 vs 1418519112256"
+  },
+  {
+   "run": "baseline_50step_1problem",
+   "sample": 39,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 2,
+   "reference_proof_empty": true,
+   "why": "goal `1061520150601 = (100 + 6)^6` is FALSE: 1061520150601 vs 1418519112256"
+  },
+  {
+   "run": "baseline_50step_1problem",
+   "sample": 42,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "goal `1061520150601 = 1 * (100 + 6)^6` is FALSE: 1061520150601 vs 1418519112256"
+  },
+  {
+   "run": "baseline_50step_1problem",
+   "sample": 44,
+   "state": "Success of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": false,
+   "why": "goal `x = 1 * (100^3 + 3 * 100^2 * 6 + 10800)` is FALSE: 1191016 vs 1190800"
+  },
+  {
+   "run": "baseline_50step_1problem",
+   "sample": 46,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 2,
+   "reference_proof_empty": true,
+   "why": "goal `1061520150601 = (100 + 6)^6` is FALSE: 1061520150601 vs 1418519112256"
+  },
+  {
+   "run": "baseline_50step_1problem",
+   "sample": 49,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "goal `n = 1030301 * 10^6 + 1 * 10^6` is FALSE: 1061520150601 vs 1030302000000"
+  },
+  {
+   "run": "n50_distinct_T0.0",
+   "sample": 5,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 3,
+   "reference_proof_empty": true,
+   "why": "goal `5 / 6 = 1 - 1 / 6` is FALSE: 0 vs 1"
+  },
+  {
+   "run": "n50_distinct_T0.0",
+   "sample": 7,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "goal `(11! / (9! + 2 * 8!)) = (11 * 10 / (9 + 2))` is FALSE: 90 vs 10"
+  },
+  {
+   "run": "n50_distinct_T0.0",
+   "sample": 16,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "goal `total_cubes - interior_cubes = 36` is FALSE: 56 vs 36"
+  },
+  {
+   "run": "n50_distinct_T0.0",
+   "sample": 36,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "goal `(6! + 7!) / 5! = 8` is FALSE: 48 vs 8"
+  },
+  {
+   "run": "n50_distinct_T0.2",
+   "sample": 5,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 3,
+   "reference_proof_empty": true,
+   "why": "goal `5 / 6 = 1 - 1 / 6` is FALSE: 0 vs 1"
+  },
+  {
+   "run": "n50_distinct_T0.2",
+   "sample": 7,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "goal `(11! / (9! + 2 * 8!)) = (11 * 10 / (9 + 2))` is FALSE: 90 vs 10"
+  },
+  {
+   "run": "n50_distinct_T0.2",
+   "sample": 16,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "goal `total_cubes - interior_cubes = 36` is FALSE: 56 vs 36"
+  },
+  {
+   "run": "n50_distinct_T0.2",
+   "sample": 36,
+   "state": "Failure of Proof",
+   "n_dataset_rows": 1,
+   "reference_proof_empty": true,
+   "why": "goal `(6! + 7!) / 5! = 8` is FALSE: 48 vs 8"
+  }
+ ],
+ "per_run": {
+  "baseline_50step_1problem": {
+   "k": 15,
+   "n": 18,
+   "wilson": [
+    0.6077750036164076,
+    0.9416352959953425
+   ],
+   "ref_empty": 15
+  },
+  "n50_distinct_T0.0": {
+   "k": 4,
+   "n": 4,
+   "wilson": [
+    0.5100999795960008,
+    1.0
+   ],
+   "ref_empty": 4
+  },
+  "n50_distinct_T0.2": {
+   "k": 4,
+   "n": 4,
+   "wilson": [
+    0.5100999795960008,
+    1.0
+   ],
+   "ref_empty": 4
+  }
+ }
+}
