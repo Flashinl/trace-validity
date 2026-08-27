@@ -112,3 +112,53 @@ Both reports now carry a generated statistics block, emitted by
 removed rather than kept in sync: a number that appears twice is a number that
 can disagree with itself, which is exactly how the 36-vs-37 contradiction
 survived unnoticed.
+
+---
+
+## 2026-08-27 — re-verified pre-meeting: no live contradiction remains
+
+Re-checked because the pre-meeting brief still described
+`SUMMARY_n50_distinct.md` as reporting 36 valid / 14 failures. **It does not,
+and has not since `776eebf`.** The brief's premise describes an older commit.
+
+State on `pre-meeting/close-open-questions` (base `8978e94`):
+
+| document | headline | status |
+|---|---|---|
+| `results/SUMMARY_n50_distinct.md` | 37/50 = 74% [60–84%] | live, correct |
+| `README.md` §"Which verification pass" | marks `verify_temp0.*` **superseded**, `verify3_*` current | live, correct |
+| `results/AUDIT_LOG.md` | "superseded 36/50 = 72%" | correctly marked dead |
+| `results/AUDIT_REPORT.md` | "superseded 36/50" | correctly marked dead |
+| `results/BRANCH_MAP.md`, `BRANCH_COMPARISON.md` | 36/50 as history | historical, describes an older HEAD |
+
+**The sample that moved is 12.** Verified directly against the artifacts:
+
+| sample | `verify_temp0.0` | `verify3_temp0.0` | old error |
+|---|---|---|---|
+| **12** | `compile_error` | **`valid`** | `maximum recursion depth has been reached / use set_option maxRecDepth <num>` |
+| 19 | `compile_error` | `statement_error` | `unexpected token 'in'; expected ','` |
+| 49 | `compile_error` | `statement_error` | `unexpected token 'in'; expected ','` |
+
+Only sample 12 changes the numerator (36 → 37). Samples 19 and 49 move from
+`compile_error` to `statement_error`, which changes the *testable* denominator
+(50 → 48), not the count of passes.
+
+**Cause and commit, both confirmed:** `maxRecDepth` was raised from Lean's
+default 512 to 10000 in `verifier.py` at commit **`64fba01`**. Sample 12's old
+error names the exact option that was raised, so the attribution is direct
+rather than inferred.
+
+### Two documentation drifts flagged in `BRANCH_COMPARISON.md` are now CLOSED
+
+That document lists two items as "fix before merge". Both are fixed on HEAD and
+it should not be read in a meeting as an open action:
+
+1. *"README omits `statement_error` from the outcome list"* — **fixed.** The
+   README lists `statement_error` (3 occurrences), including in the outcome
+   enumeration.
+2. *"README's worked example writes `results/verify_temp0.0.jsonl`, so following
+   the documented commands reproduces 36/50 = 72%"* — **fixed.** The README now
+   writes and analyses `results/verify3_temp0.0.jsonl` throughout, and carries an
+   explicit table marking `verify_temp0.*` superseded.
+
+**No action required. 37/50 = 74% [60–84%] is the single live value.**
