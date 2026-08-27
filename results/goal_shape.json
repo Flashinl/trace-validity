@@ -1,0 +1,3568 @@
+{
+ "summary": {
+  "A. FIRST STEP OF EACH PROBLEM (n=500)": {
+   "proof": 252,
+   "calculation": 226,
+   "mixed": 2,
+   "UNKNOWN": 20,
+   "n": 500,
+   "wilson": {
+    "proof": [
+     0.4603113571655595,
+     0.5476276458861933
+    ],
+    "calculation": [
+     0.4089065586120002,
+     0.49582540476696657
+    ],
+    "mixed": [
+     0.0010976075412372681,
+     0.014466014041418871
+    ],
+    "UNKNOWN": [
+     0.026040593951356387,
+     0.06097405509707471
+    ]
+   }
+  },
+  "B. ALL ROWS IN THE SPLIT (n=30809)": {
+   "proof": 9153,
+   "calculation": 20823,
+   "mixed": 232,
+   "UNKNOWN": 601,
+   "n": 30809,
+   "wilson": {
+    "proof": [
+     0.2920112433492472,
+     0.3022163789418433
+    ],
+    "calculation": [
+     0.6706258320311147,
+     0.6810781795846137
+    ],
+    "mixed": [
+     0.006624433618489869,
+     0.008558898255711565
+    ],
+    "UNKNOWN": [
+     0.018021805029586765,
+     0.02111257977184615
+    ]
+   }
+  },
+  "coverage": {
+   "problems_with_proof_step": 494,
+   "problems": 500,
+   "proof_rows": 9385,
+   "rows": 30809
+  },
+  "decision": {
+   "proof_or_mixed_500": 254,
+   "n": 500,
+   "threshold": 75,
+   "verdict": "VIABLE"
+  }
+ },
+ "rows500": [
+  {
+   "row": 0,
+   "pid": "math_train_counting_and_probability_408",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "∃ a: ℕ, a^6 = n"
+  },
+  {
+   "row": 66,
+   "pid": "math_train_counting_and_probability_5028",
+   "class": "calculation",
+   "why": "conjunction, all closed arithmetic",
+   "goal": "(1 ≤ d ∧ d ≤ 9)"
+  },
+  {
+   "row": 132,
+   "pid": "math_train_counting_and_probability_1104",
+   "class": "proof",
+   "why": "quantifier,set_relation",
+   "goal": "(∃ y ∈ s, y = 3 * x)"
+  },
+  {
+   "row": 187,
+   "pid": "math_train_counting_and_probability_492",
+   "class": "proof",
+   "why": "inequality over a free variable",
+   "goal": "(b ≥ 50)"
+  },
+  {
+   "row": 231,
+   "pid": "math_train_counting_and_probability_1020",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(5 + 4 + 3 + 2 + 1 = 15)"
+  },
+  {
+   "row": 241,
+   "pid": "math_train_counting_and_probability_5027",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(north = 2) ∧ (east = 2) ∧ (west = 0) ∧ (south = 0)"
+  },
+  {
+   "row": 291,
+   "pid": "math_train_counting_and_probability_437",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "triplets.card = 3"
+  },
+  {
+   "row": 333,
+   "pid": "math_train_counting_and_probability_283",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "Fintype.card (Finset.univ : Finset (Fin 3)) = 3"
+  },
+  {
+   "row": 385,
+   "pid": "math_train_counting_and_probability_811",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(steps_right + steps_down = 9)"
+  },
+  {
+   "row": 414,
+   "pid": "math_train_counting_and_probability_1039",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "∃ r, (r = Real.sqrt 5) ∧ (P.1, P.2) ∈ Metric.ball (2, 1) r"
+  },
+  {
+   "row": 463,
+   "pid": "math_train_counting_and_probability_719",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.factorial 4 = 24)"
+  },
+  {
+   "row": 502,
+   "pid": "math_train_counting_and_probability_484",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(balls = 4)"
+  },
+  {
+   "row": 541,
+   "pid": "math_train_counting_and_probability_691",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(letters.card = 10)"
+  },
+  {
+   "row": 574,
+   "pid": "math_train_counting_and_probability_178",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(9! = 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9)"
+  },
+  {
+   "row": 620,
+   "pid": "math_train_counting_and_probability_782",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "((a + b) % 100 = (8^25 + 12^25) % 100)"
+  },
+  {
+   "row": 670,
+   "pid": "math_train_counting_and_probability_88",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(3 + 3 = 6)"
+  },
+  {
+   "row": 698,
+   "pid": "math_train_counting_and_probability_142",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(white + black = 11)"
+  },
+  {
+   "row": 754,
+   "pid": "math_train_counting_and_probability_163",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(1 ≤ a.val) ∧ (a.val ≤ 6) ∧ (1 ≤ b.val) ∧ (b.val ≤ 6) ∧ (1 ≤ c.val) ∧ (c.val ≤ 6)"
+  },
+  {
+   "row": 807,
+   "pid": "math_train_counting_and_probability_284",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(Nat.card {x : Nat | 3 ≤ x ∧ x ≤ 9} = 7)"
+  },
+  {
+   "row": 898,
+   "pid": "math_train_counting_and_probability_5002",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(n = 6) ∧ (∃! k, (k < n) ∧ (∀ i < k, i + 1 < k) ∧ (∀ i > k, i + 1 > k))"
+  },
+  {
+   "row": 955,
+   "pid": "math_train_counting_and_probability_617",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(3 ^ friends = 3 ^ 6)"
+  },
+  {
+   "row": 985,
+   "pid": "math_train_counting_and_probability_622",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(n - k = 4)"
+  },
+  {
+   "row": 1028,
+   "pid": "math_train_counting_and_probability_597",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "(∃ k: ℕ, k = 3)"
+  },
+  {
+   "row": 1084,
+   "pid": "math_train_counting_and_probability_881",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "total = 11"
+  },
+  {
+   "row": 1133,
+   "pid": "math_train_counting_and_probability_5060",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "True"
+  },
+  {
+   "row": 1261,
+   "pid": "math_train_counting_and_probability_5078",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(total_flags = blue_flags + green_flags)"
+  },
+  {
+   "row": 1413,
+   "pid": "math_train_counting_and_probability_847",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(b ≠ a ∧ b ≠ d ∧ c ≠ a ∧ c ≠ d)"
+  },
+  {
+   "row": 1475,
+   "pid": "math_train_counting_and_probability_11",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(x = 4018)"
+  },
+  {
+   "row": 1534,
+   "pid": "math_train_counting_and_probability_470",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(total_cards = 52)"
+  },
+  {
+   "row": 1610,
+   "pid": "math_train_counting_and_probability_372",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(n = 5)"
+  },
+  {
+   "row": 1650,
+   "pid": "math_train_counting_and_probability_5011",
+   "class": "calculation",
+   "why": "conjunction, all closed arithmetic",
+   "goal": "hh = 2 ∧ ht = 3 ∧ th = 4 ∧ tt = 5"
+  },
+  {
+   "row": 1729,
+   "pid": "math_train_counting_and_probability_1024",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(total_units = 7)"
+  },
+  {
+   "row": 1771,
+   "pid": "math_train_counting_and_probability_296",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(2 ^ balls = 32)"
+  },
+  {
+   "row": 1837,
+   "pid": "math_train_counting_and_probability_446",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(6! - 5 * 5! - 5! = 0)"
+  },
+  {
+   "row": 1886,
+   "pid": "math_train_counting_and_probability_1068",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "n = 12"
+  },
+  {
+   "row": 1930,
+   "pid": "math_train_counting_and_probability_552",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(Nat.factorial n = Nat.factorial r * Nat.factorial (n - r) * (Nat.choose n r))"
+  },
+  {
+   "row": 1979,
+   "pid": "math_train_counting_and_probability_744",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "(∃ (t : Nat), t = 14)"
+  },
+  {
+   "row": 2053,
+   "pid": "math_train_counting_and_probability_167",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "∃ n: Nat, n = 6"
+  },
+  {
+   "row": 2097,
+   "pid": "math_train_counting_and_probability_515",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(m = 6)"
+  },
+  {
+   "row": 2145,
+   "pid": "math_train_counting_and_probability_5107",
+   "class": "proof",
+   "why": "iff",
+   "goal": "((d1 + d3) - d2) % 11 = 0 ↔ ((d1 * 100 + d2 * 10 + d3) % 11 = 0)"
+  },
+  {
+   "row": 2258,
+   "pid": "math_train_counting_and_probability_533",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(first_digit * second_digit = 12)"
+  },
+  {
+   "row": 2298,
+   "pid": "math_train_counting_and_probability_287",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(total_books - identical_books = 3)"
+  },
+  {
+   "row": 2338,
+   "pid": "math_train_counting_and_probability_299",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(daily_expected_rain * total_days = 5.5)"
+  },
+  {
+   "row": 2375,
+   "pid": "math_train_counting_and_probability_431",
+   "class": "proof",
+   "why": "finset_or_card,quantifier",
+   "goal": "(∃ scenarios: Set (Finset ℕ), scenarios = {{4,0,0,0}, {3,1,0,0}, {2,2,0,0}, {2,1,1,0}, {1,1,1,1}})"
+  },
+  {
+   "row": 2451,
+   "pid": "math_train_counting_and_probability_46",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(Nat.choose n k = Nat.choose (n - 1) (k - 1) + Nat.choose (n - 1) k)"
+  },
+  {
+   "row": 2512,
+   "pid": "math_train_counting_and_probability_290",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(choose 10 4 + choose 10 4) / choose 20 4 = (choose 10 total_committee + choose 10 total_committee) / choose 20 total_committee"
+  },
+  {
+   "row": 2572,
+   "pid": "math_train_counting_and_probability_73",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∃ k, k ≤ n ∧ (Nat.choose n k = 1))"
+  },
+  {
+   "row": 2638,
+   "pid": "math_train_counting_and_probability_5050",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "∃ j : Nat, 1 ≤ j ∧ j ≤ 10"
+  },
+  {
+   "row": 2725,
+   "pid": "math_train_counting_and_probability_399",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "Nat.choose n k = n! / (k! * (n - k)!)"
+  },
+  {
+   "row": 2775,
+   "pid": "math_train_counting_and_probability_783",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(j = b ∨ j = b + 1 ∨ j = b + 2 ∨ b = j + 1 ∨ b = j + 2)"
+  },
+  {
+   "row": 2818,
+   "pid": "math_train_counting_and_probability_138",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(5 / 6 = 1 - 1 / 6)"
+  },
+  {
+   "row": 2878,
+   "pid": "math_train_counting_and_probability_554",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "Nat.choose n r = n! / (r! * (n - r)!)"
+  },
+  {
+   "row": 2932,
+   "pid": "math_train_counting_and_probability_232",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(x = 1)"
+  },
+  {
+   "row": 2986,
+   "pid": "math_train_counting_and_probability_658",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(sides + diagonals = 10)"
+  },
+  {
+   "row": 3053,
+   "pid": "math_train_counting_and_probability_60",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.choose n k = 220)"
+  },
+  {
+   "row": 3091,
+   "pid": "math_train_counting_and_probability_404",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(p = 8/27)"
+  },
+  {
+   "row": 3148,
+   "pid": "math_train_counting_and_probability_943",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "-- This would involve listing partitions of 8 into at most 4 parts -- The theorem itself would need a robust combinatorial proof True"
+  },
+  {
+   "row": 3236,
+   "pid": "math_train_counting_and_probability_426",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(8! - 7! = 7! * 7)"
+  },
+  {
+   "row": 3297,
+   "pid": "math_train_counting_and_probability_892",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(30! = 30 * 29 * 28 * 27 * 26 * 25 * 24 * 23 * 22 * 21 * 20 * 19 * 18 * 17 * 16 * 15 * 14 * 13 * 12 * 11 * 10 * 9 * 8 * 7 * 6 * 5 * 4 * 3 * 2 * 1)"
+  },
+  {
+   "row": 3315,
+   "pid": "math_train_counting_and_probability_607",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.pow 6 3 = 216)"
+  },
+  {
+   "row": 3351,
+   "pid": "math_train_counting_and_probability_5008",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "slots = 6"
+  },
+  {
+   "row": 3425,
+   "pid": "math_train_counting_and_probability_468",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.choose 18 2 = 153)"
+  },
+  {
+   "row": 3508,
+   "pid": "math_train_counting_and_probability_147",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(total_pairs ≠ 0)"
+  },
+  {
+   "row": 3574,
+   "pid": "math_train_counting_and_probability_1110",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(Fintype.card (Finset (Fin k)) = Nat.choose n k)"
+  },
+  {
+   "row": 3633,
+   "pid": "math_train_counting_and_probability_626",
+   "class": "proof",
+   "why": "inequality over a free variable",
+   "goal": "(u ≥ 2 * t)"
+  },
+  {
+   "row": 3692,
+   "pid": "math_train_counting_and_probability_5052",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∃ t₁ t₂ t₃: Finset (ℝ × ℝ × ℝ), (∀ x ∈ t₁, x ∈ v) ∧ (∀ x ∈ t₂, x ∈ v) ∧ (∀ x ∈ t₃, x ∈ v) ∧ (t₁.card = 3) ∧ (t₂.card = 3) ∧ (t₃.card = 3))"
+  },
+  {
+   "row": 3754,
+   "pid": "math_train_counting_and_probability_5088",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(⌊Real.sqrt (P x)⌋ = Real.sqrt (P (⌊x⌋)))"
+  },
+  {
+   "row": 3861,
+   "pid": "math_train_counting_and_probability_1070",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.choose 16 3 = 560)"
+  },
+  {
+   "row": 3959,
+   "pid": "math_train_counting_and_probability_736",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(3 / 6 = 1 / 2)"
+  },
+  {
+   "row": 4000,
+   "pid": "math_train_counting_and_probability_921",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(1 - p = 3/4)"
+  },
+  {
+   "row": 4073,
+   "pid": "math_train_counting_and_probability_821",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(11! / (9! + 2 * 8!)) = (11 * 10 / (9 + 2))"
+  },
+  {
+   "row": 4129,
+   "pid": "math_train_counting_and_probability_1029",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(n = 50)"
+  },
+  {
+   "row": 4290,
+   "pid": "math_train_counting_and_probability_28",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(63 = 3 ^ 2 * 7)"
+  },
+  {
+   "row": 4365,
+   "pid": "math_train_counting_and_probability_709",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(6 * 2 = 12)"
+  },
+  {
+   "row": 4415,
+   "pid": "math_train_counting_and_probability_315",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "Nat.choose n r = n! / (r! * (n - r)!)"
+  },
+  {
+   "row": 4465,
+   "pid": "math_train_counting_and_probability_308",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(x + o = 5)"
+  },
+  {
+   "row": 4535,
+   "pid": "math_train_counting_and_probability_830",
+   "class": "proof",
+   "why": "predicate",
+   "goal": "(Even (a + b))"
+  },
+  {
+   "row": 4582,
+   "pid": "math_train_counting_and_probability_75",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(p_heads * w_heads + p_tails * w_tails = 1/3)"
+  },
+  {
+   "row": 4623,
+   "pid": "math_train_counting_and_probability_410",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(a^(n-k) * b^k = 1)"
+  },
+  {
+   "row": 4665,
+   "pid": "math_train_counting_and_probability_756",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.factorial 7 = 5040)"
+  },
+  {
+   "row": 4726,
+   "pid": "math_train_counting_and_probability_493",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(\"COMBINATION\".length = 11)"
+  },
+  {
+   "row": 4778,
+   "pid": "math_train_counting_and_probability_386",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(6 = 6)"
+  },
+  {
+   "row": 4820,
+   "pid": "math_train_counting_and_probability_5031",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(r = (h_lines.choose 2) * (v_lines.choose 2))"
+  },
+  {
+   "row": 4903,
+   "pid": "math_train_counting_and_probability_387",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "Fintype.card {s : Finset vowels // s.card = 2} = 3"
+  },
+  {
+   "row": 4972,
+   "pid": "math_train_counting_and_probability_5079",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(M + V + E = 5 + 5 + 5)"
+  },
+  {
+   "row": 5068,
+   "pid": "math_train_counting_and_probability_213",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(paths = 1)"
+  },
+  {
+   "row": 5103,
+   "pid": "math_train_counting_and_probability_1049",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(String.length \"MADAM\" = 5)"
+  },
+  {
+   "row": 5151,
+   "pid": "math_train_counting_and_probability_580",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(r / g = 1)"
+  },
+  {
+   "row": 5214,
+   "pid": "math_train_counting_and_probability_257",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∃ k : Nat, k ≥ n / 2 ∧ k ≤ n)"
+  },
+  {
+   "row": 5295,
+   "pid": "math_train_counting_and_probability_1048",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(routes = 0)"
+  },
+  {
+   "row": 5347,
+   "pid": "math_train_counting_and_probability_5061",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.choose (gold + silver) gold = 70)"
+  },
+  {
+   "row": 5402,
+   "pid": "math_train_counting_and_probability_5121",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(2 ^ 4 = 16)"
+  },
+  {
+   "row": 5442,
+   "pid": "math_train_counting_and_probability_565",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "Nat.choose n r = n.factorial / (r.factorial * (n - r).factorial)"
+  },
+  {
+   "row": 5496,
+   "pid": "math_train_counting_and_probability_5046",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(a + b > c)"
+  },
+  {
+   "row": 5562,
+   "pid": "math_train_counting_and_probability_129",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "Nat.choose 20 n = Nat.choose 20 11"
+  },
+  {
+   "row": 5593,
+   "pid": "math_train_counting_and_probability_750",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(p_single_digit * 1 + p_double_digit * 2 = 1.25)"
+  },
+  {
+   "row": 5645,
+   "pid": "math_train_counting_and_probability_896",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(Fintype.card (Fin 4) = 4)"
+  },
+  {
+   "row": 5720,
+   "pid": "math_train_counting_and_probability_459",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(12 - x = total_slips - x)"
+  },
+  {
+   "row": 5772,
+   "pid": "math_train_counting_and_probability_698",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(total = geometryBooks + numberTheoryBooks)"
+  },
+  {
+   "row": 5832,
+   "pid": "math_train_counting_and_probability_784",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(1 = 1)"
+  },
+  {
+   "row": 5894,
+   "pid": "math_train_counting_and_probability_563",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(P_W + P_L = 1)"
+  },
+  {
+   "row": 5925,
+   "pid": "math_train_counting_and_probability_543",
+   "class": "proof",
+   "why": "finset_or_card,quantifier",
+   "goal": "(∀ s : Finset (Fin n), s.card = 2^n)"
+  },
+  {
+   "row": 5941,
+   "pid": "math_train_counting_and_probability_897",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(choose n k = choose 11 6)"
+  },
+  {
+   "row": 6003,
+   "pid": "math_train_counting_and_probability_211",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∃ u : Finset ℕ, u.card = 5 ∧ ∀ x ∈ u, 20 ≤ x ∧ x ≤ 69 ∧ ∀ x ∈ u, ∀ y ∈ u, x ≠ y → x / 10 ≠ y / 10)"
+  },
+  {
+   "row": 6066,
+   "pid": "math_train_counting_and_probability_647",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(Finset.card (s ×ˢ s) = 20) ∧ (Finset.card ((s ×ˢ s).filter (fun (p : ℕ × ℕ) => p.1 ≠ p.2)) = 10)"
+  },
+  {
+   "row": 6123,
+   "pid": "math_train_counting_and_probability_729",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "P_A + P_B + P_C = 1"
+  },
+  {
+   "row": 6177,
+   "pid": "math_train_counting_and_probability_593",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(Nat.choose n r = n.factorial / (r.factorial * (n - r).factorial))"
+  },
+  {
+   "row": 6223,
+   "pid": "math_train_counting_and_probability_999",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(13 + 3 = 16)"
+  },
+  {
+   "row": 6270,
+   "pid": "math_train_counting_and_probability_428",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(2 = 2 ^ 1)"
+  },
+  {
+   "row": 6319,
+   "pid": "math_train_counting_and_probability_424",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(999 - 100 + 1 = 900)"
+  },
+  {
+   "row": 6376,
+   "pid": "math_train_counting_and_probability_469",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.factorial 6 / (Nat.factorial 2 * Nat.factorial 2 * Nat.factorial 2) = 90)"
+  },
+  {
+   "row": 6440,
+   "pid": "math_train_counting_and_probability_5016",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(Fintype.card {s : Finset (Fin n) // s.card = k} = Nat.choose n k)"
+  },
+  {
+   "row": 6594,
+   "pid": "math_train_counting_and_probability_448",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "((N - 1)! * N / (N + 1)!) = 1 / (N + 1)"
+  },
+  {
+   "row": 6647,
+   "pid": "math_train_counting_and_probability_144",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(red + green + white = 15)"
+  },
+  {
+   "row": 6702,
+   "pid": "math_train_counting_and_probability_1042",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(word.length = 5)"
+  },
+  {
+   "row": 6736,
+   "pid": "math_train_counting_and_probability_716",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.choose n k = 15)"
+  },
+  {
+   "row": 6794,
+   "pid": "math_train_counting_and_probability_5131",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "∃ (N : ℕ), (N = (choose 16 7))"
+  },
+  {
+   "row": 6842,
+   "pid": "math_train_counting_and_probability_334",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(26 = 26)"
+  },
+  {
+   "row": 6885,
+   "pid": "math_train_counting_and_probability_826",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(5 + k = 5 + k)"
+  },
+  {
+   "row": 6948,
+   "pid": "math_train_counting_and_probability_5007",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "n = Nat.choose 200 100"
+  },
+  {
+   "row": 6993,
+   "pid": "math_train_counting_and_probability_877",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "Nat.choose n r = 1996 * 1995 * 1994 * 1993 / (4 * 3 * 2 * 1)"
+  },
+  {
+   "row": 7046,
+   "pid": "math_train_counting_and_probability_353",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(Finset.card (Finset.filter (fun x => x % 2 = 0) (Finset.range 51)) = 25)"
+  },
+  {
+   "row": 7110,
+   "pid": "math_train_counting_and_probability_553",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(x = 49.6)"
+  },
+  {
+   "row": 7164,
+   "pid": "math_train_counting_and_probability_758",
+   "class": "proof",
+   "why": "inequality over a free variable",
+   "goal": "(a < b)"
+  },
+  {
+   "row": 7221,
+   "pid": "math_train_counting_and_probability_1121",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "(n ≡ 1 + 2 + 6 [MOD 15])"
+  },
+  {
+   "row": 7284,
+   "pid": "math_train_counting_and_probability_627",
+   "class": "proof",
+   "why": "inequality over a free variable",
+   "goal": "b ≤ 4"
+  },
+  {
+   "row": 7331,
+   "pid": "math_train_counting_and_probability_5045",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(spanish_percent_lower * total_students ≤ spanish_percent_upper * total_students) ∧ (french_percent_lower * total_students ≤ french_percent_upper * total_students)"
+  },
+  {
+   "row": 7416,
+   "pid": "math_train_counting_and_probability_5103",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(4 / 10) * (16 / (16 + N)) = (2 / 5) * (16 / (16 + N))"
+  },
+  {
+   "row": 7498,
+   "pid": "math_train_counting_and_probability_200",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(1 - p = 3/7)"
+  },
+  {
+   "row": 7526,
+   "pid": "math_train_counting_and_probability_350",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(9 - 2 = 7)"
+  },
+  {
+   "row": 7563,
+   "pid": "math_train_counting_and_probability_255",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(boys * girls + girls * boys = 200)"
+  },
+  {
+   "row": 7609,
+   "pid": "math_train_counting_and_probability_992",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(4000 ≤ N) ∧ (N < 6000)"
+  },
+  {
+   "row": 7657,
+   "pid": "math_train_counting_and_probability_29",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(5 * 5 * 5 * 5 = 625)"
+  },
+  {
+   "row": 7701,
+   "pid": "math_train_counting_and_probability_1034",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(total_paths = cases)"
+  },
+  {
+   "row": 7798,
+   "pid": "math_train_counting_and_probability_819",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "Nat.choose 16 4 = 182"
+  },
+  {
+   "row": 7857,
+   "pid": "math_train_counting_and_probability_814",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "Nat.choose n k = n.factorial / (k.factorial * (n - k).factorial)"
+  },
+  {
+   "row": 7893,
+   "pid": "math_train_counting_and_probability_700",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(String.length \"ALABAMA\" = 7)"
+  },
+  {
+   "row": 7932,
+   "pid": "math_train_counting_and_probability_265",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(p_same = 1 - p_diff)"
+  },
+  {
+   "row": 8016,
+   "pid": "math_train_counting_and_probability_639",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 = 45)"
+  },
+  {
+   "row": 8085,
+   "pid": "math_train_counting_and_probability_5086",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "A.card + B.card = 12"
+  },
+  {
+   "row": 8180,
+   "pid": "math_train_counting_and_probability_806",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(5 = Finset.card (Finset.filter (fun x => x % 2 = 1) (Finset.range 10)))"
+  },
+  {
+   "row": 8224,
+   "pid": "math_train_counting_and_probability_45",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(prob_of_rolling_1_on_die = 1 / 6)"
+  },
+  {
+   "row": 8253,
+   "pid": "math_train_counting_and_probability_452",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "∃ (n : Nat), n = (d1, d2, d3, d4)"
+  },
+  {
+   "row": 8291,
+   "pid": "math_train_counting_and_probability_591",
+   "class": "proof",
+   "why": "implication",
+   "goal": "(n = 3) → (n.choose 1 = 3)"
+  },
+  {
+   "row": 8350,
+   "pid": "math_train_counting_and_probability_344",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(probability = 1 / 4)"
+  },
+  {
+   "row": 8364,
+   "pid": "math_train_counting_and_probability_191",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(probability = (intersecting_diagonals : ℝ) / (total_diagonals : ℝ))"
+  },
+  {
+   "row": 8431,
+   "pid": "math_train_counting_and_probability_402",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(List.permutations digits).length = 5! / (2!)"
+  },
+  {
+   "row": 8491,
+   "pid": "math_train_counting_and_probability_189",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(Fintype.card (Fin 6 × Fin 6) = 36)"
+  },
+  {
+   "row": 8566,
+   "pid": "math_train_counting_and_probability_988",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "∀ m : Nat, (m = 0 ∨ m = n) ∨ (Nat.choose n m % 2 = 0)"
+  },
+  {
+   "row": 8590,
+   "pid": "math_train_counting_and_probability_1073",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "((a ^ (n - k)) * (b ^ k) = (3 / 5) ^ 2 * (-1 / 2) ^ 6)"
+  },
+  {
+   "row": 8642,
+   "pid": "math_train_counting_and_probability_822",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "(True)"
+  },
+  {
+   "row": 8691,
+   "pid": "math_train_counting_and_probability_160",
+   "class": "proof",
+   "why": "implication",
+   "goal": "(Nat.choose n k >= 100) → Nat.choose n k = 100"
+  },
+  {
+   "row": 8729,
+   "pid": "math_train_counting_and_probability_5036",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "(∃ n : Nat, n = 40 * 39)"
+  },
+  {
+   "row": 8801,
+   "pid": "math_train_counting_and_probability_706",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(p_sat * p_sun = 0.6 * 0.25)"
+  },
+  {
+   "row": 8840,
+   "pid": "math_train_counting_and_probability_297",
+   "class": "calculation",
+   "why": "conjunction, all closed arithmetic",
+   "goal": "(0 < p ∧ p ≤ 1)"
+  },
+  {
+   "row": 8882,
+   "pid": "math_train_counting_and_probability_445",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "∃ (triplets starters: Finset ℕ), triplets.card = 3 ∧ starters.card = 6 ∧ (∀ t ∈ triplets, ∃! s ∈ starters, s = t) ∧ (∃ (A B: ℕ), A ∈ triplets ∧ B ∈ triplets ∧ A ≠ B ∧ A ∈ starters ∧ B ∈ starters)"
+  },
+  {
+   "row": 8946,
+   "pid": "math_train_counting_and_probability_959",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(max_intersections = n * (n - 1) / 2)"
+  },
+  {
+   "row": 9007,
+   "pid": "math_train_counting_and_probability_5115",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(4 - 1 + 1) * (4 - 1 + 1) = 16"
+  },
+  {
+   "row": 9123,
+   "pid": "math_train_counting_and_probability_548",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(p = 1 / 6)"
+  },
+  {
+   "row": 9163,
+   "pid": "math_train_counting_and_probability_712",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "Nat.choose n 1 = n"
+  },
+  {
+   "row": 9202,
+   "pid": "math_train_counting_and_probability_669",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(total_cubes - interior_cubes = 36)"
+  },
+  {
+   "row": 9277,
+   "pid": "math_train_counting_and_probability_5069",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "True"
+  },
+  {
+   "row": 9330,
+   "pid": "math_train_counting_and_probability_1032",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(count0 = 0 ∨ count0 = 1 ∨ count0 = 2)"
+  },
+  {
+   "row": 9437,
+   "pid": "math_train_counting_and_probability_902",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "((n * (n - 3)) / 2 = 27)"
+  },
+  {
+   "row": 9503,
+   "pid": "math_train_counting_and_probability_779",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "Nat.choose n r = n.factorial / (r.factorial * (n - r).factorial)"
+  },
+  {
+   "row": 9548,
+   "pid": "math_train_counting_and_probability_52",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "(∃ n k, Nat.choose n k = 43)"
+  },
+  {
+   "row": 9565,
+   "pid": "math_train_counting_and_probability_942",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(Finset.image (fun x => x.2 - x.1) (S.product S)).card = 15"
+  },
+  {
+   "row": 9598,
+   "pid": "math_train_counting_and_probability_325",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "((boys * (boys - vice_president)) + (girls * (girls - vice_president)) = 180)"
+  },
+  {
+   "row": 9656,
+   "pid": "math_train_counting_and_probability_5004",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(1 < 10)"
+  },
+  {
+   "row": 9744,
+   "pid": "math_train_counting_and_probability_249",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.choose boys 3 * Nat.choose girls 3 = Nat.choose 6 3 * Nat.choose 8 3)"
+  },
+  {
+   "row": 9806,
+   "pid": "math_train_counting_and_probability_925",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "True"
+  },
+  {
+   "row": 9863,
+   "pid": "math_train_counting_and_probability_541",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.choose 9 2 * Nat.choose 7 2 = 36 * 21)"
+  },
+  {
+   "row": 9923,
+   "pid": "math_train_counting_and_probability_335",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "-- Total of daughters and granddaughters is 30 (g = 24) := -- Therefore, Bertha has 24 granddaughters by sorry"
+  },
+  {
+   "row": 9996,
+   "pid": "math_train_counting_and_probability_912",
+   "class": "calculation",
+   "why": "conjunction, all closed arithmetic",
+   "goal": "(11^1 = 11) ∧ (11^2 = 121) ∧ (11^3 = 1331) ∧ (11^4 = 14641) ∧ (11^5 = 161051)"
+  },
+  {
+   "row": 10016,
+   "pid": "math_train_counting_and_probability_600",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(2 * 2 = 4)"
+  },
+  {
+   "row": 10046,
+   "pid": "math_train_counting_and_probability_1027",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "true"
+  },
+  {
+   "row": 10087,
+   "pid": "math_train_counting_and_probability_388",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.choose 10 3 = 120)"
+  },
+  {
+   "row": 10148,
+   "pid": "math_train_counting_and_probability_318",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(n = 5)"
+  },
+  {
+   "row": 10208,
+   "pid": "math_train_counting_and_probability_643",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(initial_first_set_size * initial_second_set_size * initial_third_set_size = 60)"
+  },
+  {
+   "row": 10264,
+   "pid": "math_train_counting_and_probability_539",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.choose g 2 * Nat.choose b 2 = 3 * 10)"
+  },
+  {
+   "row": 10327,
+   "pid": "math_train_counting_and_probability_306",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(shorts_colors.card * jersey_colors.card = 6)"
+  },
+  {
+   "row": 10357,
+   "pid": "math_train_counting_and_probability_5094",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(Nat.choose n 8 = n! / (8! * (n - 8)!))"
+  },
+  {
+   "row": 10421,
+   "pid": "math_train_counting_and_probability_985",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "((Nat.factorial n) / (Nat.factorial r * Nat.factorial (n - r)) = 120)"
+  },
+  {
+   "row": 10481,
+   "pid": "math_train_counting_and_probability_5022",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "Finset.card x = 5"
+  },
+  {
+   "row": 10542,
+   "pid": "math_train_counting_and_probability_630",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(pC = 1 - pA - pB)"
+  },
+  {
+   "row": 10591,
+   "pid": "math_train_counting_and_probability_618",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.choose n k = 210)"
+  },
+  {
+   "row": 10627,
+   "pid": "math_train_counting_and_probability_511",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(Finset.card S = 8)"
+  },
+  {
+   "row": 10681,
+   "pid": "math_train_counting_and_probability_1061",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(n % 5 = 2) ↔ (n = 2 ∨ n = 3 ∨ n = 8 ∨ n = 13 ∨ n = 18)"
+  },
+  {
+   "row": 10720,
+   "pid": "math_train_counting_and_probability_968",
+   "class": "proof",
+   "why": "quantifier,set_relation",
+   "goal": "(∃ x ∈ s₁, ∃ y ∈ s₂, x + y = 24)"
+  },
+  {
+   "row": 10768,
+   "pid": "math_train_counting_and_probability_336",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "(∃ m: ℕ, k = 7 * m + 3)"
+  },
+  {
+   "row": 10832,
+   "pid": "math_train_counting_and_probability_629",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(∑ n in Finset.range 6, p (n+1) * f (n+1)) = (1/6) * (1^2 + 2^2 + 3^2 + 4^2 + 5^2 + 6^2)"
+  },
+  {
+   "row": 10877,
+   "pid": "math_train_counting_and_probability_346",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(Finset.card (Finset.filter (fun x => x % 2 = 1) (Finset.range n)) = 15)"
+  },
+  {
+   "row": 10919,
+   "pid": "math_train_counting_and_probability_1106",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(50 - 1 + 1 = 50)"
+  },
+  {
+   "row": 10980,
+   "pid": "math_train_counting_and_probability_85",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "True"
+  },
+  {
+   "row": 11044,
+   "pid": "math_train_counting_and_probability_397",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(p1 = p2)"
+  },
+  {
+   "row": 11080,
+   "pid": "math_train_counting_and_probability_201",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(21 / 128) = 0.1640625"
+  },
+  {
+   "row": 11135,
+   "pid": "math_train_counting_and_probability_953",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(6 * 6 = 36)"
+  },
+  {
+   "row": 11172,
+   "pid": "math_train_counting_and_probability_322",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∀ w x y z: ℕ, w * x * y * z = 12 → w ≠ 0 ∧ x ≠ 0 ∧ y ≠ 0 ∧ z ≠ 0)"
+  },
+  {
+   "row": 11281,
+   "pid": "math_train_counting_and_probability_5083",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.factorial 3 = 6)"
+  },
+  {
+   "row": 11393,
+   "pid": "math_train_counting_and_probability_718",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(fours / total = 4 / 52)"
+  },
+  {
+   "row": 11489,
+   "pid": "math_train_counting_and_probability_15",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(6 / 6 = 1)"
+  },
+  {
+   "row": 11564,
+   "pid": "math_train_counting_and_probability_305",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "∃ (x y : ℕ), x^3 + y^3 < 500"
+  },
+  {
+   "row": 11687,
+   "pid": "math_train_counting_and_probability_941",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "Fintype.card (Fin 10) = 10"
+  },
+  {
+   "row": 11745,
+   "pid": "math_train_counting_and_probability_567",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(2 * (l + w) = 64)"
+  },
+  {
+   "row": 11824,
+   "pid": "math_train_counting_and_probability_558",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(4 * 10 * 4 = 160)"
+  },
+  {
+   "row": 11868,
+   "pid": "math_train_counting_and_probability_122",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(totalLineups - lineupsWithBoth = Nat.choose 12 5 - Nat.choose 10 3)"
+  },
+  {
+   "row": 11935,
+   "pid": "math_train_counting_and_probability_1100",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(days2001 + days2002 + days2003 + days2004 = 1461)"
+  },
+  {
+   "row": 11968,
+   "pid": "math_train_counting_and_probability_929",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(total_players.choose goalies = 15)"
+  },
+  {
+   "row": 12031,
+   "pid": "math_train_counting_and_probability_1066",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "true"
+  },
+  {
+   "row": 12097,
+   "pid": "math_train_counting_and_probability_5091",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(n = 3)"
+  },
+  {
+   "row": 12166,
+   "pid": "math_train_counting_and_probability_674",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(2 ^ 3 = 8)"
+  },
+  {
+   "row": 12180,
+   "pid": "math_train_counting_and_probability_944",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(odd_digits.card = 3)"
+  },
+  {
+   "row": 12225,
+   "pid": "math_train_counting_and_probability_836",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "sides.card = 6"
+  },
+  {
+   "row": 12267,
+   "pid": "math_train_counting_and_probability_1099",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(26 + 10 = 36)"
+  },
+  {
+   "row": 12339,
+   "pid": "math_train_counting_and_probability_90",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(6 ^ 5 = 7776)"
+  },
+  {
+   "row": 12396,
+   "pid": "math_train_counting_and_probability_24",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(4 ^ 3 = 64)"
+  },
+  {
+   "row": 12439,
+   "pid": "math_train_counting_and_probability_808",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(choose total_players goalie = 16)"
+  },
+  {
+   "row": 12502,
+   "pid": "math_train_counting_and_probability_979",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "games = 255"
+  },
+  {
+   "row": 12617,
+   "pid": "math_train_counting_and_probability_256",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "(∃ n k, Nat.choose n k ≥ 1000)"
+  },
+  {
+   "row": 12645,
+   "pid": "math_train_counting_and_probability_301",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(reduced_keys = 4)"
+  },
+  {
+   "row": 12741,
+   "pid": "math_train_counting_and_probability_879",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(red_shirts + green_shirts = 10) ∧ (pants = 6) ∧ (red_hats + green_hats = 16) → (5 * 6 * 8 + 5 * 6 * 8 = 480)"
+  },
+  {
+   "row": 12787,
+   "pid": "math_train_counting_and_probability_856",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(99999 - 10000 + 1 = 90000)"
+  },
+  {
+   "row": 12850,
+   "pid": "math_train_counting_and_probability_5117",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "((a + b)^n = ∑ k in Finset.range (n + 1), (Nat.choose n k) * b^k)"
+  },
+  {
+   "row": 12897,
+   "pid": "math_train_counting_and_probability_868",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(total = 11)"
+  },
+  {
+   "row": 12946,
+   "pid": "math_train_counting_and_probability_5085",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(changedGates = 11)"
+  },
+  {
+   "row": 13069,
+   "pid": "math_train_counting_and_probability_843",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.factorial 3 = 6)"
+  },
+  {
+   "row": 13144,
+   "pid": "math_train_counting_and_probability_12",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(k = 1)"
+  },
+  {
+   "row": 13172,
+   "pid": "math_train_counting_and_probability_1015",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(Fintype.card (Fin 6) ^ 3 = 216)"
+  },
+  {
+   "row": 13202,
+   "pid": "math_train_counting_and_probability_420",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.factorial 4 = 24)"
+  },
+  {
+   "row": 13275,
+   "pid": "math_train_counting_and_probability_37",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "True"
+  },
+  {
+   "row": 13379,
+   "pid": "math_train_counting_and_probability_463",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(n = 6)"
+  },
+  {
+   "row": 13440,
+   "pid": "math_train_counting_and_probability_55",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(x < y ∧ y ≤ x + 2)"
+  },
+  {
+   "row": 13476,
+   "pid": "math_train_counting_and_probability_5039",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(n = 56)"
+  },
+  {
+   "row": 13565,
+   "pid": "math_train_counting_and_probability_1041",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "Nat.choose 40 4 = 91390"
+  },
+  {
+   "row": 13630,
+   "pid": "math_train_counting_and_probability_5118",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "∃ n, n = team1.sum ∧ (n < team2.sum)"
+  },
+  {
+   "row": 13779,
+   "pid": "math_train_counting_and_probability_194",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "((factorial n) / (2 * n) = 10)"
+  },
+  {
+   "row": 13834,
+   "pid": "math_train_counting_and_probability_92",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "(∃ k, n = 4 * k)"
+  },
+  {
+   "row": 13893,
+   "pid": "math_train_counting_and_probability_657",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(3 = 3)"
+  },
+  {
+   "row": 13931,
+   "pid": "math_train_counting_and_probability_693",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.choose 5 2 = 10)"
+  },
+  {
+   "row": 13977,
+   "pid": "math_train_counting_and_probability_226",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.choose n k = 15)"
+  },
+  {
+   "row": 14043,
+   "pid": "math_train_counting_and_probability_954",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(tamika_greater.length / (tamika_results.length * carlos_results.length) = 1/2)"
+  },
+  {
+   "row": 14095,
+   "pid": "math_train_counting_and_probability_5053",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∀ x: Nat, 0 ≤ x ∧ x ≤ 9 → x + 1 ≤ 10)"
+  },
+  {
+   "row": 14197,
+   "pid": "math_train_counting_and_probability_556",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "((n + 1) * Nat.factorial n = 720)"
+  },
+  {
+   "row": 14265,
+   "pid": "math_train_counting_and_probability_733",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.choose n 0 = 1)"
+  },
+  {
+   "row": 14344,
+   "pid": "math_train_counting_and_probability_5089",
+   "class": "proof",
+   "why": "inequality over a free variable",
+   "goal": "a + d > b + c"
+  },
+  {
+   "row": 14463,
+   "pid": "math_train_counting_and_probability_133",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(1 / 2 = 0.5)"
+  },
+  {
+   "row": 14496,
+   "pid": "math_train_counting_and_probability_1008",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(cost_jag + cost_jig + cost_jog = 10)"
+  },
+  {
+   "row": 14666,
+   "pid": "math_train_counting_and_probability_841",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.choose n r + Nat.choose n (r + 1) = Nat.choose (n + 1) (r + 1))"
+  },
+  {
+   "row": 14702,
+   "pid": "math_train_counting_and_probability_5017",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(i + j = i + j)"
+  },
+  {
+   "row": 14769,
+   "pid": "math_train_counting_and_probability_984",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(p_male = p_female)"
+  },
+  {
+   "row": 14821,
+   "pid": "math_train_counting_and_probability_120",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(total_outfits - same_color_outfits = 210)"
+  },
+  {
+   "row": 14856,
+   "pid": "math_train_counting_and_probability_135",
+   "class": "proof",
+   "why": "inequality over a free variable",
+   "goal": "(Area_PBC < (1 / 2) * Area_ABC)"
+  },
+  {
+   "row": 14931,
+   "pid": "math_train_counting_and_probability_1101",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(A.card = 4) ∧ (B.card = 3) ∧ (∀ a ∈ A, ∀ b ∈ B, a * b % 2 = 0 → (∃ a ∈ A, a % 2 = 0 ∨ ∃ b ∈ B, b % 2 = 0))"
+  },
+  {
+   "row": 14981,
+   "pid": "math_train_counting_and_probability_44",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(CD / AB = (BC - AD) / AB)"
+  },
+  {
+   "row": 15047,
+   "pid": "math_train_counting_and_probability_248",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(17 - 5 + 1).choose 2 = 91"
+  },
+  {
+   "row": 15116,
+   "pid": "math_train_counting_and_probability_773",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(8 * 0.25 = 2.0)"
+  },
+  {
+   "row": 15297,
+   "pid": "math_train_counting_and_probability_192",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(AB^2 = BC^2 + CA^2)"
+  },
+  {
+   "row": 15359,
+   "pid": "math_train_counting_and_probability_986",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "(n ≡ r [ZMOD Nat.lcm 6 8])"
+  },
+  {
+   "row": 15475,
+   "pid": "math_train_counting_and_probability_5005",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(∑ x in s, x) = 28"
+  },
+  {
+   "row": 15525,
+   "pid": "math_train_counting_and_probability_320",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "Nat.choose 12 1 = 12"
+  },
+  {
+   "row": 15560,
+   "pid": "math_train_counting_and_probability_227",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.choose n k = 56)"
+  },
+  {
+   "row": 15600,
+   "pid": "math_train_counting_and_probability_96",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(50 = 50)"
+  },
+  {
+   "row": 15670,
+   "pid": "math_train_counting_and_probability_81",
+   "class": "calculation",
+   "why": "conjunction, all closed arithmetic",
+   "goal": "(1 / 2 > 0) ∧ (1 / 2 < 1)"
+  },
+  {
+   "row": 15723,
+   "pid": "math_train_counting_and_probability_149",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(number_of_ways_distinguishable_boxes = 2^4)"
+  },
+  {
+   "row": 15811,
+   "pid": "math_train_counting_and_probability_848",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(ham_excluded_meats = 3)"
+  },
+  {
+   "row": 15865,
+   "pid": "math_train_counting_and_probability_5056",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "(∃ star, star = (n, k))"
+  },
+  {
+   "row": 15944,
+   "pid": "math_train_counting_and_probability_340",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "∃ (a b : ℕ), a * b < 30"
+  },
+  {
+   "row": 16040,
+   "pid": "math_train_counting_and_probability_1000",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(red * green = 1)"
+  },
+  {
+   "row": 16074,
+   "pid": "math_train_counting_and_probability_527",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "Prop := ∀ x, x ∈ s → x + 1 ∉ s ∧ x + 2 ∉ s theorem test (s : Set ℕ) (h₀ : ∀ x, x ∈ s → x + 1 ∉ s ∧ x + 2 ∉ s) (h₁ : s ⊆ {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}) : is_spacy s"
+  },
+  {
+   "row": 16196,
+   "pid": "math_train_counting_and_probability_599",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(unpainted = total_cubes - total_painted)"
+  },
+  {
+   "row": 16265,
+   "pid": "math_train_counting_and_probability_198",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(p_tail * worth_tail = -2)"
+  },
+  {
+   "row": 16299,
+   "pid": "math_train_counting_and_probability_462",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "(∃ n, n = sides ^ dice)"
+  },
+  {
+   "row": 16393,
+   "pid": "math_train_counting_and_probability_169",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "(∃ d, d = n * (n - 3) / 2)"
+  },
+  {
+   "row": 16445,
+   "pid": "math_train_counting_and_probability_995",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(probability_of_winning_at_least_four_games = p)"
+  },
+  {
+   "row": 16510,
+   "pid": "math_train_counting_and_probability_5123",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(total = 20)"
+  },
+  {
+   "row": 16599,
+   "pid": "math_train_counting_and_probability_5000",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(n % 1000 = 844)"
+  },
+  {
+   "row": 16655,
+   "pid": "math_train_counting_and_probability_5098",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "true"
+  },
+  {
+   "row": 16779,
+   "pid": "math_train_counting_and_probability_566",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(2 ^ 7 = 128)"
+  },
+  {
+   "row": 16856,
+   "pid": "math_train_counting_and_probability_5019",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "True"
+  },
+  {
+   "row": 16995,
+   "pid": "math_train_counting_and_probability_516",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(5! * 3! = n!)"
+  },
+  {
+   "row": 17041,
+   "pid": "math_train_counting_and_probability_637",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.choose n k = Nat.div (n * (n - 1)) 2)"
+  },
+  {
+   "row": 17093,
+   "pid": "math_train_counting_and_probability_280",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.choose 3 2 = 3)"
+  },
+  {
+   "row": 17140,
+   "pid": "math_train_counting_and_probability_5006",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "True"
+  },
+  {
+   "row": 17220,
+   "pid": "math_train_counting_and_probability_631",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(3/8 + 1/4 + 2 * pC = 1)"
+  },
+  {
+   "row": 17287,
+   "pid": "math_train_counting_and_probability_722",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(13 / 52 = 1 / 4)"
+  },
+  {
+   "row": 17383,
+   "pid": "math_train_counting_and_probability_49",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(0 + 4) / 2 = 2"
+  },
+  {
+   "row": 17419,
+   "pid": "math_train_counting_and_probability_269",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "(∀ n: Nat, n > 0 -> (∃ row: List ℕ, row.length = n))"
+  },
+  {
+   "row": 17455,
+   "pid": "math_train_counting_and_probability_89",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(∑ i in Finset.range (n + 1), Nat.choose n i) = 2^n"
+  },
+  {
+   "row": 17496,
+   "pid": "math_train_counting_and_probability_507",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(13 = 52 / 4)"
+  },
+  {
+   "row": 17537,
+   "pid": "math_train_counting_and_probability_471",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "Nat.choose n k + Nat.choose n (k + 1) = Nat.choose (n + 1) (k + 1)"
+  },
+  {
+   "row": 17585,
+   "pid": "math_train_counting_and_probability_757",
+   "class": "calculation",
+   "why": "conjunction, all closed arithmetic",
+   "goal": "(17 - 8 = 9) ∧ (8 = 17 / 2)"
+  },
+  {
+   "row": 17647,
+   "pid": "math_train_counting_and_probability_126",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "Finset.card (Finset.univ : Finset (Fin 7 × Fin 7)) = 49"
+  },
+  {
+   "row": 17711,
+   "pid": "math_train_counting_and_probability_1094",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(26 / 52 = 1 / 2)"
+  },
+  {
+   "row": 17754,
+   "pid": "math_train_counting_and_probability_915",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(total_outcomes = dice_faces ^ dice_count)"
+  },
+  {
+   "row": 17806,
+   "pid": "math_train_counting_and_probability_949",
+   "class": "proof",
+   "why": "quantifier,set_relation",
+   "goal": "(∃ host: ℕ, host ∈ teams)"
+  },
+  {
+   "row": 17855,
+   "pid": "math_train_counting_and_probability_530",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(n - 1 = 7)"
+  },
+  {
+   "row": 17886,
+   "pid": "math_train_counting_and_probability_251",
+   "class": "calculation",
+   "why": "conjunction, all closed arithmetic",
+   "goal": "(1 / 27 > 0) ∧ (1 / 27 ≤ 1)"
+  },
+  {
+   "row": 17944,
+   "pid": "math_train_counting_and_probability_141",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(10 = 10)"
+  },
+  {
+   "row": 17973,
+   "pid": "math_train_counting_and_probability_1011",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(successful / unsuccessful = 3 / 4)"
+  },
+  {
+   "row": 17998,
+   "pid": "math_train_counting_and_probability_1074",
+   "class": "calculation",
+   "why": "conjunction, all closed arithmetic",
+   "goal": "(1 / 3 > 0) ∧ (1 / 3 < 1)"
+  },
+  {
+   "row": 18085,
+   "pid": "math_train_counting_and_probability_5054",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(P_2 = 1 / 2)"
+  },
+  {
+   "row": 18162,
+   "pid": "math_train_counting_and_probability_948",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(p_s * (1 - p_u) = 0.2)"
+  },
+  {
+   "row": 18200,
+   "pid": "math_train_counting_and_probability_534",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(red_cards / total_cards = 1 / 2)"
+  },
+  {
+   "row": 18252,
+   "pid": "math_train_counting_and_probability_529",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(3 + 2 * (n - 1) = 31)"
+  },
+  {
+   "row": 18311,
+   "pid": "math_train_counting_and_probability_440",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(3 * 6 = 18)"
+  },
+  {
+   "row": 18377,
+   "pid": "math_train_counting_and_probability_574",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(different / total = 9 / 10)"
+  },
+  {
+   "row": 18450,
+   "pid": "math_train_counting_and_probability_373",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(subcommittees_with_at_least_one_teacher = (choose teachers 1) * (choose (members - teachers) (subcommittee - 1)) + (choose teachers 2) * (choose (members - teachers) (subcommittee - 2)) + (choose teachers 3) * (choose (members - teachers) (subcommittee - 3)) + (choose teachers 4) * (choose (members - teachers) (subcommittee - 4)))"
+  },
+  {
+   "row": 18526,
+   "pid": "math_train_counting_and_probability_749",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(n.factorial = 24)"
+  },
+  {
+   "row": 18565,
+   "pid": "math_train_counting_and_probability_681",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "n₆ = 1555"
+  },
+  {
+   "row": 18586,
+   "pid": "math_train_counting_and_probability_161",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(3 / 6 = 1 / 2)"
+  },
+  {
+   "row": 18707,
+   "pid": "math_train_counting_and_probability_223",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(p = 1 / 6)"
+  },
+  {
+   "row": 18751,
+   "pid": "math_train_counting_and_probability_895",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(at_least_one_boy_girl_cases / total_cases = 6 / 8)"
+  },
+  {
+   "row": 18795,
+   "pid": "math_train_counting_and_probability_69",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(1 / (n : ℝ) = 1 / 8)"
+  },
+  {
+   "row": 18863,
+   "pid": "math_train_counting_and_probability_361",
+   "class": "proof",
+   "why": "inequality over a free variable",
+   "goal": "(y < 0.5)"
+  },
+  {
+   "row": 18920,
+   "pid": "math_train_counting_and_probability_854",
+   "class": "proof",
+   "why": "inequality over a free variable",
+   "goal": "(a - 1) * (b - 1) * (c - 1) ≠ 0"
+  },
+  {
+   "row": 18951,
+   "pid": "math_train_counting_and_probability_111",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∃ n, 100 ≤ n ∧ n < 1000 ∧ ¬(5 ∈ n.digits 10))"
+  },
+  {
+   "row": 18999,
+   "pid": "math_train_counting_and_probability_246",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.choose n r = 15)"
+  },
+  {
+   "row": 19042,
+   "pid": "math_train_counting_and_probability_760",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(V_sphere / V_cube = (4 / 3) * Real.pi / 8)"
+  },
+  {
+   "row": 19076,
+   "pid": "math_train_counting_and_probability_466",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(Fintype.card (Equiv.Perm democrats) = 24) ∧ (Fintype.card (Equiv.Perm republicans) = 120)"
+  },
+  {
+   "row": 19110,
+   "pid": "math_train_counting_and_probability_839",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(3 = 1 + 1 + 1)"
+  },
+  {
+   "row": 19150,
+   "pid": "math_train_counting_and_probability_611",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(9 > 0)"
+  },
+  {
+   "row": 19210,
+   "pid": "math_train_counting_and_probability_612",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(n.factorial = 24)"
+  },
+  {
+   "row": 19263,
+   "pid": "math_train_counting_and_probability_5092",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "n = 9 → ∃ (l : List Nat), (∀ x ∈ l, x ≥ 3) ∧ List.sum l = n"
+  },
+  {
+   "row": 19376,
+   "pid": "math_train_counting_and_probability_376",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.choose n k = 28)"
+  },
+  {
+   "row": 19445,
+   "pid": "math_train_counting_and_probability_842",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(P1 + P2 + P3 + P4 + P5 + P6 = 1)"
+  },
+  {
+   "row": 19491,
+   "pid": "math_train_counting_and_probability_500",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(3 ^ balls = 81)"
+  },
+  {
+   "row": 19520,
+   "pid": "math_train_counting_and_probability_113",
+   "class": "proof",
+   "why": "inequality over a free variable",
+   "goal": "(d < 10)"
+  },
+  {
+   "row": 19647,
+   "pid": "math_train_counting_and_probability_775",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "∃ (p : ℚ), p = 3 / 8"
+  },
+  {
+   "row": 19698,
+   "pid": "math_train_counting_and_probability_787",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(A_circle / A_square = Real.pi / 16)"
+  },
+  {
+   "row": 19722,
+   "pid": "math_train_counting_and_probability_518",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(n / (3! * 2!) = 10)"
+  },
+  {
+   "row": 19782,
+   "pid": "math_train_counting_and_probability_197",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(p_treasure ^ 3 * (1 - p_treasure) ^ 3 * p_trap ^ 0 * (1 - p_trap) ^ 6 = (1 / 4) ^ 3 * (3 / 4) ^ 3)"
+  },
+  {
+   "row": 19830,
+   "pid": "math_train_counting_and_probability_752",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(Nat.choose n r = n.factorial / (r.factorial * (n - r).factorial))"
+  },
+  {
+   "row": 19887,
+   "pid": "math_train_counting_and_probability_5100",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "true"
+  },
+  {
+   "row": 19990,
+   "pid": "math_train_counting_and_probability_307",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.factorial 8 = 40320)"
+  },
+  {
+   "row": 20034,
+   "pid": "math_train_counting_and_probability_183",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(6 * 6 = 36)"
+  },
+  {
+   "row": 20078,
+   "pid": "math_train_counting_and_probability_117",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "True"
+  },
+  {
+   "row": 20160,
+   "pid": "math_train_counting_and_probability_67",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(1 / 3 = 1 / 3)"
+  },
+  {
+   "row": 20208,
+   "pid": "math_train_counting_and_probability_1059",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(2 * b = a)"
+  },
+  {
+   "row": 20266,
+   "pid": "math_train_counting_and_probability_1",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(x^3 + 3 * x^2 + 3 * x + 1 = (x + 1)^3)"
+  },
+  {
+   "row": 20347,
+   "pid": "math_train_counting_and_probability_680",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∀ p ∈ pairs, p.1 + p.2 = 10 ∧ p.1 ∈ l ∧ p.2 ∈ l)"
+  },
+  {
+   "row": 20366,
+   "pid": "math_train_counting_and_probability_502",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.factorial 3 = 6)"
+  },
+  {
+   "row": 20409,
+   "pid": "math_train_counting_and_probability_9",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(Nat.choose n k = Nat.choose (n - 1) (k - 1) + Nat.choose (n - 1) k)"
+  },
+  {
+   "row": 20484,
+   "pid": "math_train_counting_and_probability_687",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(a + b = 7)"
+  },
+  {
+   "row": 20518,
+   "pid": "math_train_counting_and_probability_5033",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(player_sum % 2 = 1)"
+  },
+  {
+   "row": 20597,
+   "pid": "math_train_counting_and_probability_5102",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "(∃ n ≥ 4, a4 = 0)"
+  },
+  {
+   "row": 20753,
+   "pid": "math_train_counting_and_probability_221",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(n.factorial + (n + 1) * n.factorial = (n + 1) * n.factorial)"
+  },
+  {
+   "row": 20792,
+   "pid": "math_train_counting_and_probability_730",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "(∃ (n : Nat), n = 3)"
+  },
+  {
+   "row": 20828,
+   "pid": "math_train_counting_and_probability_5113",
+   "class": "proof",
+   "why": "implication",
+   "goal": "Nat → Nat | 0 => 0 -- No subsets for an empty set | 1 => 1 -- Only one subset for a set with one element | n + 1 => count_subsets n + count_subsets (n - 1) -- Theorem to verify the count for the set {1, 2, ..., 15} theorem count_non_empty_subsets : count_subsets 15 = 277"
+  },
+  {
+   "row": 20878,
+   "pid": "math_train_counting_and_probability_131",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(2 ^ 6 = 64)"
+  },
+  {
+   "row": 20937,
+   "pid": "math_train_counting_and_probability_5101",
+   "class": "proof",
+   "why": "finset_or_card,implication,quantifier,set_relation",
+   "goal": "∀ (T : Finset (Fin 10)), T ⊆ S → T.card ≥ 3 → ∃ i, {i, (i+1) % 10, (i+2) % 10} ⊆ T"
+  },
+  {
+   "row": 21041,
+   "pid": "math_train_counting_and_probability_713",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(total_ways > 0) ∧ (spade_ways > 0)"
+  },
+  {
+   "row": 21091,
+   "pid": "math_train_counting_and_probability_947",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "-- d₁, d₂, d₃, d₄ represent digits 7, 8, 9 (∃ n : Nat, n = 1000000 * d₁ + 100000 * d₂ + 10000 * d₃ + 1000 * d₄ + 100 * d₃ + 10 * d₂ + d₁)"
+  },
+  {
+   "row": 21124,
+   "pid": "math_train_counting_and_probability_1057",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "∃ (n : ℕ), (n = 1 ∨ n = 2 ∨ n = 3 ∨ n = 4 ∨ n = 5) ∧ (n^2 = 1 ∨ n^2 = 2 ∨ n^2 = 5 ∨ n^2 = 8 ∨ n^2 = 10 ∨ n^2 = 13 ∨ n^2 = 16 ∨ n^2 = 18 ∨ n^2 = 20 ∨ n^2 = 25)"
+  },
+  {
+   "row": 21198,
+   "pid": "math_train_counting_and_probability_585",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(positions = 5)"
+  },
+  {
+   "row": 21264,
+   "pid": "math_train_counting_and_probability_532",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(9! / (6! * 3!) = 84)"
+  },
+  {
+   "row": 21325,
+   "pid": "math_train_counting_and_probability_20",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.choose 25 5 = Nat.choose 24 4 + Nat.choose 24 5)"
+  },
+  {
+   "row": 21391,
+   "pid": "math_train_counting_and_probability_1028",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(favorite_length < total_length)"
+  },
+  {
+   "row": 21513,
+   "pid": "math_train_counting_and_probability_715",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(shirts * hats * pants = 144)"
+  },
+  {
+   "row": 21558,
+   "pid": "math_train_counting_and_probability_937",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "(∃ d: ℕ, d = n * (n - 3) / 2)"
+  },
+  {
+   "row": 21593,
+   "pid": "math_train_counting_and_probability_165",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(remaining_players = 11)"
+  },
+  {
+   "row": 21634,
+   "pid": "math_train_counting_and_probability_304",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(6! + 7!) / 5! = 8"
+  },
+  {
+   "row": 21687,
+   "pid": "math_train_counting_and_probability_707",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(included * totalKinds = 3)"
+  },
+  {
+   "row": 21740,
+   "pid": "math_train_counting_and_probability_578",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "Fintype.card (Finset.powerset (Finset.range 3)) = 8"
+  },
+  {
+   "row": 21775,
+   "pid": "math_train_counting_and_probability_918",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∃ ways_with_triplets: Nat, ways_with_triplets = Nat.choose (total_players - triplets) (starters - triplets)) ∧ (∃ total_ways: Nat, total_ways = Nat.choose total_players starters)"
+  },
+  {
+   "row": 21855,
+   "pid": "math_train_counting_and_probability_1105",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.factorial n = 40320)"
+  },
+  {
+   "row": 21922,
+   "pid": "math_train_counting_and_probability_615",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(9 = 9)"
+  },
+  {
+   "row": 21963,
+   "pid": "math_train_counting_and_probability_5012",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(r 19 = r 29)"
+  },
+  {
+   "row": 22079,
+   "pid": "math_train_counting_and_probability_588",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "∃ m : Nat, m < n ∧ ∀ x y : Nat, x^y ≤ n → y > 1 → x^y = m"
+  },
+  {
+   "row": 22144,
+   "pid": "math_train_counting_and_probability_94",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(Real.sqrt x + 5 / x = a + b)"
+  },
+  {
+   "row": 22211,
+   "pid": "math_train_counting_and_probability_276",
+   "class": "calculation",
+   "why": "conjunction, all closed arithmetic",
+   "goal": "(d₄ = 0 ∨ d₄ = 5)"
+  },
+  {
+   "row": 22256,
+   "pid": "math_train_counting_and_probability_272",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(edges_from_A = 3)"
+  },
+  {
+   "row": 22285,
+   "pid": "math_train_counting_and_probability_882",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "∃ A: Nat, A = 4500"
+  },
+  {
+   "row": 22353,
+   "pid": "math_train_counting_and_probability_1089",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(s.card = 9)"
+  },
+  {
+   "row": 22473,
+   "pid": "math_train_counting_and_probability_5023",
+   "class": "proof",
+   "why": "implication,quantifier",
+   "goal": "∃ (rotation: Fin 6 → Fin 6), True"
+  },
+  {
+   "row": 22564,
+   "pid": "math_train_counting_and_probability_5111",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "∃ n : ℕ, n = 560 ∨ n = 564 ∨ n = 568 ∨ n = 1498 ∨ n = 2255"
+  },
+  {
+   "row": 22649,
+   "pid": "math_train_counting_and_probability_5037",
+   "class": "proof",
+   "why": "divisibility,implication,quantifier",
+   "goal": "Bool := step % label == 0 theorem switches_advanced (totalSwitches: Nat) (labels: Fin totalSwitches → Nat) (steps: Fin totalSwitches → Nat) (h: ∀ i, isAdvanced (labels i) (steps i) = true): (∃ k, labels k ∣ steps k)"
+  },
+  {
+   "row": 22796,
+   "pid": "math_train_counting_and_probability_573",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "Nat.choose n 0 = 1"
+  },
+  {
+   "row": 22839,
+   "pid": "math_train_counting_and_probability_905",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.choose n r = 5)"
+  },
+  {
+   "row": 22879,
+   "pid": "math_train_counting_and_probability_5009",
+   "class": "proof",
+   "why": "implication",
+   "goal": "ℕ → ℚ"
+  },
+  {
+   "row": 22951,
+   "pid": "math_train_counting_and_probability_509",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "True"
+  },
+  {
+   "row": 22994,
+   "pid": "math_train_counting_and_probability_1069",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(total_count - non_five_count = 600 - 6 * 9 * 9)"
+  },
+  {
+   "row": 23055,
+   "pid": "math_train_counting_and_probability_285",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(x + y)^n = ∑ k in Finset.range (n + 1), (Nat.choose n k) * (x ^ (n - k)) * (y ^ k)"
+  },
+  {
+   "row": 23128,
+   "pid": "math_train_counting_and_probability_640",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "∃ n : Nat, n ≤ 7"
+  },
+  {
+   "row": 23274,
+   "pid": "math_train_counting_and_probability_738",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(o = 3)"
+  },
+  {
+   "row": 23324,
+   "pid": "math_train_counting_and_probability_644",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(composite_faces / total_faces = 1 / 3)"
+  },
+  {
+   "row": 23409,
+   "pid": "math_train_counting_and_probability_824",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.choose 18 3 = 816)"
+  },
+  {
+   "row": 23469,
+   "pid": "math_train_counting_and_probability_412",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(vertices.card.choose 3 = 56)"
+  },
+  {
+   "row": 23514,
+   "pid": "math_train_counting_and_probability_5120",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "∃ n, n = (materials - 1) * (sizes - 1) + (materials - 1) * (colors - 1) + (materials - 1) * (shapes - 1) + (sizes - 1) * (colors - 1) + (sizes - 1) * (shapes - 1) + (colors - 1) * (shapes - 1) ∧ n = 29"
+  },
+  {
+   "row": 23603,
+   "pid": "math_train_counting_and_probability_5063",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "(∃ k, 131 = n + 2 * k + 1)"
+  },
+  {
+   "row": 23682,
+   "pid": "math_train_counting_and_probability_958",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "((red_cards: ℚ) / total_cards = 1 / 2)"
+  },
+  {
+   "row": 23722,
+   "pid": "math_train_counting_and_probability_180",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "Nat.choose n r = (Nat.factorial n) / ((Nat.factorial r) * (Nat.factorial (n - r)))"
+  },
+  {
+   "row": 23771,
+   "pid": "math_train_counting_and_probability_218",
+   "class": "mixed",
+   "why": "conjunction of both kinds",
+   "goal": "(n! = n * (n - 1)!) ∧ (0! = 1)"
+  },
+  {
+   "row": 23828,
+   "pid": "math_train_counting_and_probability_917",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∀ (E1 E2 B : ℝ), 2 ≤ E1 ∧ E1 ≤ 4 ∧ 2 ≤ E2 ∧ E2 ≤ 4 ∧ 2 ≤ B ∧ B ≤ 4)"
+  },
+  {
+   "row": 23901,
+   "pid": "math_train_counting_and_probability_291",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(Nat.gcd a b = Nat.factorial 5)"
+  },
+  {
+   "row": 23956,
+   "pid": "math_train_counting_and_probability_873",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(p = 5 / 9)"
+  },
+  {
+   "row": 24029,
+   "pid": "math_train_counting_and_probability_561",
+   "class": "proof",
+   "why": "implication,quantifier",
+   "goal": "∀ (n k: Nat) (a b: ℝ), (n = 7) → (k = 2) → (a = 2) → (b = 3) → (Nat.choose n k * (a:ℝ)^(n-k) * b^k = Nat.choose 7 2 * (2:ℝ)^5 * 3^2)"
+  },
+  {
+   "row": 24076,
+   "pid": "math_train_counting_and_probability_1116",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(2 ^ 10 = 1024)"
+  },
+  {
+   "row": 24131,
+   "pid": "math_train_counting_and_probability_646",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(n - 1 = 9)"
+  },
+  {
+   "row": 24183,
+   "pid": "math_train_counting_and_probability_31",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(10 * t + o ≥ 10) ∧ (10 * t + o ≤ 99)"
+  },
+  {
+   "row": 24254,
+   "pid": "math_train_counting_and_probability_311",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.factorial (A + O + B) / (Nat.factorial A * Nat.factorial O * Nat.factorial B) = 210)"
+  },
+  {
+   "row": 24310,
+   "pid": "math_train_counting_and_probability_121",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(p0 + p1 + p2 = 1)"
+  },
+  {
+   "row": 24394,
+   "pid": "math_train_counting_and_probability_983",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(r / 10 * (r - 1) / 9 = (r * (r - 1)) / 90)"
+  },
+  {
+   "row": 24471,
+   "pid": "math_train_counting_and_probability_433",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(region_area / total_area = 1 / 2)"
+  },
+  {
+   "row": 24544,
+   "pid": "math_train_counting_and_probability_1045",
+   "class": "proof",
+   "why": "divisibility",
+   "goal": "(10 ∣ n!)"
+  },
+  {
+   "row": 24590,
+   "pid": "math_train_counting_and_probability_240",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(a + b) ^ n = ∑ k in Finset.range (n + 1), (Nat.choose n k) * a^(n-k) * b^k"
+  },
+  {
+   "row": 24646,
+   "pid": "math_train_counting_and_probability_703",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(7 = 7)"
+  },
+  {
+   "row": 24690,
+   "pid": "math_train_counting_and_probability_59",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.choose n k = n! / (k! * (n-k)!))"
+  },
+  {
+   "row": 24736,
+   "pid": "math_train_counting_and_probability_701",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "Fintype.card (s.powerset) = 16"
+  },
+  {
+   "row": 24772,
+   "pid": "math_train_counting_and_probability_293",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(p = (256/625))"
+  },
+  {
+   "row": 24811,
+   "pid": "math_train_counting_and_probability_153",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(total = 8)"
+  },
+  {
+   "row": 24859,
+   "pid": "math_train_counting_and_probability_739",
+   "class": "proof",
+   "why": "implication",
+   "goal": "n = 10 → Nat.choose n 2 = 45"
+  },
+  {
+   "row": 24917,
+   "pid": "math_train_counting_and_probability_538",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(∏ i, rolls i = odd)"
+  },
+  {
+   "row": 24965,
+   "pid": "math_train_counting_and_probability_858",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(f + g) / e = (3 * 5! + 15 * 4!) / 6!"
+  },
+  {
+   "row": 25039,
+   "pid": "math_train_counting_and_probability_5038",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(40 = 4 * 10)"
+  },
+  {
+   "row": 25122,
+   "pid": "math_train_counting_and_probability_5082",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "((1 + x) * (1 + x) * (4 + 3 * x) = 4 + 11 * x + 11 * x^2 + 3 * x^3)"
+  },
+  {
+   "row": 25235,
+   "pid": "math_train_counting_and_probability_273",
+   "class": "calculation",
+   "why": "conjunction, all closed arithmetic",
+   "goal": "((a, b, c) = (4, 0, 0) ∨ (a, b, c) = (0, 4, 0) ∨ (a, b, c) = (0, 0, 4))"
+  },
+  {
+   "row": 25253,
+   "pid": "math_train_counting_and_probability_364",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(2 ^ n = 64)"
+  },
+  {
+   "row": 25309,
+   "pid": "math_train_counting_and_probability_963",
+   "class": "calculation",
+   "why": "conjunction, all closed arithmetic",
+   "goal": "(150 / 4 = 37) ∧ (150 % 4 = 2)"
+  },
+  {
+   "row": 25362,
+   "pid": "math_train_counting_and_probability_517",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(List.length [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22]) = 11"
+  },
+  {
+   "row": 25427,
+   "pid": "math_train_counting_and_probability_202",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(2 = 2)"
+  },
+  {
+   "row": 25472,
+   "pid": "math_train_counting_and_probability_204",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(9! * 5! * 2!) / (8! * 6!) = 9"
+  },
+  {
+   "row": 25566,
+   "pid": "math_train_counting_and_probability_224",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "Fintype.card (Fin 6 × Fin 6) = 36"
+  },
+  {
+   "row": 25645,
+   "pid": "math_train_counting_and_probability_379",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(total_words = total_letters ^ word_length)"
+  },
+  {
+   "row": 25684,
+   "pid": "math_train_counting_and_probability_891",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(4 / (52 * 51 / 2) = 1 / 221)"
+  },
+  {
+   "row": 25796,
+   "pid": "math_train_counting_and_probability_326",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∃ n : Nat, a < n ∧ n < b)"
+  },
+  {
+   "row": 25879,
+   "pid": "math_train_counting_and_probability_32",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(9 = 9)"
+  },
+  {
+   "row": 25901,
+   "pid": "math_train_counting_and_probability_143",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(a + b < c)"
+  },
+  {
+   "row": 26034,
+   "pid": "math_train_counting_and_probability_809",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "Nat.choose 5 2 = 10"
+  },
+  {
+   "row": 26085,
+   "pid": "math_train_counting_and_probability_569",
+   "class": "proof",
+   "why": "inequality over a free variable",
+   "goal": "(List.length (List.filter (fun x => x % 10 = 4) (List.range 489))) = 49"
+  },
+  {
+   "row": 26146,
+   "pid": "math_train_counting_and_probability_316",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(List.length ['T', 'O', 'O', 'T'] = 4)"
+  },
+  {
+   "row": 26182,
+   "pid": "math_train_counting_and_probability_832",
+   "class": "proof",
+   "why": "inequality over a free variable",
+   "goal": "(n < 21)"
+  },
+  {
+   "row": 26265,
+   "pid": "math_train_counting_and_probability_981",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∀ n : Nat, 100 ≤ n ∧ n < 500 → (n / 100 = n % 10) → (n / 100 = 1 ∨ n / 100 = 2 ∨ n / 100 = 3 ∨ n / 100 = 4))"
+  },
+  {
+   "row": 26299,
+   "pid": "math_train_counting_and_probability_82",
+   "class": "proof",
+   "why": "implication",
+   "goal": "(P_rain = 3/10) → (P_not_rain = 7/10)"
+  },
+  {
+   "row": 26332,
+   "pid": "math_train_counting_and_probability_741",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∀ n: Nat, n ∈ [1, 2, 3, 4, 5, 6, 7, 8] -> n ≥ 1 ∧ n ≤ 8)"
+  },
+  {
+   "row": 26404,
+   "pid": "math_train_counting_and_probability_332",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(3! = 6)"
+  },
+  {
+   "row": 26454,
+   "pid": "math_train_counting_and_probability_5041",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(Finset.card (Finset.Icc (0, 0, 0) (2, 3, 4)) = 3 * 4 * 5)"
+  },
+  {
+   "row": 26554,
+   "pid": "math_train_counting_and_probability_104",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(TotalOutcomes = 6 ^ 6)"
+  },
+  {
+   "row": 26608,
+   "pid": "math_train_counting_and_probability_447",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.choose n r = Nat.choose 12 4)"
+  },
+  {
+   "row": 26658,
+   "pid": "math_train_counting_and_probability_5109",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∀ (x: Bool), x = a ∨ x = !a)"
+  },
+  {
+   "row": 26741,
+   "pid": "math_train_counting_and_probability_8",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.choose n k = n! / (k! * (n - k)!))"
+  },
+  {
+   "row": 26817,
+   "pid": "math_train_counting_and_probability_118",
+   "class": "proof",
+   "why": "set_relation",
+   "goal": "(d1, d2, d3) ∈ [(6, 6, 4), (6, 4, 6), (4, 6, 6), (5, 5, 6), (5, 6, 5), (6, 5, 5)]"
+  },
+  {
+   "row": 26869,
+   "pid": "math_train_counting_and_probability_955",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∃ evens : List Nat, evens.length = 4 ∧ evens.all (fun n => n % 2 = 0) ∧ evens = [4, 6, 4] ∧ ∀ x ∈ evens, x ∈ [1, 4, 6, 4, 1])"
+  },
+  {
+   "row": 26909,
+   "pid": "math_train_counting_and_probability_966",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∃ (d : ℕ), d ∈ [2, 3, 5, 7] ∧ d < 10) ∧ (Finset.card (Finset.filter (fun d => d ∈ [2, 3, 5, 7]) (Finset.range 10)) = 4)"
+  },
+  {
+   "row": 26936,
+   "pid": "math_train_counting_and_probability_398",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "True"
+  },
+  {
+   "row": 27066,
+   "pid": "math_train_counting_and_probability_5032",
+   "class": "proof",
+   "why": "finset_or_card,implication,quantifier",
+   "goal": "∃ (rows : Finset (Fin 4 → ℤ)), rows.card = 6"
+  },
+  {
+   "row": 27208,
+   "pid": "math_train_counting_and_probability_5126",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(total_items = 8)"
+  },
+  {
+   "row": 27307,
+   "pid": "math_train_counting_and_probability_491",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(Nat.choose n r = (n.factorial / (r.factorial * (n - r).factorial)))"
+  },
+  {
+   "row": 27354,
+   "pid": "math_train_counting_and_probability_728",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(G * R * B = 2 * 3 * 1)"
+  },
+  {
+   "row": 27404,
+   "pid": "math_train_counting_and_probability_324",
+   "class": "calculation",
+   "why": "conjunction, all closed arithmetic",
+   "goal": "(total - french < total ∧ total - spanish < total)"
+  },
+  {
+   "row": 27494,
+   "pid": "math_train_counting_and_probability_5048",
+   "class": "proof",
+   "why": "quantifier",
+   "goal": "(∃ (total_palindrome: ℕ), ∃ (total_plates: ℕ), (total_palindrome / total_plates) = (m / n))"
+  },
+  {
+   "row": 27616,
+   "pid": "math_train_counting_and_probability_237",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.factorial 9 = 9 * 8 * 7 * 6 * 5 * 4 * 3 * 2 * 1)"
+  },
+  {
+   "row": 27659,
+   "pid": "math_train_counting_and_probability_422",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "Fintype.card (Finset (Fin n)) = n.choose r"
+  },
+  {
+   "row": 27734,
+   "pid": "math_train_counting_and_probability_5075",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(a_n = a_n_minus_2 + 2)"
+  },
+  {
+   "row": 27889,
+   "pid": "math_train_counting_and_probability_1097",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(a = 1) ∧ (b = 2) ∧ (c = 3) ∧ (d = 4) ∧ (e = 5) ∧ (f = 6) → ((b - a) = 1) ∧ ((c - a) = 2) ∧ ((d - a) = 3) ∧ ((e - a) = 4) ∧ ((f - a) = 5) ∧ ((c - b) = 1) ∧ ((d - b) = 2) ∧ ((e - b) = 3) ∧ ((f - b) = 4) ∧ ((d - c) = 1) ∧ ((e - c) = 2) ∧ ((f - c) = 3) ∧ ((e - d) = 1) ∧ ((f - d) = 2) ∧ ((f - e) = 1)"
+  },
+  {
+   "row": 27915,
+   "pid": "math_train_counting_and_probability_383",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "Nat.choose n r = n.factorial / (r.factorial * (n - r).factorial)"
+  },
+  {
+   "row": 27967,
+   "pid": "math_train_counting_and_probability_1013",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(3 * 60 - 2 * 60 = 60)"
+  },
+  {
+   "row": 28019,
+   "pid": "math_train_counting_and_probability_310",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(b / total = 5 / 8)"
+  },
+  {
+   "row": 28070,
+   "pid": "math_train_counting_and_probability_460",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(p = 6 * (2/5)^2 * (3/5)^3)"
+  },
+  {
+   "row": 28153,
+   "pid": "math_train_counting_and_probability_375",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "total_flavors = 15"
+  },
+  {
+   "row": 28212,
+   "pid": "math_train_counting_and_probability_356",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(P + S = 5 * k - 1)"
+  },
+  {
+   "row": 28314,
+   "pid": "math_train_counting_and_probability_171",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "n = 7"
+  },
+  {
+   "row": 28375,
+   "pid": "math_train_counting_and_probability_799",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.choose 16 15 = 16)"
+  },
+  {
+   "row": 28413,
+   "pid": "math_train_counting_and_probability_1080",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(p = 1 / 4)"
+  },
+  {
+   "row": 28441,
+   "pid": "math_train_counting_and_probability_457",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∃ n: Nat, n = 6! ∧ n = 720)"
+  },
+  {
+   "row": 28497,
+   "pid": "math_train_counting_and_probability_571",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "((a + b)^4 = 6 * a^2 * b^2 + 4 * a^3 * b + 4 * a * b^3 + a^4 + b^4)"
+  },
+  {
+   "row": 28548,
+   "pid": "math_train_counting_and_probability_243",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.choose 7 2 = 21)"
+  },
+  {
+   "row": 28608,
+   "pid": "math_train_counting_and_probability_1022",
+   "class": "mixed",
+   "why": "conjunction of both kinds",
+   "goal": "(9 + 3 = 12) ∧ (∀ n, (1 ≤ n ∧ n ≤ 9) ∨ (10 ≤ n ∧ n ≤ 12))"
+  },
+  {
+   "row": 28660,
+   "pid": "math_train_counting_and_probability_613",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(Nat.choose n k = n.factorial / (k.factorial * (n - k).factorial))"
+  },
+  {
+   "row": 28702,
+   "pid": "math_train_counting_and_probability_401",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(75 / 100 = 0.75)"
+  },
+  {
+   "row": 28738,
+   "pid": "math_train_counting_and_probability_5047",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "n = 512"
+  },
+  {
+   "row": 28883,
+   "pid": "math_train_counting_and_probability_753",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(5 = 5)"
+  },
+  {
+   "row": 28925,
+   "pid": "math_train_counting_and_probability_5026",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "= (state: ℕ) (probability: ℚ) def probability_of_run_5_heads_before_2_tails (p: ℚ) (states: List StateTransition) : Prop"
+  },
+  {
+   "row": 29025,
+   "pid": "math_train_counting_and_probability_333",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(n = 1080)"
+  },
+  {
+   "row": 29121,
+   "pid": "math_train_counting_and_probability_1023",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∃ n, n ∈ [3, 4, 5] ∧ n % 2 = 0) ∧ (∀ n, n ∈ [3, 4, 5] → (n = 4 → n % 2 = 0))"
+  },
+  {
+   "row": 29172,
+   "pid": "math_train_counting_and_probability_920",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(5 = 5)"
+  },
+  {
+   "row": 29198,
+   "pid": "math_train_counting_and_probability_692",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(Nat.choose 10 5 = 252)"
+  },
+  {
+   "row": 29249,
+   "pid": "math_train_counting_and_probability_415",
+   "class": "proof",
+   "why": "conjunction, all proof-shaped",
+   "goal": "(∀ n, n ∈ [1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144] ↔ ∃ m, m^2 = n ∧ 1 ≤ n ∧ n ≤ 150)"
+  },
+  {
+   "row": 29339,
+   "pid": "math_train_counting_and_probability_1017",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(jacks / total = 4 / 52)"
+  },
+  {
+   "row": 29424,
+   "pid": "math_train_counting_and_probability_931",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(success / total = 1 / 9)"
+  },
+  {
+   "row": 29475,
+   "pid": "math_train_counting_and_probability_5104",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(P x y = (1/3) * P (x-1) y + (1/3) * P x (y-1) + (1/3) * P (x-1) (y-1))"
+  },
+  {
+   "row": 29571,
+   "pid": "math_train_counting_and_probability_70",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(2 ^ balls = 32)"
+  },
+  {
+   "row": 29604,
+   "pid": "math_train_counting_and_probability_634",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(4 = 4)"
+  },
+  {
+   "row": 29641,
+   "pid": "math_train_counting_and_probability_83",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(1 = 1)"
+  },
+  {
+   "row": 29664,
+   "pid": "math_train_counting_and_probability_62",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(probability_no_obtuse = 1/4)"
+  },
+  {
+   "row": 29694,
+   "pid": "math_train_counting_and_probability_5057",
+   "class": "calculation",
+   "why": "conjunction, all closed arithmetic",
+   "goal": "(tr + mr = terry_picks + mary_picks) ∧ (tb + mb = total_candies - terry_picks - mary_picks)"
+  },
+  {
+   "row": 29800,
+   "pid": "math_train_counting_and_probability_801",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "True"
+  },
+  {
+   "row": 29892,
+   "pid": "math_train_counting_and_probability_605",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "((a + 1) * (b + 1) * (c + 1) * (d + 1) = 90)"
+  },
+  {
+   "row": 29941,
+   "pid": "math_train_counting_and_probability_978",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(x + y = (x - 3) + (y - 1))"
+  },
+  {
+   "row": 30079,
+   "pid": "math_train_counting_and_probability_1037",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(Fintype.card (Finset.univ : Finset (Fin 2 × Fin 2 × Fin 2)) = 8)"
+  },
+  {
+   "row": 30114,
+   "pid": "math_train_counting_and_probability_358",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(n.factorial = 2)"
+  },
+  {
+   "row": 30148,
+   "pid": "math_train_counting_and_probability_522",
+   "class": "proof",
+   "why": "finset_or_card",
+   "goal": "(∑ i in Finset.range 6, i + 1 = 21)"
+  },
+  {
+   "row": 30209,
+   "pid": "math_train_counting_and_probability_327",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(p = 0.5)"
+  },
+  {
+   "row": 30272,
+   "pid": "math_train_counting_and_probability_5097",
+   "class": "UNKNOWN",
+   "why": "no relation and no proof marker",
+   "goal": "True"
+  },
+  {
+   "row": 30405,
+   "pid": "math_train_counting_and_probability_429",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(Nat.choose n k = 15)"
+  },
+  {
+   "row": 30446,
+   "pid": "math_train_counting_and_probability_1075",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(Nat.factorial n % 100 = 0)"
+  },
+  {
+   "row": 30540,
+   "pid": "math_train_counting_and_probability_5124",
+   "class": "proof",
+   "why": "implication,quantifier",
+   "goal": "(∀ n : Nat, n = 1 → a₁ = 2)"
+  },
+  {
+   "row": 30626,
+   "pid": "math_train_counting_and_probability_1018",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "(2^10 = 1024)"
+  },
+  {
+   "row": 30674,
+   "pid": "math_train_counting_and_probability_740",
+   "class": "proof",
+   "why": "equation over free variables",
+   "goal": "(small_triangles = 10)"
+  },
+  {
+   "row": 30710,
+   "pid": "math_train_counting_and_probability_656",
+   "class": "calculation",
+   "why": "closed numeric relation",
+   "goal": "Nat.gcd 7 30 = 1"
+  },
+  {
+   "row": 30758,
+   "pid": "math_train_counting_and_probability_625",
+   "class": "calculation",
+   "why": "goal over hypothesis-pinned numerals",
+   "goal": "(total_lamps - aloe_lamp = 3)"
+  }
+ ]
+}
