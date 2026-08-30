@@ -90,6 +90,20 @@ def main(path=None, out_md=None, out_json=None):
                      for w in rp.get("recoveries", [])}
     n_witnessed = sum(1 for hit in witnessed.values() if hit)
 
+    # A SUBSTANTIVE recovery is one that survives both vacuity checks: the
+    # hypotheses are consistent (Phase 2's required probe) AND the goal is not
+    # an existential witnessed by its own right-hand side (the gap in
+    # vacuity_scan's taxonomy, §3b). Every count below uses this, never the raw
+    # `recovered` verdict, because the brief's rule is that a recovery is not
+    # reportable unless the vacuity probe passes on it.
+    def substantive(s_):
+        return (v(s_) == "recovered"
+                and not witnessed.get((s_["set"], str(s_["id"])), False))
+
+    def n_sub(setname=None):
+        return sum(1 for s_ in done
+                   if substantive(s_) and (setname is None or s_["set"] == setname))
+
     L = []
     A = L.append
     A("# Phase 2–4 — the tactic oracle: how many recorded failures are the "
@@ -112,7 +126,7 @@ def main(path=None, out_md=None, out_json=None):
     # ------------------------------------------------------------------ tl;dr
     rec = collections.Counter(v(s) for s in done)["recovered"]
     sb0k, sb0n, _ = HEADLINE["stageB_T0.0"]
-    sb0r = sum(1 for s in done if s["set"] == "stageB_T0.0" and v(s) == "recovered")
+    sb0r = n_sub("stageB_T0.0")
     A("---\n")
     A("## 0. The answer, before the tables\n")
     if rec / max(n, 1) < 0.10:
@@ -143,7 +157,7 @@ def main(path=None, out_md=None, out_json=None):
           "them.** \"This tactic was wrong\" turns out not to imply \"a right "
           "tactic exists\".\n"
           % (sum(1 for s in done if s["structural"]),
-             sum(1 for s in done if s["structural"] and v(s) == "recovered")))
+             sum(1 for s in done if s["structural"] and substantive(s))))
         A("What this does **not** say: that the failures are the *trace's* "
           "fault. The oracle is a weak prover and `none_closed` means only that "
           "this ladder failed. §8 is the list of what it cannot see.\n")
@@ -238,8 +252,8 @@ def main(path=None, out_md=None, out_json=None):
     for name, tac in LADDER:
         k = rung.get(name, 0)
         rows.append(["`%s`" % tac, k, pct(k, n), pct(k, rec) if rec else "—"])
-    A(md(["rung", "genuine recoveries", "share of all %d" % n,
-          "share of the %d recoveries" % rec], rows))
+    A(md(["rung", "goals closed", "share of all %d" % n,
+          "share of the %d closes" % rec], rows))
     A("")
     if rung:
         top, topk = rung.most_common(1)[0]
@@ -470,14 +484,15 @@ def main(path=None, out_md=None, out_json=None):
             hit_goals = [w for kk, w in
                          [((x["set"], str(x["id"])), x) for x in done]
                          if witnessed.get(kk)]
-            A("**But that taxonomy has a gap, and %d of these fall in it.** "
+            A("**But that taxonomy has a gap, and %d of these %s in it.** "
               "`∃ x, x = e` asserts nothing whatever — take `x` to be `e` — yet "
               "it is not `True`, not a hypothesis, not `rfl`, and not "
               "`decide`-able, so all six of `vacuity_scan.py`'s probes miss it "
               "and it is filed `6_contentful`. Tested directly with "
               "`exact ⟨_, rfl⟩`, which closes exactly the goals witnessed by "
-              "their own right-hand side: **%d of the %d recoveries are**%s.\n"
-              % (nw, nw, len(witnessed),
+              "their own right-hand side: **%d of the %d recoveries %s**%s.\n"
+              % (nw, "falls" if nw == 1 else "fall", nw, len(witnessed),
+                 "is" if nw == 1 else "are",
                  (" — " + ", ".join("`%s`" % (g["goal"] or "")[:60]
                                     for g in hit_goals)) if hit_goals else ""))
             subst = rec - nw
@@ -514,19 +529,21 @@ def main(path=None, out_md=None, out_json=None):
     rows = []
     for sh in shapes:
         grp = [s for s in done if s["shape"] == sh]
-        k = sum(1 for s in grp if v(s) == "recovered")
+        k = sum(1 for s in grp if substantive(s))
         rows.append([sh, len(grp), k, pct(k, len(grp)), ci(k, len(grp))])
-    A(md(["goal shape (top-level)", "n", "recovered", "rate", "95% CI"], rows))
+    A(md(["goal shape (top-level)", "n", "substantive recoveries", "rate",
+          "95% CI"], rows))
     A("")
     rows = []
     for t, c in collections.Counter(s["lean_tactic"] for s in done).most_common():
         grp = [s for s in done if s["lean_tactic"] == t]
-        k = sum(1 for s in grp if v(s) == "recovered")
+        k = sum(1 for s in grp if substantive(s))
         rows.append(["`%s`" % t, len(grp), k, pct(k, len(grp)), ci(k, len(grp))])
-    A(md(["tactic Lean named as failing", "n", "recovered", "rate", "95% CI"], rows))
+    A(md(["tactic Lean named as failing", "n", "substantive recoveries", "rate",
+          "95% CI"], rows))
     A("")
     st_grp = [s for s in done if s["structural"]]
-    st_rec = sum(1 for s in st_grp if v(s) == "recovered")
+    st_rec = sum(1 for s in st_grp if substantive(s))
     if st_grp:
         A("Phase 1 identified **%d** failures as structural category errors on "
           "direct evidence from Lean. The oracle recovers **%d of those %d "
@@ -542,18 +559,27 @@ def main(path=None, out_md=None, out_json=None):
       "on the trace-validity signal. The gap between the two columns is the size "
       "of the prover-skill contamination in the current metric. The two numbers "
       "are only meaningful side by side and must never be reported apart.\n")
-    hdr = ["trace set", "observed pass rate", "95% CI", "genuine recoveries",
+    hdr = ["trace set", "observed pass rate", "95% CI", "substantive recoveries",
            "pass rate under tactic oracle (**upper bound**)", "95% CI", "gap"]
     rows = []
     for st in tc.SET_ORDER:
         k, tot, _art = HEADLINE[st]
-        r = sum(1 for s in done if s["set"] == st and v(s) == "recovered")
+        r = n_sub(st)
+        raw = sum(1 for s in done if s["set"] == st and v(s) == "recovered")
         rows.append([tc.SET_LABEL[st],
-                     "%d/%d = %s" % (k, tot, pct(k, tot)), ci(k, tot), r,
+                     "%d/%d = %s" % (k, tot, pct(k, tot)), ci(k, tot),
+                     "%d%s" % (r, "" if r == raw else " *(of %d closed)*" % raw),
                      "%d/%d = %s" % (k + r, tot, pct(k + r, tot)), ci(k + r, tot),
                      "+%.1f pp" % (100.0 * r / tot)])
     A(md(hdr, rows))
     A("")
+    if n_witnessed:
+        A("**The recovery column is the substantive count, not the raw one.** "
+          "%d close%s in §2 that is an existential witnessed by its own "
+          "right-hand side is excluded here for the same reason a "
+          "contradictory-hypothesis close is: it is not evidence that the trace "
+          "was valid. The raw count is shown in italics where the two differ.\n"
+          % (n_witnessed, "" if n_witnessed == 1 else "s"))
     A("**No row is pooled with another.** FormalStep and Stage B are different "
       "formalization pipelines with different units; the two FormalStep n50 runs "
       "cover the same 50 problems at two temperatures and their passes are not "
@@ -565,7 +591,7 @@ def main(path=None, out_md=None, out_json=None):
       "are real failures worth putting through the oracle, but 21/50 is a "
       "within-problem step rate and must not be read as a validity figure.\n")
     sb0 = HEADLINE["stageB_T0.0"]
-    r0 = sum(1 for s in done if s["set"] == "stageB_T0.0" and v(s) == "recovered")
+    r0 = n_sub("stageB_T0.0")
     A("> Stage B T=0.0, the repo's headline Stage B figure: **observed "
       "%d/%d = %s %s; under a perfect tactic oracle %d/%d = %s %s.** The second "
       "number is an upper bound that no prover attains, and the %.0f-point gap "
@@ -580,10 +606,16 @@ def main(path=None, out_md=None, out_json=None):
 
     A("### 6.1 What fraction of our recorded failures are the prover's fault "
       "rather than the trace's?\n")
+    _sub = n_sub()
     A("**%s %s of `tactic_mismatch` failures — %d of %d — are the prover's "
       "fault in the strictest sense available: keep the statement and the "
       "header exactly as they were, replace the proof with a fixed standard "
-      "tactic, and the goal closes.** " % (pct(rec, n), ci(rec, n), rec, n))
+      "tactic, and a goal that asserts something closes.**%s "
+      % (pct(_sub, n), ci(_sub, n), _sub, n,
+         "" if _sub == rec else
+         (" (%d closed in all; the %d excluded %s an existential witnessed by "
+          "its own right-hand side — §3b.)" % (rec, rec - _sub,
+                                               "is" if rec - _sub == 1 else "are"))))
     A("Two things bound that number in opposite directions. It is a **lower** "
       "bound on prover fault, because a ladder of %d standard tactics — %d of "
       "them live on this toolchain, none of them able to `intro` a quantifier "
@@ -593,7 +625,7 @@ def main(path=None, out_md=None, out_json=None):
       "could recover without new generation, because the oracle is allowed to "
       "know the answer and the model is not.\n" % (len(LADDER), live))
     sb_done = [s for s in done if s["pipeline"] == "StageB"]
-    sb_rec = sum(1 for s in sb_done if v(s) == "recovered")
+    sb_rec = sum(1 for s in sb_done if substantive(s))
     A("Scaled to Stage B's whole judged failure set rather than to "
       "`tactic_mismatch` alone, and using Stage B's own numbers rather than the "
       "pooled rate: **%d of %d** Stage B `tactic_mismatch` failures recover "
@@ -609,7 +641,7 @@ def main(path=None, out_md=None, out_json=None):
     gaps = []
     for st in tc.SET_ORDER:
         k, tot, _ = HEADLINE[st]
-        r = sum(1 for s in done if s["set"] == st and v(s) == "recovered")
+        r = n_sub(st)
         gaps.append((tc.SET_LABEL[st], k, tot, r, 100.0 * r / tot))
     worst = max(gaps, key=lambda g: g[4])
     if worst[4] < 5.0:
@@ -763,8 +795,10 @@ def main(path=None, out_md=None, out_json=None):
         "recovering_rung": dict(rung),
         "vacuous_rung": dict(vrung),
         "headline": {st: {"observed_k": HEADLINE[st][0], "n": HEADLINE[st][1],
-                          "recoveries": sum(1 for s in done if s["set"] == st
-                                            and v(s) == "recovered")}
+                          "substantive_recoveries": n_sub(st),
+                          "closes_including_vacuous":
+                              sum(1 for s in done if s["set"] == st
+                                  and v(s) == "recovered")}
                      for st in tc.SET_ORDER},
     }
     json.dump(summary, io.open(out_json or os.path.join(_ROOT, "results",

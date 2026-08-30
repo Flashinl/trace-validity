@@ -1,0 +1,500 @@
+{
+  "exists_eq_probe": "exact ⟨_, rfl⟩",
+  "recoveries": [
+    {
+      "set": "stageB_T0.7",
+      "id": "04f77b5a-761d-5f60-b904-40d296227afc",
+      "witnessed_by_own_rhs": false,
+      "goal": "¬∃ n, n ∈ S ∧ n = 119 ∧ ∀ m > 119, ∃ k, m ∈ S ∧ k > 0 ∧ m - k ∈ S"
+    },
+    {
+      "set": "stageB_T0.7",
+      "id": "076e5357-9507-5775-b951-4af80bf2d409",
+      "witnessed_by_own_rhs": true,
+      "goal": "∃ q : ℚ, q = ∑' n, a n / 10 ^ n"
+    },
+    {
+      "set": "stageB_T0.7",
+      "id": "082c0e7e-1ef1-5760-aa48-8a9e73a8a778",
+      "witnessed_by_own_rhs": false,
+      "goal": "7 ∣ (5 * a + 2 * b)"
+    },
+    {
+      "set": "formalStep_baseline_50step_1problem",
+      "id": 11,
+      "witnessed_by_own_rhs": false,
+      "goal": "(Real.sqrt (Real.sqrt (Real.sqrt (a * b))) = Real.sqrt (Real.sqrt (Real.sqrt a)) * Real.sqrt (Real.sqrt (Real.sqrt b)))"
+    }
+  ],
+  "repaired_rung": {
+    "simp_arith_repaired": "simp +arith +decide"
+  },
+  "repaired_rung_timeout_seconds": 20,
+  "rows": [
+    {
+      "set": "stageB_T0.0",
+      "id": "002d9130-a6e7-56cc-9c79-3a98babe9589",
+      "shape": "nonlinear",
+      "goal": "¬∃ a b : ℕ, Odd a ∧ Odd b ∧ ∃ m n, a * b = m ^ 2 ∧ a + b = n ^ 2",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.493,
+          "error_head": "unsolved goals ⊢ ∀ (x : ℕ), Odd x → ∀ (x_1 : ℕ), Odd x_1 → ∀ (x_2 : ℕ), x * x_1 = x_2 ^ 2 → ∀ (x_3 : ℕ), ¬x + x_1 = x_3 ^ 2"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "003d391a-9eae-50cf-bcf8-52a7068f276b",
+      "shape": "nat_int_arith",
+      "goal": "p ∣ n ∨ Nat.Coprime p n",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.023,
+          "error_head": "`simp` made no progress"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "009e6379-699b-548c-aea0-fddb8d857d87",
+      "shape": "nat_int_arith",
+      "goal": "∃ j : Fin 3 → ℕ, (∀ i, j i > 0) ∧ (∃ k : ℤ, (j 0 + j 1 + j 2) / 3 = k) ∧ ¬∃ p : Equiv.Perm (Fin 3), ∀ i, j i = p i",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.513,
+          "error_head": "unsolved goals ⊢ ∃ j, (∀ (i : Fin 3), 1 ≤ j i) ∧ ∀ (x : Equiv.Perm (Fin 3)), ∃ x_1, ¬j x_1 = ↑(x x_1)"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "01334d04-5a77-57f7-9186-6b4250da421a",
+      "shape": "nat_int_arith",
+      "goal": "∀ k, 19 ∣ A k",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.028,
+          "error_head": "`simp` made no progress"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "0145b833-1c5c-572d-ae4e-c99d03115a01",
+      "shape": "nonlinear",
+      "goal": "¬∃ m, n * (n + 1) * (n + 2) = m ^ 3",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.035,
+          "error_head": "unsolved goals n : ℕ h : n > 0 ⊢ ∀ (x : ℕ), ¬n * (n + 1) * (n + 2) = x ^ 3"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "015c4f53-c1a0-5a27-9054-c4e64aea860d",
+      "shape": "nonlinear",
+      "goal": "∀ N, ∃ m, m > N ∧ ∃ k, a m = k ^ 2",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.074,
+          "error_head": "unsolved goals a : ℕ → ℤ h₀ : a 1 = 1 h₁ : ∀ (n : ℕ), a (n + 1) = a n + ⌊√↑(a n)⌋ ⊢ ∀ (N : ℕ), ∃ m, N < m ∧ ∃ k, a m = k ^ 2"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "017fd168-d272-5d64-a884-6cb3a244ab40",
+      "shape": "nat_int_arith",
+      "goal": "(Even x ∧ Odd y) ∨ (Odd x ∧ Even y)",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.054,
+          "error_head": "`simp` made no progress"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "019949dc-998c-50e2-8a4c-e52b3bc714bf",
+      "shape": "nonlinear",
+      "goal": "49 ∣ n * m",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.026,
+          "error_head": "`simp` made no progress"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "021f5889-2f54-564a-aaa4-ea238818a002",
+      "shape": "nonlinear",
+      "goal": "¬∃ a b c : ℕ, a ≠ 0 ∧ b ≠ 0 ∧ c ≠ 0 ∧ (8 * n - 1) = a ^ 2 + b ^ 2 + c ^ 2",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.303,
+          "error_head": "unsolved goals n : ℕ ⊢ ∀ (x x_1 x_2 : ℕ), ¬8 * n - 1 = (x + 1) ^ 2 + (x_1 + 1) ^ 2 + (x_2 + 1) ^ 2"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "022e6a2f-1c07-50e7-9403-fc59f8add495",
+      "shape": "nat_int_arith",
+      "goal": "a p ≤ a q",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.027,
+          "error_head": "`simp` made no progress"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "024ee395-5fa4-574a-9186-24273ee91aaf",
+      "shape": "nonlinear",
+      "goal": "∀ n, ∃ m, m > n ∧ ∃ p q x y, a m = x * a p + y * a q ∧ p ≠ q",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.219,
+          "error_head": "unsolved goals a : ℕ → ℕ ha : ∀ (k : ℕ), 0 < a k hinc : ∀ (k : ℕ), a k < a (k + 1) ⊢ ∀ (n : ℕ), ∃ m, n < m ∧ ∃ p q, (∃ x x_1, a m = x * a p + x_1 * a q) ∧ ¬p = "
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "02f5af73-2087-50cd-a1b4-81c9c049b08f",
+      "shape": "nat_int_arith",
+      "goal": "3 ∣ n + (n + 1)",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.026,
+          "error_head": "`simp` made no progress"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "0313f21a-9207-5788-8e5f-06348ff85b69",
+      "shape": "nonlinear",
+      "goal": "(Nat.digits b ((b-1)^4))[0]? = some 1 ∧ (Nat.digits b ((b-1)^4))[2]? = some 5",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.14,
+          "error_head": "`simp` made no progress"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "03e184cb-e882-5042-a3c4-e65adacf1d4f",
+      "shape": "nat_int_arith",
+      "goal": "IsCoprime (21*n + 4) (14*n + 3)",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.026,
+          "error_head": "`simp` made no progress"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "04565238-2805-5cad-98a9-cc6ae94ac48d",
+      "shape": "nonlinear",
+      "goal": "∃ a b, a ≠ b ∧ n = 2 * a * b / (a + b)",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.101,
+          "error_head": "unsolved goals n : ℕ hn : Odd n ∧ 3 ≤ n ⊢ ∃ a b, ¬a = b ∧ n = 2 * a * b / (a + b)"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "04abbfcd-cd56-5072-9d3e-9afc80e96ce2",
+      "shape": "nonlinear",
+      "goal": "∃ m n, m^2 - n^2 = r^3",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.234,
+          "error_head": "unsolved goals r : ℤ x✝ : r > 0 ⊢ ∃ m n, -1 * r ^ 3 + m ^ 2 + -1 * n ^ 2 = 0"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "0551bfa6-80b7-554b-afef-991c1ef522d8",
+      "shape": "nonlinear",
+      "goal": "¬∃ x y z : ℤ, x^2+y^2-8*z^3=6",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.436,
+          "error_head": "unsolved goals ⊢ ∀ (x x_1 x_2 : ℤ), ¬x ^ 2 + x_1 ^ 2 + -8 * x_2 ^ 3 + -6 = 0"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "0560e7d8-b615-5571-81a5-5d73b522e30b",
+      "shape": "nonlinear",
+      "goal": "∃ n : ℕ, 4 ≤ n ∧ ∀ m ∈ Set.Ioo (2 * n / 3) n, ∃ k : ℕ, 2 ≤ k ∧ k ≤ 2022 ∧ ∃ x : ℚ, x > 0 ∧ x < (n - m) / m ∧ (Nat.floor (x * (-k : ℤ))) % k = 0",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 8.395,
+          "error_head": "Tactic `simp` failed with a nested error: maximum recursion depth has been reached use `set_option maxRecDepth <num>` to increase limit use `set_option diagnost"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "059d3fbd-e23e-519a-b6f0-e6573b465df1",
+      "shape": "finset_bigop",
+      "goal": "Even {k | ∃ i, i ∈ Finset.Icc 1 (n - 1) ∧ Nat.Coprime i n ∧ k = i}.ncard",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.171,
+          "error_head": "unsolved goals n : ℕ hn : 2 < n ⊢ Even {k | (1 ≤ k ∧ k ≤ n - 1) ∧ k.Coprime n}.ncard"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "05a8cfb9-5abe-5216-9c19-27bb0d495914",
+      "shape": "nonlinear",
+      "goal": "∀ k, k ∈ Finset.Icc 1 5 → 271 ∣ (n / 10 ^ k + (n % 10 ^ k) * 10 ^ (5 - k))",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.185,
+          "error_head": "unsolved goals n : ℕ h₀ : n ∈ Finset.Icc 10000 99999 h₁ : 271 ∣ n ⊢ ∀ (k : ℕ), 1 ≤ k → k ≤ 5 → 271 ∣ n / 10 ^ k + n % 10 ^ k * 10 ^ (5 - k)"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "05c894e4-97a2-506f-ab92-1a3c85122249",
+      "shape": "nat_int_arith",
+      "goal": "a = b",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.014,
+          "error_head": "`simp` made no progress"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "05d6dafa-4626-5fe8-9a96-326e04fc2472",
+      "shape": "nat_int_arith",
+      "goal": "∃ b c d, b ≠ c ∧ b ≠ d ∧ c ≠ d ∧ 3 ∣ a b + a c + a d",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.128,
+          "error_head": "unsolved goals a : Fin 5 → ℤ ⊢ ∃ b c, ¬b = c ∧ ∃ x, ¬b = x ∧ ¬c = x ∧ 3 ∣ a b + a c + a x"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "05e87a03-b7db-57dd-9233-9284c35f7feb",
+      "shape": "nonlinear",
+      "goal": "∀ n: ℕ, n > 0 → ∀ x: ℕ, x ∈ row n → x ≤ 2 ^ (n - 1)",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.161,
+          "error_head": "unsolved goals row : ℕ → Finset ℕ h0 : row 0 = ∅ h1 : row 1 = {1} h : ∀ n > 0, ∀ x ∈ row (n + 1), ∃ a b, a ∈ row n ∧ b ∈ row n ∧ x = a + b ⊢ ∀ (n : ℕ), 1 ≤ n → "
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "0699130e-8867-5efa-8de8-0f18ed2c3707",
+      "shape": "nat_int_arith",
+      "goal": "∀ n, 0 < n → ∃ p q : ℕ, 0 < p ∧ 0 < q ∧ n = a p - a q",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.199,
+          "error_head": "unsolved goals a : ℕ → ℕ ha : StrictMono a apos : ∀ (n : ℕ), 0 < a n ha1 : a 1 = 1 han : ∀ (n : ℕ), a (n + 1) ≤ 2 * n ⊢ ∀ (n : ℕ), 1 ≤ n → ∃ p, 1 ≤ p ∧ ∃ x, 1 ≤"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "075cfac6-425b-5a3a-a05d-6be869d37e67",
+      "shape": "nat_int_arith",
+      "goal": "{n | Odd (x n)}.Infinite ∧ {n | Even (x n)}.Infinite",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.06,
+          "error_head": "`simp` made no progress"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "08b73585-3d83-57aa-bee1-380d14011bfa",
+      "shape": "nonlinear",
+      "goal": "∃ x y : ℤ, x ^ 2 - y ^ 2 = a ^ 3",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.15,
+          "error_head": "unsolved goals a : ℕ ha : 0 < a ⊢ ∃ x y, x ^ 2 + -1 * y ^ 2 + -1 * ↑a ^ 3 = 0"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "08e7648a-a9e2-5b35-a6ff-ac1150733c18",
+      "shape": "nonlinear",
+      "goal": "Tendsto (λ n => (q n : ℝ) / n) atTop (𝓝 0)",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.096,
+          "error_head": "`simp` made no progress"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "092c450d-7982-549c-b49f-07a012d9d992",
+      "shape": "nonlinear",
+      "goal": "¬ ∃ m, m^2 = 2551 * 543^n - 2008 * 7^n",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.123,
+          "error_head": "unsolved goals n : ℕ hn : n > 0 ⊢ ∀ (x : ℕ), ¬x ^ 2 = 2551 * 543 ^ n - 2008 * 7 ^ n"
+        }
+      ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "094d2d3b-a20e-519a-b85a-a2311fdecd8b",
+      "shape": "nat_int_arith",
+      "goal": "∃ k > 0, a k = 2",
+      "verdict": "none_closed",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "compile_error",
+          "seconds": 0.103,
+          "error_head": "unsolved goals p q : ℕ hp : Nat.Prime p hq : Nat.Prime q hne : p ≠ q a : ℕ → ℕ ha1 : a 1 = p ha2 : a 2 = q han : ∀ n > 0, ∃ m > 0, a n + a (n + 1) = 2 ^ m → a ("
+        }
+      ]
+    }
+  ],
+  "aborted": null
+}

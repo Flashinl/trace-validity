@@ -104,12 +104,14 @@ proof deleted, one fixed ladder of standard tactics.
 
 | figure | k/n | 95% CI | artifact | date |
 |---|---|---|---|---|
-| **recovered by a standard tactic** | **4/104 = 3.8%** | [1.5–9.5] | `tactic_oracle.jsonl` | 08-30 |
+| **substantive recoveries** | **3/104 = 2.9%** | [1.0–8.1] | `TACTIC_ORACLE.md` §3b | 08-30 |
+| — goals closed by a ladder tactic in all | 4/104 = 3.8% | [1.5–9.5] | `tactic_oracle.jsonl` | 08-30 |
+| — of those, an `∃ x, x = e` asserting nothing | 1/4 | — | `tactic_oracle_repair.json` | 08-30 |
 | closed only via inconsistent hypotheses | 0/104 | [0–3.6] | `tactic_oracle.jsonl` | 08-30 |
 | no ladder tactic closed it | 100/104 = 96.2% | [90.5–98.5] | `tactic_oracle.jsonl` | 08-30 |
 | exceeded the 60s budget | 0/104 | [0–3.6] | `tactic_oracle.jsonl` | 08-30 |
 | **Stage B T=0.0 under the oracle** | **28/90 = 31.1%** | [22.5–41.3] | `TACTIC_ORACLE.md` §5 | 08-30 |
-| Stage B T=0.7 under the oracle | 29/90 = 32.2% | [23.5–42.4] | `TACTIC_ORACLE.md` §5 | 08-30 |
+| Stage B T=0.7 under the oracle | 28/90 = 31.1% | [22.5–41.3] | `TACTIC_ORACLE.md` §5 | 08-30 |
 | structural category errors, direct evidence | **12/104 = 11.5%** | [7–19] | `TACTIC_SELECTION.md` §2a | 08-30 |
 | — of those, recovered by the oracle | **0/12** | [0–24.3] | `TACTIC_ORACLE.md` §4 | 08-30 |
 | `linarith` on a nonlinear context | 9/104 = 8.7% | [5–16] | `TACTIC_SELECTION.md` §2b | 08-30 |
@@ -118,9 +120,15 @@ proof deleted, one fixed ladder of standard tactics.
 > **The oracle rate is not a validity figure and must never be quoted alone.**
 > It is what the pass rate would be *if tactic selection were perfect* — an
 > upper bound, not something any prover attains. On Stage B T=0.0 it equals the
-> observed rate exactly: **31.1% → 31.1%, a zero-point correction.** The largest
-> correction anywhere is +3.3 pp (Stage B T=0.7), inside the interval on the
-> figure itself.
+> observed rate exactly: **31.1% → 31.1%, a zero-point correction.** The
+> largest correction anywhere is +2.2 pp (Stage B T=0.7), well inside the
+> interval on the figure itself.
+>
+> A **substantive** recovery is one where the hypotheses are consistent AND the
+> goal is not an existential witnessed by its own right-hand side. The second
+> check is not in `vacuity_scan.py`'s taxonomy — it has no probe for
+> `∃ x, x = e`, which asserts nothing yet is not `True`, not a hypothesis, not
+> `rfl` and not `decide`-able — and it removes one of the four closes.
 
 > ⚠️ **The ladder is weak and 2 of its 11 rungs were dead.** `simp_arith` is
 > deprecated in Lean v4.32.0 and errored before running; the brief's

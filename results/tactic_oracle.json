@@ -86,27 +86,32 @@
     "stageB_T0.0": {
       "observed_k": 28,
       "n": 90,
-      "recoveries": 0
+      "substantive_recoveries": 0,
+      "closes_including_vacuous": 0
     },
     "stageB_T0.7": {
       "observed_k": 26,
       "n": 90,
-      "recoveries": 3
+      "substantive_recoveries": 2,
+      "closes_including_vacuous": 3
     },
     "formalStep_baseline_50step_1problem": {
       "observed_k": 21,
       "n": 50,
-      "recoveries": 1
+      "substantive_recoveries": 1,
+      "closes_including_vacuous": 1
     },
     "formalStep_n50_distinct_T0.0": {
       "observed_k": 37,
       "n": 50,
-      "recoveries": 0
+      "substantive_recoveries": 0,
+      "closes_including_vacuous": 0
     },
     "formalStep_n50_distinct_T0.2": {
       "observed_k": 37,
       "n": 50,
-      "recoveries": 0
+      "substantive_recoveries": 0,
+      "closes_including_vacuous": 0
     }
   }
 }
