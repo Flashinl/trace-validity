@@ -1,0 +1,112 @@
+{
+  "complete": true,
+  "n_done": 104,
+  "n_total": 104,
+  "ladder": [
+    {
+      "rung": "norm_num",
+      "tactic": "norm_num"
+    },
+    {
+      "rung": "decide",
+      "tactic": "decide"
+    },
+    {
+      "rung": "omega",
+      "tactic": "omega"
+    },
+    {
+      "rung": "ring_nf",
+      "tactic": "ring_nf"
+    },
+    {
+      "rung": "positivity",
+      "tactic": "positivity"
+    },
+    {
+      "rung": "nlinarith_hint",
+      "tactic": "nlinarith [sq_nonneg _, sq_nonneg _]"
+    },
+    {
+      "rung": "nlinarith",
+      "tactic": "nlinarith"
+    },
+    {
+      "rung": "field_simp_ring",
+      "tactic": "field_simp; ring"
+    },
+    {
+      "rung": "simp_arith",
+      "tactic": "simp_arith"
+    },
+    {
+      "rung": "aesop",
+      "tactic": "aesop"
+    },
+    {
+      "rung": "norm_num_choose",
+      "tactic": "norm_num [Nat.choose, Nat.factorial]"
+    }
+  ],
+  "per_attempt_budget_seconds": 60,
+  "counts": {
+    "none_closed": 100,
+    "recovered": 4
+  },
+  "recovered_wilson": [
+    0.0151,
+    0.0947
+  ],
+  "by_set": {
+    "stageB_T0.0": {
+      "none_closed": 40
+    },
+    "stageB_T0.7": {
+      "none_closed": 42,
+      "recovered": 3
+    },
+    "formalStep_baseline_50step_1problem": {
+      "recovered": 1,
+      "none_closed": 9
+    },
+    "formalStep_n50_distinct_T0.0": {
+      "none_closed": 5
+    },
+    "formalStep_n50_distinct_T0.2": {
+      "none_closed": 4
+    }
+  },
+  "recovering_rung": {
+    "aesop": 2,
+    "norm_num": 1,
+    "omega": 1
+  },
+  "vacuous_rung": {},
+  "headline": {
+    "stageB_T0.0": {
+      "observed_k": 28,
+      "n": 90,
+      "recoveries": 0
+    },
+    "stageB_T0.7": {
+      "observed_k": 26,
+      "n": 90,
+      "recoveries": 3
+    },
+    "formalStep_baseline_50step_1problem": {
+      "observed_k": 21,
+      "n": 50,
+      "recoveries": 1
+    },
+    "formalStep_n50_distinct_T0.0": {
+      "observed_k": 37,
+      "n": 50,
+      "recoveries": 0
+    },
+    "formalStep_n50_distinct_T0.2": {
+      "observed_k": 37,
+      "n": 50,
+      "recoveries": 0
+    }
+  }
+}
