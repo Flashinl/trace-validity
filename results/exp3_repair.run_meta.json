@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "experiment": "exp3_repair",
+  "started_utc": "2026-08-30T22:50:58Z",
+  "finished_utc": "2026-08-30T23:08:54Z",
+  "command": "tests/audit/gpu_recovery.py exp3 --temp 0.0 --seed 20260830 --out results/exp3_repair.jsonl",
+  "git": {
+    "sha": "2f25feb659385719112980c4b8e64f6104157fc2",
+    "branch": "exp/gpu-tactic-recovery",
+    "dirty": false,
+    "source": "code_version_file"
+  },
+  "model": {
+    "name": "Goedel-LM/Goedel-Prover-SFT"
+  },
+  "sampling": {
+    "temperature": 0.0,
+    "do_sample": false,
+    "top_p": null,
+    "seed": 20260830,
+    "samples_per_item": 1,
+    "n_items": 104
+  },
+  "prompt": {
+    "shape": "REPAIR_TEMPLATE: original prompt + failed attempt + Lean error verbatim, then the original prompt again",
+    "assembled_from": "config.PROMPT_TEMPLATE and GOEDEL_LEAN4_HEADER, both unmodified",
+    "max_error_chars": 1800,
+    "comparable_with_one_shot": false
+  },
+  "environment": {
+    "hostname": "158-101-124-92",
+    "platform": "Linux-6.8.0-60-generic-x86_64-with-glibc2.35",
+    "python": "3.10.12",
+    "torch": "2.7.0",
+    "transformers": "4.46.3",
+    "datasets": "3.6.0",
+    "gpu": "NVIDIA A100-SXM4-40GB",
+    "gpu_total_gib": 39.49,
+    "gpu_free_gib_at_start": 39.08
+  },
+  "output": {
+    "traces": "exp3_repair.jsonl",
+    "records_written": 104,
+    "sha256": "dde63f393c9a477f26f63820f12dd6dd93e1946907cb25cda892ab7160059020",
+    "elapsed_seconds": 1066.1
+  },
+  "status": "complete"
+}

@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "experiment": "exp2_stageb",
+  "started_utc": "2026-08-30T21:49:14Z",
+  "finished_utc": "2026-08-30T22:50:54Z",
+  "command": "tests/audit/gpu_recovery.py exp2-stageb --k 16 --batch 16 --temp 0.7 --seed 20260830 --out results/exp2_stageb_k16.jsonl",
+  "git": {
+    "sha": "2f25feb659385719112980c4b8e64f6104157fc2",
+    "branch": "exp/gpu-tactic-recovery",
+    "dirty": false,
+    "source": "code_version_file"
+  },
+  "model": {
+    "name": "Goedel-LM/Goedel-Prover-SFT"
+  },
+  "sampling": {
+    "temperature": 0.7,
+    "do_sample": true,
+    "top_p": 0.95,
+    "seed": 20260830,
+    "samples_per_item": 16,
+    "n_items": 90
+  },
+  "prompt": {
+    "shape": "stage_b_generate.build_prompt (verbatim)",
+    "informal_prefix": "carried in the NuminaMath statement itself",
+    "template": "config.PROMPT_TEMPLATE (verbatim upstream)"
+  },
+  "environment": {
+    "hostname": "158-101-124-92",
+    "platform": "Linux-6.8.0-60-generic-x86_64-with-glibc2.35",
+    "python": "3.10.12",
+    "torch": "2.7.0",
+    "transformers": "4.46.3",
+    "datasets": "3.6.0",
+    "gpu": "NVIDIA A100-SXM4-40GB",
+    "gpu_total_gib": 39.49,
+    "gpu_free_gib_at_start": 39.08
+  },
+  "output": {
+    "traces": "exp2_stageb_k16.jsonl",
+    "records_written": 1440,
+    "sha256": "fd4f3fdddce1babb4b67410f7e11c4c61545e7fd3da282fc433eed7d161fc537",
+    "elapsed_seconds": 3689.4
+  },
+  "status": "complete"
+}

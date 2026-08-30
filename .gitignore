@@ -63,3 +63,16 @@ results/*.png
 # so leaving it untracked is what keeps run_meta.json`s `dirty` flag truthful --
 # otherwise every deploy dirties the tree by writing this file.
 CODE_VERSION
+
+# 2026-08-30 GPU tactic-recovery experiments. The traces and verdicts are the
+# evidence for GPU_TACTIC_RECOVERY.md and are kept; the content-addressed
+# verifier cache is a rebuildable local speed-up and is not.
+!results/exp1_*.verified.jsonl
+!results/exp2_stageb_k16.jsonl
+!results/exp2_*.verified.jsonl
+!results/exp3_repair.jsonl
+!results/exp3_*.verified.jsonl
+!results/exp_vacuity.json
+!results/GPU_TACTIC_RECOVERY.json
+!results/*.run_meta.json
+results/exp_verify_cache.json
