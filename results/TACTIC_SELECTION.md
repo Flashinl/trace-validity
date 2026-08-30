@@ -124,13 +124,13 @@ From Table A. Cells whose tactic is _(none named)_ are excluded: they describe a
 
 | # | tactic | goal shape | n | share of 104 | verdict |
 |---|---|---|---|---|---|
-| 1 | `omega` | nonlinear | 24 | 23.1% | **structural** |
+| 1 | `omega` | nonlinear | 24 | 23.1% | structural at face value, **2 of 24** on direct evidence |
 | 2 | `omega` | ℕ/ℤ, divisibility, modular | 10 | 9.6% | not structural |
-| 3 | `linarith` | nonlinear | 9 | 8.7% | **structural** |
+| 3 | `linarith` | nonlinear | 9 | 8.7% | structural at face value, **9 of 9** on direct evidence |
 | 4 | `linarith` | ℕ/ℤ, divisibility, modular | 5 | 4.8% | not structural |
 | 5 | `simp` | nonlinear | 5 | 4.8% | not structural |
 
-The shape of the answer: **omega and linarith, on goals neither can represent, account for 33 of 104 = 32% of every `tactic_mismatch` failure in this repo.** Two tactics, one mistake — reaching for a linear decision procedure on a nonlinear goal.
+The shape of the answer: **`omega` and `linarith` on goals classified nonlinear are 33 of 104 = 32% of every `tactic_mismatch` failure in this repo** — two tactics making one mistake, reaching for a linear decision procedure on a nonlinear goal. Of those 33, **11 are backed by Lean's own output** (§2a); the rest rest on the top-level goal. **11 is the quotable figure and 33 is the ceiling.** (§2a's total of 12 is one higher: it counts a third `omega` sample whose statement-level shape falls in a different column, so it is outside these two cells.)
 
 ## 5. The model's raw tactic vocabulary
 

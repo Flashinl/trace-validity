@@ -294,16 +294,26 @@ def main():
     rows = []
     ranked = [(k, v) for k, v in crossA.most_common() if k[0] != "(none named)"]
     for i, ((t, s), c) in enumerate(ranked[:5], 1):
+        cell = [x for x in samples if x["lean_tactic"] == t and x["lean_shape"] == s]
+        ev = sum(1 for x in cell if x["structural"])
         rows.append([i, "`%s`" % t, SHAPE_LABEL[s], c, "%.1f%%" % (100.0 * c / n),
-                     "**structural**" if (t, s) in STRUCTURAL else "not structural"])
+                     ("structural at face value, **%d of %d** on direct evidence"
+                      % (ev, c)) if (t, s) in STRUCTURAL else "not structural"])
     A(md(["#", "tactic", "goal shape", "n", "share of %d" % n, "verdict"], rows))
     A("")
-    A("The shape of the answer: **omega and linarith, on goals neither can "
-      "represent, account for %d of %d = %.0f%% of every `tactic_mismatch` "
-      "failure in this repo.** Two tactics, one mistake — reaching for a linear "
-      "decision procedure on a nonlinear goal.\n"
-      % (crossA[("omega", "nonlinear")] + lin, n,
-         100.0 * (crossA[("omega", "nonlinear")] + lin) / n))
+    face = crossA[("omega", "nonlinear")] + lin
+    face_ev = sum(1 for x in samples
+                  if x["structural"] and x["lean_shape"] == "nonlinear"
+                  and x["lean_tactic"] in ("omega", "linarith"))
+    A("The shape of the answer: **`omega` and `linarith` on goals classified "
+      "nonlinear are %d of %d = %.0f%% of every `tactic_mismatch` failure in "
+      "this repo** — two tactics making one mistake, reaching for a linear "
+      "decision procedure on a nonlinear goal. Of those %d, **%d are backed by "
+      "Lean's own output** (§2a); the rest rest on the top-level goal. **%d is "
+      "the quotable figure and %d is the ceiling.** (§2a's total of %d is one "
+      "higher: it counts a third `omega` sample whose statement-level shape "
+      "falls in a different column, so it is outside these two cells.)\n"
+      % (face, n, 100.0 * face / n, face, face_ev, face_ev, face, ns))
 
     # ---------------------------------------------------------------- vocab
     A("## 5. The model's raw tactic vocabulary\n")
