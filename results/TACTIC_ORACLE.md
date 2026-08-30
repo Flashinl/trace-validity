@@ -86,6 +86,8 @@ Percentages are the share of that set's `tactic_mismatch` failures.
 
 **The single most valuable substitution is `aesop`**, which alone accounts for 2 of the 4 recoveries (1.9% of all `tactic_mismatch` failures).
 
+With 4 recoveries in total that ranking rests on 2 samples, and no weight belongs on the ordering between rungs. The finding is the total, not its composition.
+
 ### 3a. Rung health — did every rung actually run?
 
 A ladder is only as long as its rungs that elaborate. Three verdicts, assigned mechanically:
@@ -129,10 +131,10 @@ The `asserts` column is the repo's full vacuity taxonomy from `vacuity_scan.py` 
 
 | trace set | id | rung that closed it | what the model wrote | what the goal asserts | goal |
 |---|---|---|---|---|---|
-| Stage B T=0.7 | `04f77b5a-761` | `aesop` | `rw, hS, intro, rcases, omega` | `6_contentful` | `¬∃ n, n ∈ S ∧ n = 119 ∧ ∀ m > 119, ∃ k, m ∈ S ∧ k > 0 ∧ m - k ∈ S` |
-| Stage B T=0.7 | `076e5357-950` | `norm_num` | `refine', simp, h` | `6_contentful` | `∃ q : ℚ, q = ∑' n, a n / 10 ^ n` |
-| Stage B T=0.7 | `082c0e7e-1ef` | `omega` | `simp, Nat.dvd_iff_mod_eq_zero, have, rw, h2` | `6_contentful` | `7 ∣ (5 * a + 2 * b)` |
-| FormalStep baseline | `11` | `aesop` | `rw, h, norm_num, ring` | `6_contentful` | `(Real.sqrt (Real.sqrt (Real.sqrt (a * b))) = Real.sqrt (Real.sqrt (Rea` |
+| Stage B T=0.7 | `04f77b5a-761` | `aesop` | `rw, intro, rcases, omega` | `6_contentful` | `¬∃ n, n ∈ S ∧ n = 119 ∧ ∀ m > 119, ∃ k, m ∈ S ∧ k > 0 ∧ m - k ∈ S` |
+| Stage B T=0.7 | `076e5357-950` | `norm_num` | `refine', simp` | `6_contentful` | `∃ q : ℚ, q = ∑' n, a n / 10 ^ n` |
+| Stage B T=0.7 | `082c0e7e-1ef` | `omega` | `simp, have, rw, omega` | `6_contentful` | `7 ∣ (5 * a + 2 * b)` |
+| FormalStep baseline | `11` | `aesop` | `rw, norm_num, ring` | `6_contentful` | `(Real.sqrt (Real.sqrt (Real.sqrt (a * b))) = Real.sqrt (Real.sqrt (Rea` |
 
 **4 of the 4 recoveries come back `6_contentful`** — no probe in `vacuity_scan.py`'s taxonomy fires on them, and no hypothesis set is contradictory.
 

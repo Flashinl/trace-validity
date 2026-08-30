@@ -246,6 +246,11 @@ def main(path=None, out_md=None, out_json=None):
         A("**The single most valuable substitution is `%s`**, which alone "
           "accounts for %d of the %d recoveries (%s of all `tactic_mismatch` "
           "failures).\n" % (tacmap[top], topk, rec, pct(topk, n)))
+        if rec < 10:
+            A("With %d recoveries in total that ranking rests on %d sample%s, "
+              "and no weight belongs on the ordering between rungs. The finding "
+              "is the total, not its composition.\n"
+              % (rec, topk, "" if topk == 1 else "s"))
     else:
         A("No rung produced a genuine recovery.\n")
 
