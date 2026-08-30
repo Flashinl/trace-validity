@@ -73,6 +73,23 @@ def main(path=None, out_md=None, out_json=None):
     v = lambda r: r["oracle"]["verdict"]
     counts = collections.Counter(v(s) for s in done)
 
+    # Supplementary Lean passes, both optional. `probe` is vacuity_scan's full
+    # taxonomy over the recoveries; `witnessed` marks the recoveries that are
+    # existentials satisfied by their own right-hand side, a shape that taxonomy
+    # has no probe for.
+    probe_path = os.path.join(_ROOT, "results", "tactic_oracle_probe.json")
+    probe = {}
+    if os.path.exists(probe_path):
+        probe = {(p["set"], str(p["id"])): p
+                 for p in json.load(io.open(probe_path, encoding="utf-8"))}
+    rp_path = os.path.join(_ROOT, "results", "tactic_oracle_repair.json")
+    rp, witnessed = None, {}
+    if os.path.exists(rp_path):
+        rp = json.load(io.open(rp_path, encoding="utf-8"))
+        witnessed = {(w["set"], str(w["id"])): w["witnessed_by_own_rhs"]
+                     for w in rp.get("recoveries", [])}
+    n_witnessed = sum(1 for hit in witnessed.values() if hit)
+
     L = []
     A = L.append
     A("# Phase 2–4 — the tactic oracle: how many recorded failures are the "
@@ -102,16 +119,23 @@ def main(path=None, out_md=None, out_json=None):
         A("**The contamination is small, and that is the finding.** A fixed "
           "ladder of standard tactics, given the identical goal with the model's "
           "proof deleted, closes **%d of %d = %s %s** of the failures the "
-          "labeller called `tactic_mismatch`. Stage B's headline pass rate at "
+          "labeller called `tactic_mismatch`.%s Stage B's headline pass rate at "
           "T=0.0 moves from **%s to %s** — a gap of **%.1f points**.\n"
-          % (rec, n, pct(rec, n), ci(rec, n), pct(sb0k, sb0n),
-             pct(sb0k + sb0r, sb0n), 100.0 * sb0r / sb0n))
+          % (rec, n, pct(rec, n), ci(rec, n),
+             ("" if not n_witnessed else
+              (" %d of those %d is an existential witnessed by its own "
+               "right-hand side and asserts nothing, so the substantive figure "
+               "is **%d of %d = %s** (§3b)." % (n_witnessed, rec,
+                                                rec - n_witnessed, n,
+                                                pct(rec - n_witnessed, n)))),
+             pct(sb0k, sb0n), pct(sb0k + sb0r, sb0n), 100.0 * sb0r / sb0n))
         A("So the hypothesis this audit was built to test — that "
           "`tactic_mismatch` is mostly the prover fumbling goals a better tactic "
           "would close, and that the validity number is badly understated as a "
           "result — **is not supported**. These goals are not one `nlinarith` "
-          "away. They are olympiad number theory, and standard automation does "
-          "not close them at all.\n")
+          "away. Stage B is olympiad number theory and one-shot standard "
+          "automation does not close it; the FormalStep failures fare no "
+          "better.\n")
         A("The sharpest version: Phase 1 found %d failures where Lean's own "
           "output proves the model's tactic could never have worked (`linarith` "
           "holding a nonlinear context, `omega` reporting that it abstracted a "
@@ -145,9 +169,10 @@ def main(path=None, out_md=None, out_json=None):
       "Two notes on rungs 6 and 7:\n")
     A("- **Rung 6 is the brief's `nlinarith [sq_nonneg _, sq_nonneg _]`, run "
       "verbatim.** The `_` placeholders cannot be synthesised from the goal, so "
-      "the rung raises an elaboration error rather than attempting a proof. It "
-      "is kept, and its behaviour reported, so that the pre-registered ladder is "
-      "on the record as written.\n")
+      "the rung fails to elaborate rather than attempting a proof — measured, "
+      "not assumed: `typeclass instance problem is stuck AddLeftMono ?m.N` on "
+      "102 of 102 attempts (§3a). It is kept, and its behaviour reported, so "
+      "that the pre-registered ladder is on the record as written.\n")
     A("- **Rung 7 is bare `nlinarith`, added because rung 6 cannot run.** It is "
       "the only sample-independent form: any concrete hint term (`sq_nonneg "
       "(x - y)`) would have to be read off the individual goal, which is exactly "
@@ -165,12 +190,13 @@ def main(path=None, out_md=None, out_json=None):
       "`none_closed`.\n" % VERIFY_TIMEOUT_SECONDS)
     A("- Every close runs the axiom audit the main verifier runs (`#print "
       "axioms`), so a proof standing on an untrusted axiom is not scored valid.\n")
-    A("- **Every close then runs the vacuity probe**: `theorem contra_probe "
-      "<binders> : False := by %s`. If `False` follows from the hypotheses "
-      "alone, the goal was closable because the hypotheses are inconsistent, and "
-      "that is not a recovery — it is another sample 42. Those are counted in "
-      "their own row and excluded from the recovery count.\n"
-      % " / ".join("`%s`" % t for t in CONTRA_TACTICS))
+    A("- **Every close then runs the vacuity probe**: "
+      "`theorem contra_probe <binders> : False := by <t>` for each of "
+      "%s in turn. If `False` follows from the hypotheses alone, the goal was "
+      "closable because the hypotheses are inconsistent, and that is not a "
+      "recovery — it is another sample 42. Those are counted in their own row "
+      "and excluded from the recovery count.\n"
+      % ", ".join("`%s`" % t for t in CONTRA_TACTICS))
 
     # ------------------------------------------------------------------ results
     A("## 2. Results, per trace set\n")
@@ -322,6 +348,40 @@ def main(path=None, out_md=None, out_json=None):
         A("It closed %d goals. This is why rung 7 exists.\n"
           % rung.get("nlinarith_hint", 0))
 
+    # ------------------------------------------- the repaired dead rung
+    if rp is not None:
+        rrows = rp.get("rows", [])
+        rc = collections.Counter(r["verdict"] for r in rrows)
+        A("### 3c. Supplementary — re-running the one repairable dead rung\n")
+        A("`simp_arith` (rung 9) is deprecated on this toolchain and errored "
+          "before it ever saw a goal, so rung 9 tested nothing. Lean's own "
+          "deprecation message names the replacement, `simp +arith +decide`. "
+          "Running that is not tuning the ladder — it is running the rung the "
+          "brief asked for, in the spelling this Lean still has.\n")
+        A("It is nevertheless reported **here, separately, and never folded into "
+          "§2**, because it was run after seeing that the original rung was "
+          "dead. Rung 6 is not repaired: its only sample-independent repair is "
+          "bare `nlinarith`, which the ladder already carries as rung 7.\n")
+        A("Applied to all %d samples the pre-registered ladder did not close:\n"
+          % len(rrows))
+        A(md(["outcome of `simp +arith +decide`", "n"],
+             [["genuine recovery", rc["recovered"]],
+              ["closed via inconsistent hypotheses (vacuous)", rc["vacuous_close"]],
+              ["did not close", rc["none_closed"]],
+              ["exceeded budget", rc["budget"]]]))
+        A("")
+        if rc["recovered"] == 0:
+            A("> **Zero.** The dead rung was hiding nothing. The headline %s "
+              "stands as the pre-registered ladder measured it, and the "
+              "deadness of rung 9 is a defect in the ladder's *design*, not a "
+              "distortion of its *result*.\n" % pct(rec, n))
+        else:
+            A("> The repaired rung recovers **%d further goals**, which would "
+              "take the total from %d to %d (%s). Report both; the "
+              "pre-registered figure is %s.\n"
+              % (rc["recovered"], rec, rec + rc["recovered"],
+                 pct(rec + rc["recovered"], n), pct(rec, n)))
+
     # --------------------------------------------------- what the 4 recoveries are
     probe_path = os.path.join(_ROOT, "results", "tactic_oracle_probe.json")
     probe = {}
@@ -355,15 +415,48 @@ def main(path=None, out_md=None, out_json=None):
     A(md(["trace set", "id", "rung that closed it", "what the model wrote",
           "what the goal asserts", "goal"], rows))
     A("")
+    # A gap in vacuity_scan's taxonomy, tested rather than asserted: it has no
+    # probe for `∃ x, x = e`, which asserts nothing yet is not True, not a
+    # hypothesis, not rfl and not decidable, so it comes back `6_contentful`.
     if probe:
         contentful = sum(1 for r in rows if "6_contentful" in r[4])
-        A("**%d of the %d recoveries are of goals that assert something** "
-          "(`6_contentful`); the remaining %d closed because the goal demanded "
-          "little or nothing of a prover. Counting only contentful recoveries, "
-          "the recovery rate is **%d/%d = %s %s**, and that is the tightest "
-          "number in this report.\n"
-          % (contentful, rec, rec - contentful, contentful, n,
-             pct(contentful, n), ci(contentful, n)))
+        nw = n_witnessed
+        A("**%d of the %d recoveries come back `6_contentful`** — no probe in "
+          "`vacuity_scan.py`'s taxonomy fires on them, and no hypothesis set is "
+          "contradictory.\n" % (contentful, rec))
+        if witnessed and nw:
+            hit_goals = [w for kk, w in
+                         [((x["set"], str(x["id"])), x) for x in done]
+                         if witnessed.get(kk)]
+            A("**But that taxonomy has a gap, and %d of these fall in it.** "
+              "`∃ x, x = e` asserts nothing whatever — take `x` to be `e` — yet "
+              "it is not `True`, not a hypothesis, not `rfl`, and not "
+              "`decide`-able, so all six of `vacuity_scan.py`'s probes miss it "
+              "and it is filed `6_contentful`. Tested directly with "
+              "`exact ⟨_, rfl⟩`, which closes exactly the goals witnessed by "
+              "their own right-hand side: **%d of the %d recoveries are**%s.\n"
+              % (nw, nw, len(witnessed),
+                 (" — " + ", ".join("`%s`" % (g["goal"] or "")[:60]
+                                    for g in hit_goals)) if hit_goals else ""))
+            subst = rec - nw
+            A("> **So the substantive recovery count is %d of %d = %s %s**, not "
+              "%d. That is the tightest number in this report and the one to "
+              "quote. `vacuity_scan.py` should grow a seventh probe; logged here "
+              "rather than fixed, because changing that file would move figures "
+              "in `CONTENTLESS_STEPS.md` that this audit has no mandate to "
+              "touch.\n" % (subst, n, pct(subst, n), ci(subst, n), rec))
+        elif witnessed:
+            A("Tested further with `exact ⟨_, rfl⟩` — which closes exactly the "
+              "goals `∃ x, x = e`, a shape that asserts nothing and that "
+              "`vacuity_scan.py` has no probe for — **none of the %d recoveries "
+              "is witnessed by its own right-hand side**. All %d survive as "
+              "recoveries of goals that assert something, and %s stands as the "
+              "tightest number in this report.\n"
+              % (len(witnessed), rec, pct(rec, n)))
+        else:
+            A("A seventh probe for `∃ x, x = e` — an existential witnessed by "
+              "its own right-hand side, which asserts nothing — has not been "
+              "run; `tests/audit/tactic_oracle_repair.py` runs it.\n")
     A("The `omega` row is the paradigm case and worth reading closely: on "
       "`7 ∣ (2a+5b) → 7 ∣ (5a+2b)` the model wrote "
       "`simp [Nat.dvd_iff_mod_eq_zero]`, then a `have`, then `rw`, and only then "

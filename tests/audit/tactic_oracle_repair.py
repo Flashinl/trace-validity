@@ -33,6 +33,17 @@ from tactic_oracle import statement_prefix, hypotheses_contradictory  # noqa: E4
 
 REPAIRED = [("simp_arith_repaired", "simp +arith +decide")]
 
+# A second, unrelated question answered in the same Lean session because the
+# session costs ~11 minutes to start and the probe costs milliseconds.
+#
+# `vacuity_scan.py`'s taxonomy has six probes and none of them covers
+# `∃ x, x = e` -- an existential witnessed by its own right-hand side, which
+# asserts nothing at all yet is not `True`, not a hypothesis, not `rfl`, and not
+# `decide`-able. One of the oracle's four recoveries has exactly that shape and
+# came back `6_contentful`, which would overstate it. `exact ⟨_, rfl⟩` settles
+# it: if that closes the goal, the goal is witnessed by its own RHS.
+EXISTS_EQ_PROBE = "exact ⟨_, rfl⟩"
+
 
 def main():
     oracle = {(r["set"], str(r["id"])): r
@@ -80,11 +91,29 @@ def main():
             print("  [%3d/%3d] %-22s %-38s %s"
                   % (k, len(samples), s["set"], str(s["id"])[:36], verdict), flush=True)
 
-    json.dump(out, io.open(os.path.join(_ROOT, "results", "tactic_oracle_repair.json"),
-                           "w", encoding="utf-8"), indent=2, ensure_ascii=False)
+    # Second question: which recoveries are existentials witnessed by their own
+    # right-hand side? See the note above EXISTS_EQ_PROBE.
+    from vacuity_scan import ok, stmt_with  # noqa: E402
+    witnessed = []
+    for s in tc.load_samples():
+        if oracle.get((s["set"], str(s["id"])), {}).get("verdict") != "recovered":
+            continue
+        hit = ok(v, stmt_with(s["statement"], EXISTS_EQ_PROBE))
+        witnessed.append({"set": s["set"], "id": s["id"],
+                          "witnessed_by_own_rhs": hit, "goal": s["goal"][:200]})
+        print("  [exists_eq] %-22s %-38s %s"
+              % (s["set"], str(s["id"])[:36],
+                 "WITNESSED BY ITS OWN RHS" if hit else "not that shape"), flush=True)
+
+    payload = {"repaired_rung": dict(REPAIRED), "rows": out,
+               "exists_eq_probe": EXISTS_EQ_PROBE, "recoveries": witnessed}
+    json.dump(payload, io.open(os.path.join(_ROOT, "results", "tactic_oracle_repair.json"),
+                               "w", encoding="utf-8"), indent=2, ensure_ascii=False)
     n_rec = sum(1 for r in out if r["verdict"] == "recovered")
-    print("[repair] %d additional genuine recoveries; wrote "
-          "results/tactic_oracle_repair.json" % n_rec)
+    print("[repair] %d additional genuine recoveries; %d of %d recoveries are "
+          "witnessed by their own RHS; wrote results/tactic_oracle_repair.json"
+          % (n_rec, sum(1 for w in witnessed if w["witnessed_by_own_rhs"]),
+             len(witnessed)))
 
 
 if __name__ == "__main__":

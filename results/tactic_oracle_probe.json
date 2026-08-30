@@ -1,0 +1,88 @@
+[
+  {
+    "set": "stageB_T0.7",
+    "id": "04f77b5a-761d-5f60-b904-40d296227afc",
+    "class": "6_contentful",
+    "contra": false,
+    "rung": "aesop",
+    "tactic": "aesop",
+    "goal": "¬∃ n, n ∈ S ∧ n = 119 ∧ ∀ m > 119, ∃ k, m ∈ S ∧ k > 0 ∧ m - k ∈ S",
+    "model_tactics": [
+      "rw",
+      "hS",
+      "intro",
+      "rcases",
+      "omega"
+    ],
+    "P_true": false,
+    "P_assum": false,
+    "P_redrfl": false,
+    "P_substrfl": false,
+    "P_rfl": false,
+    "P_decide": false
+  },
+  {
+    "set": "stageB_T0.7",
+    "id": "076e5357-9507-5775-b951-4af80bf2d409",
+    "class": "6_contentful",
+    "contra": false,
+    "rung": "norm_num",
+    "tactic": "norm_num",
+    "goal": "∃ q : ℚ, q = ∑' n, a n / 10 ^ n",
+    "model_tactics": [
+      "refine'",
+      "simp",
+      "h"
+    ],
+    "P_true": false,
+    "P_assum": false,
+    "P_redrfl": false,
+    "P_substrfl": false,
+    "P_rfl": false,
+    "P_decide": false
+  },
+  {
+    "set": "stageB_T0.7",
+    "id": "082c0e7e-1ef1-5760-aa48-8a9e73a8a778",
+    "class": "6_contentful",
+    "contra": false,
+    "rung": "omega",
+    "tactic": "omega",
+    "goal": "7 ∣ (5 * a + 2 * b)",
+    "model_tactics": [
+      "simp",
+      "Nat.dvd_iff_mod_eq_zero",
+      "have",
+      "rw",
+      "h2",
+      "omega"
+    ],
+    "P_true": false,
+    "P_assum": false,
+    "P_redrfl": false,
+    "P_substrfl": false,
+    "P_rfl": false,
+    "P_decide": false
+  },
+  {
+    "set": "formalStep_baseline_50step_1problem",
+    "id": 11,
+    "class": "6_contentful",
+    "contra": false,
+    "rung": "aesop",
+    "tactic": "aesop",
+    "goal": "(Real.sqrt (Real.sqrt (Real.sqrt (a * b))) = Real.sqrt (Real.sqrt (Real.sqrt a)) * Real.sqrt (Real.sqrt (Real.sqrt b)))",
+    "model_tactics": [
+      "rw",
+      "h",
+      "norm_num",
+      "ring"
+    ],
+    "P_true": false,
+    "P_assum": false,
+    "P_redrfl": false,
+    "P_substrfl": false,
+    "P_rfl": false,
+    "P_decide": false
+  }
+]
