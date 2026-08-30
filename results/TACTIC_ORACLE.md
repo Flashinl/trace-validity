@@ -124,25 +124,6 @@ A ladder is only as long as its rungs that elaborate. Three verdicts, assigned m
 Most common message: `typeclass instance problem is stuck AddLeftMono ?m.N Note: Lean will not try to resolve th` (102×). 
 It closed 0 goals. This is why rung 7 exists.
 
-### 3c. Supplementary — re-running the one repairable dead rung
-
-`simp_arith` (rung 9) is deprecated on this toolchain and errored before it ever saw a goal, so rung 9 tested nothing. Lean's own deprecation message names the replacement, `simp +arith +decide`. Running that is not tuning the ladder — it is running the rung the brief asked for, in the spelling this Lean still has.
-
-It is nevertheless reported **here, separately, and never folded into §2**, because it was run after seeing that the original rung was dead. Rung 6 is not repaired: its only sample-independent repair is bare `nlinarith`, which the ladder already carries as rung 7.
-
-**Budget: 20s per attempt, not the 60s §1 uses.** A first attempt at 60s hung the Lean server on a large `¬∃` goal — `+decide` asks the kernel to evaluate it — lean_interact killed the server, the rebuild then exceeded its own 300s budget, and every subsequent sample would have been scored `budget` for infrastructure reasons rather than measurement. A supplementary pass may take a different budget as long as it says so; this one says so. The run also aborts the moment the base environment is lost, rather than emitting rows that look like measurements and are not.
-
-Applied to the 29 of 29 samples the pre-registered ladder did not close:
-
-| outcome of `simp +arith +decide` | n | share of 29 |
-|---|---|---|
-| genuine recovery | 0 | 0.0% |
-| closed via inconsistent hypotheses (vacuous) | 0 | 0.0% |
-| did not close | 29 | 100.0% |
-| exceeded the 20s budget | 0 | 0.0% |
-
-> **Zero recoveries.** The dead rung was hiding nothing. The headline 3.8% stands as the pre-registered ladder measured it, and the deadness of rung 9 is a defect in the ladder's *design*, not a distortion of its *result*.
-
 ## 3b. Every recovery, individually
 
 At n=4 each recovery carries real weight in the headline, so each one is listed rather than summarised. 
@@ -162,6 +143,31 @@ The `asserts` column is the repo's full vacuity taxonomy from `vacuity_scan.py` 
 > **So the substantive recovery count is 3 of 104 = 2.9% [1.0–8.1]**, not 4. That is the tightest number in this report and the one to quote. `vacuity_scan.py` should grow a seventh probe; logged here rather than fixed, because changing that file would move figures in `CONTENTLESS_STEPS.md` that this audit has no mandate to touch.
 
 The `omega` row is the paradigm case and worth reading closely: on `7 ∣ (2a+5b) → 7 ∣ (5a+2b)` the model wrote `simp [Nat.dvd_iff_mod_eq_zero]`, then a `have`, then `rw`, and only then `omega` — and `omega` failed. Bare `omega`, handed the untouched goal, closes it. The tactic was right; the **preprocessing in front of it** destroyed the goal. That is a distinct failure mode from picking the wrong tactic, and it is the one a repair loop (§7.2) would catch.
+
+### 3c. Supplementary — re-running the one repairable dead rung
+
+`simp_arith` (rung 9) is deprecated on this toolchain and errored before it ever saw a goal, so rung 9 tested nothing. Lean's own deprecation message names the replacement, `simp +arith +decide`. Running that is not tuning the ladder — it is running the rung the brief asked for, in the spelling this Lean still has.
+
+It is nevertheless reported **here, separately, and never folded into §2**, because it was run after seeing that the original rung was dead. Rung 6 is not repaired: its only sample-independent repair is bare `nlinarith`, which the ladder already carries as rung 7.
+
+**Budget: 20s per attempt, not the 60s §1 uses.** A first attempt at 60s hung the Lean server on a large `¬∃` goal — `+decide` asks the kernel to evaluate it — lean_interact killed the server, the rebuild then exceeded its own 300s budget, and every subsequent sample would have been scored `budget` for infrastructure reasons rather than measurement. A supplementary pass may take a different budget as long as it says so; this one says so. The run also aborts the moment the base environment is lost, rather than emitting rows that look like measurements and are not.
+
+Applied to the 30 of 100 samples the pre-registered ladder did not close **(aborted early — see below)**:
+
+| outcome of `simp +arith +decide` | n | share of 30 |
+|---|---|---|
+| genuine recovery | 0 | 0.0% |
+| closed via inconsistent hypotheses (vacuous) | 0 | 0.0% |
+| did not close | 29 | 96.7% |
+| exceeded the 20s budget | 1 | 3.3% |
+
+> ⚠️ **This pass did not finish: base environment lost after 30 of 100 samples; the remaining rows would be `budget` for infrastructure reasons rather than measurement, so they are not reported.** Read it as 30 samples of evidence, not 100.
+
+> **Zero recoveries.** The dead rung was hiding nothing in the 30 samples that ran. The headline 2.9% stands as the pre-registered ladder measured it, and the deadness of rung 9 is a defect in the ladder's *design*, not a distortion of its *result*.
+
+**What stays unsettled, stated rather than glossed.** The rung was not measured on the other 70 samples. This is not a timeout a smaller budget fixes: the run died at the *same* sample under a 60s budget and under 20s, because `+decide` on an unbounded integer quantification asks the kernel for something it can neither finish nor abandon, and the server never comes back. The sample is `096cb1ad-142c-5d9e-9517-12f848368ea0`, goal `∀ n : ℤ, ∃ m : ℤ, m > n ∧ ¬∃ x y z : ℤ, m = x^3 + y^3 + z^3`.
+
+Two things make the loophole narrow even so: bare `decide` is rung 2 and ran on 103 samples for 0 closes, and the `simp` half of this rung is largely subsumed by `aesop` (102 attempts) and `norm_num` (104), neither of which timed out once. Narrow is not closed, and it is left open rather than argued away.
 
 ## 4. Recovery by goal shape and by the tactic the model chose
 

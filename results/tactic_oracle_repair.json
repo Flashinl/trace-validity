@@ -494,7 +494,24 @@
           "error_head": "unsolved goals p q : ℕ hp : Nat.Prime p hq : Nat.Prime q hne : p ≠ q a : ℕ → ℕ ha1 : a 1 = p ha2 : a 2 = q han : ∀ n > 0, ∃ m > 0, a n + a (n + 1) = 2 ^ m → a ("
         }
       ]
+    },
+    {
+      "set": "stageB_T0.0",
+      "id": "096cb1ad-142c-5d9e-9517-12f848368ea0",
+      "shape": "nonlinear",
+      "goal": "∀ n : ℤ, ∃ m : ℤ, m > n ∧ ¬∃ x y z : ℤ, m = x^3 + y^3 + z^3",
+      "verdict": "budget",
+      "rung": null,
+      "attempts": [
+        {
+          "rung": "simp_arith_repaired",
+          "outcome": "timeout",
+          "seconds": 20.852,
+          "error_head": "verification exceeded 20s"
+        }
+      ]
     }
   ],
-  "aborted": null
+  "aborted": "base environment lost after 30 of 100 samples; the remaining rows would be `budget` for infrastructure reasons rather than measurement, so they are not reported",
+  "attempted": 100
 }
