@@ -1,7 +1,7 @@
 # Current numbers — one page, one source of truth
 
-Every live figure in this repo, as of **2026-08-27**, branch
-`pre-meeting/close-open-questions`. If a number is not on this page it is not
+Every live figure in this repo, as of **2026-08-30**, branch
+`audit/tactic-oracle`. If a number is not on this page it is not
 current.
 
 **Two pipelines. FormalStep and NuminaMath Stage B are different formalization
@@ -92,6 +92,43 @@ from the other.**
 > It is a calculation checker and Stage B is 82/90 proof-shaped. These are
 > **detectors that never fired, not measured zeros.** Do not report Stage B's
 > dataset as clean.
+
+---
+
+## Tactic oracle — how much of the failure set is the prover's fault?
+
+Answers "is `tactic_mismatch` a false negative on the research question?". All
+104 `tactic_mismatch` failures in the repo (85 Stage B across both temperatures,
+19 FormalStep across its three runs), statement and header untouched, model's
+proof deleted, one fixed ladder of standard tactics.
+
+| figure | k/n | 95% CI | artifact | date |
+|---|---|---|---|---|
+| **recovered by a standard tactic** | **4/104 = 3.8%** | [1.5–9.5] | `tactic_oracle.jsonl` | 08-30 |
+| closed only via inconsistent hypotheses | 0/104 | [0–3.6] | `tactic_oracle.jsonl` | 08-30 |
+| no ladder tactic closed it | 100/104 = 96.2% | [90.5–98.5] | `tactic_oracle.jsonl` | 08-30 |
+| exceeded the 60s budget | 0/104 | [0–3.6] | `tactic_oracle.jsonl` | 08-30 |
+| **Stage B T=0.0 under the oracle** | **28/90 = 31.1%** | [22.5–41.3] | `TACTIC_ORACLE.md` §5 | 08-30 |
+| Stage B T=0.7 under the oracle | 29/90 = 32.2% | [23.5–42.4] | `TACTIC_ORACLE.md` §5 | 08-30 |
+| structural category errors, direct evidence | **12/104 = 11.5%** | [7–19] | `TACTIC_SELECTION.md` §2a | 08-30 |
+| — of those, recovered by the oracle | **0/12** | [0–24.3] | `TACTIC_ORACLE.md` §4 | 08-30 |
+| `linarith` on a nonlinear context | 9/104 = 8.7% | [5–16] | `TACTIC_SELECTION.md` §2b | 08-30 |
+| not tactic selection (bad lemma name, type error) | 11/104 = 10.6% | [6–18] | `TACTIC_SELECTION.md` §1 | 08-30 |
+
+> **The oracle rate is not a validity figure and must never be quoted alone.**
+> It is what the pass rate would be *if tactic selection were perfect* — an
+> upper bound, not something any prover attains. On Stage B T=0.0 it equals the
+> observed rate exactly: **31.1% → 31.1%, a zero-point correction.** The largest
+> correction anywhere is +3.3 pp (Stage B T=0.7), inside the interval on the
+> figure itself.
+
+> ⚠️ **The ladder is weak and 2 of its 11 rungs were dead.** `simp_arith` is
+> deprecated in Lean v4.32.0 and errored before running; the brief's
+> `nlinarith [sq_nonneg _, sq_nonneg _]` failed to elaborate on 102/102 samples.
+> `positivity` ran but declined every goal. Effective ladder: 8 rungs, none of
+> which introduces binders except `aesop` and `norm_num`, against 51/104 goals
+> that open with a quantifier. **`none_closed` means this ladder failed, never
+> that the goal is unprovable.**
 
 ---
 
