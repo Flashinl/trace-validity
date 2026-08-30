@@ -49,3 +49,9 @@ results/*.png
 !results/goal_shape.json
 !results/stage_b_provenance.json
 !results/corroboration.json
+# 2026-08-30 tactic-oracle audit. The .jsonl is the per-attempt record for all
+# 104 tactic_mismatch samples x 11 ladder rungs -- ~300KB, and the whole point
+# is that anyone can rerun the ladder and diff against it.
+!results/tactic_selection.json
+!results/tactic_oracle.json
+!results/tactic_oracle.jsonl
