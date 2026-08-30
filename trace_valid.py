@@ -170,6 +170,14 @@ def main():
                    help="Which CoT step to take from each selected problem")
     g.add_argument("--allow-unseeded", action="store_true",
                    help="Permit sampling (temp>0) with no seed; records seed=null")
+    # The only prompt-slot deviation this repo permits. PROMPT_TEMPLATE and
+    # GOEDEL_LEAN4_HEADER stay verbatim; this empties `informal_prefix` so the
+    # doc comment built from `current_step` is absent. Arm B of the
+    # doc-comment ablation, and nothing else, should use it.
+    g.add_argument("--no-informal", dest="include_informal",
+                   action="store_false", default=True,
+                   help="Render the prompt with informal_prefix='' (arm B of "
+                        "the doc-comment ablation). Everything else identical.")
 
     # ---- run (GPU + Lean) -------------------------------------------------
     r = sub.add_parser("run", help="Full pipeline: generate + verify in Lean")
@@ -218,6 +226,7 @@ def main():
                 stride=args.stride,
                 step_selection=args.step_selection,
                 allow_unseeded=args.allow_unseeded,
+                include_informal=args.include_informal,
             )
         return
 

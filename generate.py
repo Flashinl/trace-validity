@@ -143,7 +143,7 @@ def write_run_meta(output_path, meta):
 
 
 def build_run_meta(dataset, temperature, num_trajectories, seed, output_path,
-                   resume=False):
+                   resume=False, include_informal=True):
     do_sample = temperature > 0.0
     return {
         "schema_version": META_SCHEMA_VERSION,
@@ -168,6 +168,17 @@ def build_run_meta(dataset, temperature, num_trajectories, seed, output_path,
             "greedy_deterministic": not do_sample,
             "num_samples": len(dataset),
             "num_trajectories_per_sample": num_trajectories,
+        },
+        # The ONLY prompt-slot deviation this repo permits. PROMPT_TEMPLATE and
+        # GOEDEL_LEAN4_HEADER are untouched; `informal_prefix` is either the
+        # doc-comment built from `current_step` or the empty string. Recorded
+        # per-run because arm A and arm B are otherwise byte-identical, so
+        # nothing else on disk distinguishes them.
+        "prompt": {
+            "template": "config.PROMPT_TEMPLATE (verbatim upstream)",
+            "include_informal": bool(include_informal),
+            "informal_prefix_slot": "current_step doc comment"
+            if include_informal else "empty string",
         },
         "dataset": {
             "name": getattr(dataset, "name", DATASET_NAME),
@@ -272,7 +283,8 @@ class JsonlWriter:
         self.close()
 
 
-def build_record(sample, prompt, gen, temperature, trajectory_index, seed=None):
+def build_record(sample, prompt, gen, temperature, trajectory_index, seed=None,
+                 include_informal=True):
     """Assemble one JSONL record from a raw generation result."""
     completion = gen["text"]
     full_code = extract_lean4_block(prompt, completion)
@@ -301,6 +313,8 @@ def build_record(sample, prompt, gen, temperature, trajectory_index, seed=None):
         "type": sample.get("type"),
         "top_p": TOP_P if temperature > 0.0 else None,
         "seed": seed,
+        # A trace separated from its sidecar must still say which arm it is.
+        "include_informal": bool(include_informal),
         # inputs
         "prompt": prompt,
         "formal_statement": sample["formal_statement"],
@@ -492,6 +506,7 @@ def run_generation(
     stride=PROBLEM_STRIDE,
     step_selection=STEP_SELECTION,
     allow_unseeded=False,
+    include_informal=True,
 ):
     # Sampling without a seed cannot be reproduced. Greedy decoding can, so a
     # seed is only mandatory when the run actually samples.
@@ -536,7 +551,8 @@ def run_generation(
     # Written before the model loads: an interrupted run still leaves a sidecar
     # describing exactly what it was trying to do.
     meta = build_run_meta(dataset, temperature, num_trajectories, seed,
-                          output_path, resume=resume)
+                          output_path, resume=resume,
+                          include_informal=include_informal)
     print(f"[meta] {write_run_meta(output_path, meta)}", file=sys.stderr)
 
     # Load the model only once we know there is work to do.
@@ -562,7 +578,7 @@ def run_generation(
     with JsonlWriter(output_path) as writer:
         for idx in range(len(dataset)):
             sample = dataset[idx]
-            prompt = build_prompt(sample)
+            prompt = build_prompt(sample, include_informal=include_informal)
 
             wanted = [
                 t for t in range(num_trajectories)
@@ -588,7 +604,8 @@ def run_generation(
 
             for traj_index, gen in zip(wanted, gens):
                 record = build_record(sample, prompt, gen, temperature, traj_index,
-                                      seed=seed)
+                                      seed=seed,
+                                      include_informal=include_informal)
                 writer.write(record)
                 written += 1
                 print(
