@@ -57,3 +57,9 @@ results/*.png
 !results/tactic_oracle.jsonl
 !results/tactic_oracle_probe.json
 !results/tactic_oracle_repair.json
+
+# Deploy artifact: written next to the source at deploy time so git_state()
+# can answer on a host with no .git. It is generated FROM the commit it records,
+# so leaving it untracked is what keeps run_meta.json`s `dirty` flag truthful --
+# otherwise every deploy dirties the tree by writing this file.
+CODE_VERSION
