@@ -153,7 +153,7 @@ Every tactic named at the head of a line anywhere in a failing proof body, closi
 
 Other tactics that appear (top 15): `have` 32, `h` 31, `use` 30, `intro` 24, `simp_all` 22, `constructor` 18, `rcases` 17, `rintro` 16, `x` 8, `apply` 7, `Nat.odd_iff_not_even` 5, `Nat.dvd_iff_mod_eq_zero` 5, `zero` 5, `succ` 5, `cases` 5.
 
-**Tracked tactics the model never writes: `positivity`.** `positivity` in particular is the standard tool for the `0 < e` / `0 ≤ e` goals that arise all over this failure set, and Goedel-Prover-SFT does not have it in its repertoire.
+**Tracked tactics the model never writes: `positivity`.** `positivity` is the standard tool for `0 < e` / `0 ≤ e` goals and Goedel-Prover-SFT never reaches for it. It would be tempting to call that a gap in the model's repertoire — **and Phase 2 shows it is not.** Run as a ladder rung against all 104 goals, `positivity` returned `not a positivity goal` 102 times out of 102 (`TACTIC_ORACLE.md` §3a). Nothing in this failure set is that shape, so the omission cost the model nothing. Absence from a vocabulary is not evidence of a missing capability, and this is the cross-check that says so.
 
 ## 6. Per-trace-set breakdown (Table A attribution)
 

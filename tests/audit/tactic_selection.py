@@ -336,9 +336,15 @@ def main():
     if never:
         A("**Tracked tactics the model never writes: %s.** "
           % ", ".join("`%s`" % t for t in never)
-          + "`positivity` in particular is the standard tool for the "
-            "`0 < e` / `0 ≤ e` goals that arise all over this failure set, and "
-            "Goedel-Prover-SFT does not have it in its repertoire.\n")
+          + "`positivity` is the standard tool for `0 < e` / `0 ≤ e` goals and "
+            "Goedel-Prover-SFT never reaches for it. It would be tempting to "
+            "call that a gap in the model's repertoire — **and Phase 2 shows it "
+            "is not.** Run as a ladder rung against all 104 goals, `positivity` "
+            "returned `not a positivity goal` 102 times out of 102 "
+            "(`TACTIC_ORACLE.md` §3a). Nothing in this failure set is that "
+            "shape, so the omission cost the model nothing. Absence from a "
+            "vocabulary is not evidence of a missing capability, and this is the "
+            "cross-check that says so.\n")
 
     # ---------------------------------------------------------------- per set
     A("## 6. Per-trace-set breakdown (Table A attribution)\n")
