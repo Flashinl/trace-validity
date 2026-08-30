@@ -48,7 +48,7 @@
     "omega|nonlinear": 25,
     "linarith|nat_int_arith": 6,
     "aesop|finset_bigop": 1,
-    "nlinarith|nat_int_arith": 2,
+    "nlinarith|nat_int_arith": 3,
     "simp|nonlinear": 9,
     "field_simp|nonlinear": 1,
     "ring|nonlinear": 3,
@@ -57,7 +57,6 @@
     "simp|nat_int_arith": 2,
     "omega|quantified": 1,
     "norm_num|nonlinear": 5,
-    "ring_nf|nat_int_arith": 1,
     "simpa|nonlinear": 2,
     "exact|nonlinear": 1,
     "decide|nat_int_arith": 1,
@@ -70,7 +69,7 @@
     0.1909
   ],
   "structural_A_facevalue": 35,
-  "structural_B_facevalue": 44,
+  "structural_B_facevalue": 43,
   "omega_failures_with_nonlinear_atom": 3,
   "linarith_on_nonlinear_A": 9,
   "linarith_on_nonlinear_A_wilson": [
@@ -80,103 +79,41 @@
   "vocabulary": {
     "rintro": 16,
     "have": 32,
-    "a": 3,
-    "Nat.odd_iff_not_even": 5,
-    "m": 3,
-    "n": 4,
     "simp_all": 22,
-    "Nat.even_add": 2,
     "by_cases": 2,
-    "Nat.coprime_of_dvd_of_dvd": 1,
-    "h": 31,
     "use": 30,
     "simp": 51,
-    "Fin.forall_fin_succ": 1,
     "aesop": 3,
     "intro": 24,
-    "hA": 2,
     "omega": 41,
-    "nlinarith": 5,
-    "pow_two": 3,
+    "nlinarith": 6,
     "constructor": 18,
     "linarith": 24,
     "norm_num": 34,
-    "Int.even_add": 2,
     "rw": 20,
-    "Nat.dvd_iff_mod_eq_zero": 5,
     "rcases": 17,
     "obtain": 4,
-    "ha": 4,
-    "hinc": 1,
-    "Nat.digits_zero": 2,
     "apply": 7,
     "ring": 8,
-    "x": 8,
-    "h'": 3,
-    "h''": 3,
-    "div_lt_iff": 2,
-    "hm.1": 1,
     "ext": 1,
-    "Finset.mem_Icc": 3,
-    "dvd_iff_exists_eq_mul_left": 2,
     "ring_nf": 5,
     "cases'": 4,
     "induction": 3,
-    "zero": 5,
-    "succ": 5,
     "cases": 5,
-    "Nat.succ_pos": 1,
-    "hxn": 2,
     "refine'": 5,
-    "abs_of_nonneg": 1,
     "exact": 5,
-    "Nat.Prime": 1,
-    "Finset.sum_range_succ": 3,
     "Nat.cast_succ": 1,
-    "Nat.pow_succ": 4,
     "field_simp": 2,
     "norm_cast": 1,
-    "Set.compl": 1,
+    "Finset.sum_range_succ": 1,
     "interval_cases": 1,
-    "config": 1,
-    "p": 2,
-    "Int.odd_iff_not_even": 1,
     "induction'": 2,
-    "Nat.coprime_iff_gcd_eq_one": 1,
-    "hS": 1,
-    "mul_pos": 1,
-    "Int.ModEq": 2,
-    "Nat.succ_le_iff": 2,
-    "h6": 1,
-    "h8": 1,
-    "Nat.mul_mod": 1,
-    "h5": 1,
-    "h4": 1,
+    "exfalso": 1,
+    "assumption": 1,
     "simpa": 3,
-    "inl": 1,
-    "inr": 1,
-    "Nat.factorial_succ": 1,
-    "h1": 1,
-    "h2": 2,
-    "sq": 1,
-    "q": 1,
-    "ZMOD": 1,
-    "ha2": 1,
-    "h'''": 1,
     "Nat.cast_one": 1,
-    "mul_assoc": 1,
-    "y": 2,
-    "z": 1,
     "decide": 1,
-    "Real.sqrt_eq_iff_mul_self_eq": 4,
-    "Real.sqrt_eq_iff_sq_eq": 1,
-    "show": 1,
-    "Real.sqrt": 1,
-    "rfl": 2,
-    "Nat.choose_pos": 1,
-    "Nat.choose": 1,
-    "Nat.factorial": 3,
-    "Nat.choose_eq_factorial_div_factorial": 1
+    "rfl": 2
   },
   "samples": [
     {
@@ -187,12 +124,7 @@
       "tactics": [
         "rintro",
         "have",
-        "a",
-        "Nat.odd_iff_not_even",
-        "m",
-        "n",
-        "simp_all",
-        "Nat.even_add"
+        "simp_all"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unknown_name",
@@ -209,9 +141,7 @@
       "shape": "nat_int_arith",
       "primary": "by_cases",
       "tactics": [
-        "by_cases",
-        "Nat.coprime_of_dvd_of_dvd",
-        "h"
+        "by_cases"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unknown_name",
@@ -230,7 +160,6 @@
       "tactics": [
         "use",
         "simp",
-        "Fin.forall_fin_succ",
         "aesop"
       ],
       "lean_tactic": "(none named)",
@@ -250,7 +179,6 @@
       "tactics": [
         "intro",
         "simp",
-        "hA",
         "omega"
       ],
       "lean_tactic": "omega",
@@ -270,9 +198,7 @@
       "tactics": [
         "rintro",
         "have",
-        "nlinarith",
-        "pow_two",
-        "m"
+        "nlinarith"
       ],
       "lean_tactic": "linarith",
       "lean_kind": "tactic_failed",
@@ -294,7 +220,6 @@
         "constructor",
         "linarith",
         "simp",
-        "h",
         "norm_num"
       ],
       "lean_tactic": "linarith",
@@ -313,8 +238,7 @@
       "primary": "simp_all",
       "tactics": [
         "by_cases",
-        "simp_all",
-        "Int.even_add"
+        "simp_all"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unsolved_goals",
@@ -332,11 +256,9 @@
       "primary": "omega",
       "tactics": [
         "rw",
-        "Nat.dvd_iff_mod_eq_zero",
         "have",
         "omega",
         "rcases",
-        "h",
         "simp"
       ],
       "lean_tactic": "omega",
@@ -358,9 +280,7 @@
         "have",
         "omega",
         "rcases",
-        "h",
-        "simp",
-        "a"
+        "simp"
       ],
       "lean_tactic": "omega",
       "lean_kind": "tactic_failed",
@@ -380,8 +300,7 @@
         "obtain",
         "have",
         "simp",
-        "linarith",
-        "ha"
+        "linarith"
       ],
       "lean_tactic": "linarith",
       "lean_kind": "tactic_failed",
@@ -401,9 +320,7 @@
         "intro",
         "use",
         "constructor",
-        "linarith",
-        "hinc",
-        "n"
+        "linarith"
       ],
       "lean_tactic": "linarith",
       "lean_kind": "tactic_failed",
@@ -421,7 +338,6 @@
       "primary": "omega",
       "tactics": [
         "simp",
-        "Nat.dvd_iff_mod_eq_zero",
         "omega"
       ],
       "lean_tactic": "omega",
@@ -441,7 +357,6 @@
       "tactics": [
         "constructor",
         "simp",
-        "Nat.digits_zero",
         "norm_num",
         "omega"
       ],
@@ -482,7 +397,6 @@
         "use",
         "constructor",
         "simp_all",
-        "Nat.odd_iff_not_even",
         "omega"
       ],
       "lean_tactic": "omega",
@@ -522,13 +436,9 @@
       "tactics": [
         "rintro",
         "have",
-        "x",
-        "h",
         "norm_num",
         "rcases",
         "simp",
-        "h'",
-        "h''",
         "omega"
       ],
       "lean_tactic": "(none named)",
@@ -551,9 +461,7 @@
         "norm_num",
         "intro",
         "rw",
-        "div_lt_iff",
-        "linarith",
-        "hm.1"
+        "linarith"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unknown_name",
@@ -572,11 +480,9 @@
       "tactics": [
         "apply",
         "have",
-        "n",
         "ext",
         "simp",
-        "aesop",
-        "h"
+        "aesop"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unsolved_goals",
@@ -595,9 +501,7 @@
       "tactics": [
         "intro",
         "simp",
-        "Finset.mem_Icc",
         "norm_num",
-        "Nat.dvd_iff_mod_eq_zero",
         "omega"
       ],
       "lean_tactic": "omega",
@@ -616,7 +520,6 @@
       "primary": "nlinarith",
       "tactics": [
         "rw",
-        "dvd_iff_exists_eq_mul_left",
         "obtain",
         "ring_nf",
         "have",
@@ -660,9 +563,7 @@
       "tactics": [
         "intro",
         "induction",
-        "zero",
         "simp_all",
-        "succ",
         "cases",
         "have",
         "cases'",
@@ -686,7 +587,6 @@
         "intro",
         "use",
         "simp_all",
-        "Nat.succ_pos",
         "omega"
       ],
       "lean_tactic": "omega",
@@ -706,10 +606,8 @@
       "tactics": [
         "constructor",
         "simp_all",
-        "Nat.odd_iff_not_even",
         "norm_num",
-        "linarith",
-        "hxn"
+        "linarith"
       ],
       "lean_tactic": "simp_all",
       "lean_kind": "tactic_failed",
@@ -727,8 +625,7 @@
       "primary": "simp",
       "tactics": [
         "use",
-        "simp",
-        "ha"
+        "simp"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unsolved_goals",
@@ -749,10 +646,7 @@
         "use",
         "intro",
         "simp",
-        "abs_of_nonneg",
-        "exact",
-        "div_lt_iff",
-        "h"
+        "exact"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unknown_name",
@@ -773,7 +667,6 @@
         "norm_num",
         "have",
         "rcases",
-        "h",
         "simp",
         "omega"
       ],
@@ -793,8 +686,7 @@
       "primary": "simp_all",
       "tactics": [
         "use",
-        "simp_all",
-        "Nat.Prime"
+        "simp_all"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unsolved_goals",
@@ -819,7 +711,6 @@
         "have",
         "omega",
         "rcases",
-        "h",
         "simp"
       ],
       "lean_tactic": "omega",
@@ -839,7 +730,6 @@
       "tactics": [
         "constructor",
         "simp",
-        "Finset.sum_range_succ",
         "Nat.cast_succ",
         "ring_nf",
         "norm_num",
@@ -861,12 +751,9 @@
       "primary": "omega",
       "tactics": [
         "induction",
-        "zero",
         "norm_num",
-        "succ",
         "cases",
         "simp_all",
-        "Nat.pow_succ",
         "omega"
       ],
       "lean_tactic": "omega",
@@ -930,9 +817,7 @@
         "have",
         "omega",
         "rcases",
-        "h",
-        "simp",
-        "x"
+        "simp"
       ],
       "lean_tactic": "omega",
       "lean_kind": "tactic_failed",
@@ -953,7 +838,6 @@
         "intro",
         "rcases",
         "have",
-        "h",
         "simp",
         "omega"
       ],
@@ -974,7 +858,6 @@
       "tactics": [
         "refine'",
         "simp",
-        "Set.compl",
         "norm_num",
         "rintro",
         "simp_all",
@@ -998,10 +881,8 @@
         "norm_num",
         "have",
         "nlinarith",
-        "h",
         "interval_cases",
-        "simp_all",
-        "config"
+        "simp_all"
       ],
       "lean_tactic": "linarith",
       "lean_kind": "tactic_failed",
@@ -1020,8 +901,7 @@
       "tactics": [
         "use",
         "norm_num",
-        "simp",
-        "Nat.digits_zero"
+        "simp"
       ],
       "lean_tactic": "simp",
       "lean_kind": "tactic_failed",
@@ -1041,7 +921,6 @@
         "intro",
         "constructor",
         "use",
-        "x",
         "omega",
         "rintro"
       ],
@@ -1062,10 +941,7 @@
       "tactics": [
         "rintro",
         "have",
-        "a",
-        "ha",
-        "simp_all",
-        "Nat.even_add"
+        "simp_all"
       ],
       "lean_tactic": "simp",
       "lean_kind": "tactic_failed",
@@ -1083,9 +959,7 @@
       "primary": "omega",
       "tactics": [
         "simp",
-        "Finset.mem_Icc",
         "norm_num",
-        "h",
         "omega"
       ],
       "lean_tactic": "omega",
@@ -1103,9 +977,7 @@
       "shape": "nonlinear",
       "primary": "simp",
       "tactics": [
-        "simp",
-        "Nat.pow_succ",
-        "n"
+        "simp"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unsolved_goals",
@@ -1124,8 +996,7 @@
       "tactics": [
         "intro",
         "apply",
-        "simp",
-        "hA"
+        "simp"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unsolved_goals",
@@ -1144,9 +1015,7 @@
       "tactics": [
         "rintro",
         "have",
-        "nlinarith",
-        "pow_two",
-        "m"
+        "nlinarith"
       ],
       "lean_tactic": "linarith",
       "lean_kind": "tactic_failed",
@@ -1167,8 +1036,7 @@
         "use",
         "constructor",
         "linarith",
-        "simp",
-        "h"
+        "simp"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unsolved_goals",
@@ -1186,8 +1054,7 @@
       "primary": "simp_all",
       "tactics": [
         "cases'",
-        "simp_all",
-        "Int.even_add"
+        "simp_all"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unsolved_goals",
@@ -1205,11 +1072,9 @@
       "primary": "omega",
       "tactics": [
         "rw",
-        "Nat.dvd_iff_mod_eq_zero",
         "have",
         "omega",
         "rcases",
-        "h",
         "simp"
       ],
       "lean_tactic": "omega",
@@ -1228,7 +1093,6 @@
       "primary": "simp_all",
       "tactics": [
         "have",
-        "p",
         "exact",
         "simp_all"
       ],
@@ -1250,7 +1114,6 @@
         "rintro",
         "have",
         "rcases",
-        "h",
         "simp",
         "omega"
       ],
@@ -1272,8 +1135,7 @@
         "obtain",
         "have",
         "simp_all",
-        "linarith",
-        "ha"
+        "linarith"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unknown_name",
@@ -1291,7 +1153,6 @@
       "primary": "aesop",
       "tactics": [
         "simp",
-        "Int.odd_iff_not_even",
         "aesop"
       ],
       "lean_tactic": "simp",
@@ -1311,7 +1172,6 @@
       "tactics": [
         "intro",
         "induction'",
-        "Nat.coprime_iff_gcd_eq_one",
         "omega"
       ],
       "lean_tactic": "omega",
@@ -1351,7 +1211,6 @@
         "use",
         "constructor",
         "simp_all",
-        "Nat.odd_iff_not_even",
         "omega"
       ],
       "lean_tactic": "omega",
@@ -1371,7 +1230,6 @@
       "tactics": [
         "use",
         "simp",
-        "pow_two",
         "linarith"
       ],
       "lean_tactic": "linarith",
@@ -1390,7 +1248,6 @@
       "primary": "omega",
       "tactics": [
         "rw",
-        "hS",
         "intro",
         "rcases",
         "omega"
@@ -1414,11 +1271,7 @@
         "have",
         "omega",
         "rcases",
-        "h",
-        "simp",
-        "x",
-        "h'",
-        "h''"
+        "simp"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unsolved_goals",
@@ -1457,7 +1310,6 @@
       "tactics": [
         "intro",
         "rw",
-        "Finset.mem_Icc",
         "norm_num",
         "omega"
       ],
@@ -1474,14 +1326,13 @@
       "set": "stageB_T0.7",
       "id": "05c894e4-97a2-506f-ab92-1a3c85122249",
       "shape": "nat_int_arith",
-      "primary": "ring_nf",
+      "primary": "nlinarith",
       "tactics": [
         "rw",
-        "dvd_iff_exists_eq_mul_left",
         "obtain",
         "ring_nf",
         "apply",
-        "mul_pos"
+        "nlinarith"
       ],
       "lean_tactic": "linarith",
       "lean_kind": "tactic_failed",
@@ -1500,7 +1351,6 @@
       "tactics": [
         "use",
         "simp",
-        "Int.ModEq",
         "norm_num",
         "omega"
       ],
@@ -1521,11 +1371,8 @@
       "tactics": [
         "intro",
         "induction'",
-        "cases",
-        "zero",
         "simp_all",
-        "succ",
-        "Nat.succ_le_iff",
+        "cases",
         "linarith"
       ],
       "lean_tactic": "linarith",
@@ -1546,7 +1393,6 @@
         "intro",
         "use",
         "simp_all",
-        "Nat.succ_le_iff",
         "omega"
       ],
       "lean_tactic": "omega",
@@ -1566,14 +1412,10 @@
       "tactics": [
         "have",
         "cases'",
+        "exfalso",
         "linarith",
+        "assumption",
         "simp",
-        "h6",
-        "h8",
-        "p",
-        "Nat.mul_mod",
-        "h5",
-        "h4",
         "omega"
       ],
       "lean_tactic": "assumption",
@@ -1610,12 +1452,8 @@
       "tactics": [
         "have",
         "cases",
-        "inl",
         "simp",
-        "h",
-        "inr",
-        "simp_all",
-        "Nat.factorial_succ"
+        "simp_all"
       ],
       "lean_tactic": "simp",
       "lean_kind": "tactic_failed",
@@ -1634,9 +1472,7 @@
       "tactics": [
         "constructor",
         "simp_all",
-        "Nat.odd_iff_not_even",
-        "linarith",
-        "hxn"
+        "linarith"
       ],
       "lean_tactic": "simp_all",
       "lean_kind": "tactic_failed",
@@ -1654,8 +1490,7 @@
       "primary": "simp",
       "tactics": [
         "refine'",
-        "simp",
-        "h"
+        "simp"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unknown_name",
@@ -1676,10 +1511,7 @@
         "have",
         "omega",
         "rcases",
-        "h",
-        "simp",
-        "h1",
-        "h2"
+        "simp"
       ],
       "lean_tactic": "simp",
       "lean_kind": "tactic_failed",
@@ -1697,10 +1529,8 @@
       "primary": "omega",
       "tactics": [
         "simp",
-        "Nat.dvd_iff_mod_eq_zero",
         "have",
         "rw",
-        "h2",
         "omega"
       ],
       "lean_tactic": "omega",
@@ -1719,8 +1549,7 @@
       "primary": "simp",
       "tactics": [
         "use",
-        "simp",
-        "sq"
+        "simp"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unsolved_goals",
@@ -1738,7 +1567,6 @@
       "primary": "exact",
       "tactics": [
         "have",
-        "q",
         "simpa",
         "exact"
       ],
@@ -1759,12 +1587,9 @@
       "tactics": [
         "rintro",
         "have",
-        "ZMOD",
         "simp",
-        "Int.ModEq",
         "omega",
-        "rcases",
-        "h"
+        "rcases"
       ],
       "lean_tactic": "omega",
       "lean_kind": "tactic_failed",
@@ -1782,8 +1607,7 @@
       "primary": "simp",
       "tactics": [
         "use",
-        "simp",
-        "ha2"
+        "simp"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unsolved_goals",
@@ -1807,12 +1631,7 @@
         "rcases",
         "have",
         "omega",
-        "h",
-        "simp",
-        "x",
-        "h'",
-        "h''",
-        "h'''"
+        "simp"
       ],
       "lean_tactic": "omega",
       "lean_kind": "tactic_failed",
@@ -1833,12 +1652,9 @@
         "constructor",
         "intro",
         "simp",
-        "Nat.pow_succ",
         "cases",
-        "zero",
-        "succ",
-        "simp_all",
-        "linarith"
+        "linarith",
+        "simp_all"
       ],
       "lean_tactic": "linarith",
       "lean_kind": "tactic_failed",
@@ -1857,7 +1673,6 @@
       "tactics": [
         "constructor",
         "simp",
-        "Finset.sum_range_succ",
         "Nat.cast_one",
         "ring",
         "omega"
@@ -1878,11 +1693,8 @@
       "primary": "omega",
       "tactics": [
         "induction",
-        "zero",
         "norm_num",
-        "succ",
         "simp",
-        "Nat.pow_succ",
         "omega"
       ],
       "lean_tactic": "omega",
@@ -1921,8 +1733,7 @@
         "rcases",
         "use",
         "ring",
-        "simp",
-        "mul_assoc"
+        "simp"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unsolved_goals",
@@ -1942,8 +1753,6 @@
         "rintro",
         "norm_num",
         "have",
-        "x",
-        "y",
         "nlinarith"
       ],
       "lean_tactic": "linarith",
@@ -1963,11 +1772,7 @@
       "tactics": [
         "intro",
         "have",
-        "x",
-        "y",
-        "z",
         "rw",
-        "h",
         "simp",
         "omega",
         "rcases"
@@ -2009,7 +1814,6 @@
         "intro",
         "constructor",
         "use",
-        "x",
         "omega",
         "rintro"
       ],
@@ -2029,7 +1833,6 @@
       "primary": "norm_num",
       "tactics": [
         "rw",
-        "h",
         "norm_num",
         "ring"
       ],
@@ -2049,9 +1852,7 @@
       "primary": "linarith",
       "tactics": [
         "rw",
-        "h",
         "field_simp",
-        "Real.sqrt_eq_iff_mul_self_eq",
         "ring_nf",
         "norm_num",
         "linarith"
@@ -2072,7 +1873,6 @@
       "primary": "linarith",
       "tactics": [
         "rw",
-        "Real.sqrt_eq_iff_mul_self_eq",
         "norm_num",
         "ring",
         "linarith"
@@ -2092,8 +1892,7 @@
       "shape": "nonlinear",
       "primary": "simpa",
       "tactics": [
-        "simpa",
-        "h"
+        "simpa"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "type_error",
@@ -2111,8 +1910,7 @@
       "primary": "simp",
       "tactics": [
         "use",
-        "simp",
-        "h"
+        "simp"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unsolved_goals",
@@ -2149,7 +1947,6 @@
       "primary": "linarith",
       "tactics": [
         "norm_num",
-        "Real.sqrt_eq_iff_sq_eq",
         "simp_all",
         "linarith"
       ],
@@ -2169,7 +1966,6 @@
       "primary": "norm_num",
       "tactics": [
         "rw",
-        "Real.sqrt_eq_iff_mul_self_eq",
         "norm_num",
         "ring"
       ],
@@ -2189,10 +1985,7 @@
       "primary": "norm_num",
       "tactics": [
         "rw",
-        "show",
-        "Real.sqrt",
-        "norm_num",
-        "Real.sqrt_eq_iff_mul_self_eq"
+        "norm_num"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unsolved_goals",
@@ -2210,7 +2003,6 @@
       "primary": "norm_num",
       "tactics": [
         "rw",
-        "h",
         "norm_num",
         "rfl"
       ],
@@ -2230,7 +2022,6 @@
       "primary": "linarith",
       "tactics": [
         "rw",
-        "h",
         "norm_num",
         "linarith"
       ],
@@ -2267,7 +2058,6 @@
       "primary": "linarith",
       "tactics": [
         "constructor",
-        "Nat.choose_pos",
         "linarith"
       ],
       "lean_tactic": "linarith",
@@ -2286,8 +2076,7 @@
       "primary": "simp",
       "tactics": [
         "apply",
-        "simp",
-        "Nat.choose"
+        "simp"
       ],
       "lean_tactic": "simp",
       "lean_kind": "tactic_failed",
@@ -2305,7 +2094,6 @@
       "primary": "omega",
       "tactics": [
         "norm_num",
-        "Nat.factorial",
         "omega"
       ],
       "lean_tactic": "omega",
@@ -2324,8 +2112,7 @@
       "primary": "simp",
       "tactics": [
         "use",
-        "simp",
-        "h"
+        "simp"
       ],
       "lean_tactic": "(none named)",
       "lean_kind": "unsolved_goals",
@@ -2343,7 +2130,6 @@
       "primary": "linarith",
       "tactics": [
         "rw",
-        "h",
         "norm_num",
         "linarith"
       ],
@@ -2363,10 +2149,8 @@
       "primary": "ring",
       "tactics": [
         "rw",
-        "Nat.choose_eq_factorial_div_factorial",
         "exact",
         "simp",
-        "Nat.factorial",
         "ring",
         "simp_all"
       ],
@@ -2387,7 +2171,6 @@
       "tactics": [
         "have",
         "rw",
-        "Nat.factorial",
         "norm_num",
         "linarith",
         "exact"

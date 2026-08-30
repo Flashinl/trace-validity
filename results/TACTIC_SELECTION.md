@@ -103,20 +103,19 @@ Covers all 104 samples, including those whose error names no tactic. The *closin
 | `linarith` | **16** ⛔ | · | **6** | · | **2** | · | **24** |
 | `simp` | **9** | · | **2** | · | · | · | **11** |
 | `simp_all` | **3** | · | **4** | · | · | · | **7** |
+| `nlinarith` | **3** | · | **3** | · | · | · | **6** |
 | `norm_num` | **5** | · | **1** | · | · | · | **6** |
-| `nlinarith` | **3** | · | **2** | · | · | · | **5** |
 | `aesop` | · | **1** | **2** | · | · | · | **3** |
 | `ring` | **3** | · | · | · | · | · | **3** |
 | `simpa` | **2** | · | · | · | · | · | **2** |
 | `by_cases` | · | · | **1** | · | · | · | **1** |
 | `field_simp` | **1** | · | · | · | · | · | **1** |
-| `ring_nf` | · | · | **1** ⛔ | · | · | · | **1** |
 | `exact` | **1** | · | · | · | · | · | **1** |
 | `decide` | · | · | **1** | · | · | · | **1** |
 | `rfl` | · | · | · | · | · | **1** | **1** |
 | **all** | **68** | **2** | **30** | **1** | **2** | **1** | **104** |
 
-**Table B's pairing is inexact, and that is why Table A leads.** If the model wrote `intro n; rcases h with ⟨k, hk⟩; linarith`, the `linarith` met a subgoal that may well be linear even though the theorem's goal is not. The pairing is certainly exact only when the closing tactic is the **first** tactic in the body, which holds for just 5 of 104 samples. Table B's structural total is 44/104 = 42%, against Table A's 35 — read the difference as the inflation the top-level-goal approximation introduces, and use Table A.
+**Table B's pairing is inexact, and that is why Table A leads.** If the model wrote `intro n; rcases h with ⟨k, hk⟩; linarith`, the `linarith` met a subgoal that may well be linear even though the theorem's goal is not. The pairing is certainly exact only when the closing tactic is the **first** tactic in the body, which holds for just 5 of 104 samples. Table B's structural total is 43/104 = 41%, against Table A's 35 — read the difference as the inflation the top-level-goal approximation introduces, and use Table A.
 
 ## 4. Top five tactic/goal-shape mismatches by frequency
 
@@ -144,14 +143,14 @@ Every tactic named at the head of a line anywhere in a failing proof body, closi
 | `linarith` | 24 | 23.1% |
 | `rw` | 20 | 19.2% |
 | `ring` | 8 | 7.7% |
-| `nlinarith` | 5 | 4.8% |
+| `nlinarith` | 6 | 5.8% |
 | `ring_nf` | 5 | 4.8% |
 | `aesop` | 3 | 2.9% |
 | `field_simp` | 2 | 1.9% |
 | `decide` | 1 | 1.0% |
 | `positivity` | 0 | 0.0% |
 
-Other tactics that appear (top 15): `have` 32, `h` 31, `use` 30, `intro` 24, `simp_all` 22, `constructor` 18, `rcases` 17, `rintro` 16, `x` 8, `apply` 7, `Nat.odd_iff_not_even` 5, `Nat.dvd_iff_mod_eq_zero` 5, `zero` 5, `succ` 5, `cases` 5.
+Other tactics that appear (top 15): `have` 32, `use` 30, `intro` 24, `simp_all` 22, `constructor` 18, `rcases` 17, `rintro` 16, `apply` 7, `cases` 5, `refine'` 5, `exact` 5, `obtain` 4, `cases'` 4, `induction` 3, `simpa` 3.
 
 **Tracked tactics the model never writes: `positivity`.** `positivity` is the standard tool for `0 < e` / `0 ≤ e` goals and Goedel-Prover-SFT never reaches for it. It would be tempting to call that a gap in the model's repertoire — **and Phase 2 shows it is not.** Run as a ladder rung against all 104 goals, `positivity` returned `not a positivity goal` 102 times out of 102 (`TACTIC_ORACLE.md` §3a). Nothing in this failure set is that shape, so the omission cost the model nothing. Absence from a vocabulary is not evidence of a missing capability, and this is the cross-check that says so.
 

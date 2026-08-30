@@ -93,7 +93,20 @@ def goal_shape(statement, whole=None):
 # enough to cross-tabulate. Comments and doc blocks are stripped first so that
 # prose inside `/- ... -/` is never counted as a tactic.
 _LINE_COMMENT = re.compile(r"--[^\n]*")
-_TACTIC_HEAD = re.compile(r"(?:^|<;>|;|\||\[|\()\s*([a-zA-Z_][a-zA-Z0-9_'.]*)")
+# Tactic POSITION only: start of line, or after a sequencing combinator.
+#
+# Three things it must NOT match, each of which put a non-tactic in the published
+# vocabulary table:
+#   `[`  -> `simp [Nat.pow_succ]` reported `Nat.pow_succ` as a tactic
+#   `(`  -> `rcases h with ⟨x, hx⟩` reported `x`
+#   `|`  -> `rcases this with (h | h | h)` reported `h`, 14 times. `|` is a real
+#           tactic separator in `first | t1 | t2`, but it is far more often an
+#           rcases alternation, so it is not worth the false positives.
+_TACTIC_HEAD = re.compile(r"(?:^|<;>|;|·|\.\s)\s*([a-zA-Z_][a-zA-Z0-9_'.]*)")
+# `| zero => simp` in an induction block: `zero` is a case label, `simp` is the
+# tactic. Strip the label and keep the body -- skipping the whole line would
+# lose a real tactic.
+_CASE_LABEL = re.compile(r"^\s*\|\s*[a-zA-Z_][a-zA-Z0-9_'.]*(?:\s+\S+)*\s*=>\s*")
 
 # Words that appear in tactic-head position but are not tactics.
 _NOT_TACTICS = {
@@ -121,7 +134,7 @@ def tactics_used(body):
     b = _LINE_COMMENT.sub(" ", b)
     out, seen = [], set()
     for line in b.splitlines():
-        line = line.strip()
+        line = _CASE_LABEL.sub("", line.strip())
         if not line:
             continue
         for m in _TACTIC_HEAD.finditer(line):
