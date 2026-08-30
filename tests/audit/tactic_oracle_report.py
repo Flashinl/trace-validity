@@ -354,9 +354,11 @@ def main(path=None, out_md=None, out_json=None):
           % rung.get("nlinarith_hint", 0))
 
     # ------------------------------------------- the repaired dead rung
-    if rp is not None:
-        rrows = rp.get("rows", [])
+    if rp is not None and rp.get("rows"):
+        rrows = rp.get("rows") or []
         rc = collections.Counter(r["verdict"] for r in rrows)
+        attempted = rp.get("attempted", len(rrows))
+        aborted = rp.get("aborted")
         A("### 3c. Supplementary — re-running the one repairable dead rung\n")
         A("`simp_arith` (rung 9) is deprecated on this toolchain and errored "
           "before it ever saw a goal, so rung 9 tested nothing. Lean's own "
@@ -367,25 +369,60 @@ def main(path=None, out_md=None, out_json=None):
           "§2**, because it was run after seeing that the original rung was "
           "dead. Rung 6 is not repaired: its only sample-independent repair is "
           "bare `nlinarith`, which the ladder already carries as rung 7.\n")
-        A("Applied to all %d samples the pre-registered ladder did not close:\n"
-          % len(rrows))
-        A(md(["outcome of `simp +arith +decide`", "n"],
-             [["genuine recovery", rc["recovered"]],
-              ["closed via inconsistent hypotheses (vacuous)", rc["vacuous_close"]],
-              ["did not close", rc["none_closed"]],
-              ["exceeded budget", rc["budget"]]]))
+        A("**Budget: %ds per attempt, not the 60s §1 uses.** A first attempt at "
+          "60s hung the Lean server on a large `¬∃` goal — `+decide` asks the "
+          "kernel to evaluate it — lean_interact killed the server, the rebuild "
+          "then exceeded its own 300s budget, and every subsequent sample would "
+          "have been scored `budget` for infrastructure reasons rather than "
+          "measurement. A supplementary pass may take a different budget as "
+          "long as it says so; this one says so. The run also aborts the moment "
+          "the base environment is lost, rather than emitting rows that look "
+          "like measurements and are not.\n"
+          % rp.get("repaired_rung_timeout_seconds", "?"))
+        A("Applied to the %d of %d samples the pre-registered ladder did not "
+          "close%s:\n" % (len(rrows), attempted,
+                          " **(aborted early — see below)**" if aborted else ""))
+        A(md(["outcome of `simp +arith +decide`", "n", "share of %d" % len(rrows)],
+             [["genuine recovery", rc["recovered"], pct(rc["recovered"], len(rrows))],
+              ["closed via inconsistent hypotheses (vacuous)", rc["vacuous_close"],
+               pct(rc["vacuous_close"], len(rrows))],
+              ["did not close", rc["none_closed"], pct(rc["none_closed"], len(rrows))],
+              ["exceeded the %ss budget" % rp.get("repaired_rung_timeout_seconds", "?"),
+               rc["budget"], pct(rc["budget"], len(rrows))]]))
         A("")
+        if aborted:
+            A("> ⚠️ **This pass did not finish: %s.** Read it as %d samples of "
+              "evidence, not %d.\n" % (aborted, len(rrows), attempted))
         if rc["recovered"] == 0:
-            A("> **Zero.** The dead rung was hiding nothing. The headline %s "
-              "stands as the pre-registered ladder measured it, and the "
-              "deadness of rung 9 is a defect in the ladder's *design*, not a "
-              "distortion of its *result*.\n" % pct(rec, n))
+            A("> **Zero recoveries.** The dead rung was hiding nothing%s. The "
+              "headline %s stands as the pre-registered ladder measured it, and "
+              "the deadness of rung 9 is a defect in the ladder's *design*, not "
+              "a distortion of its *result*.\n"
+              % ("" if not aborted else " in the part of the set that ran",
+                 pct(rec, n)))
         else:
-            A("> The repaired rung recovers **%d further goals**, which would "
-              "take the total from %d to %d (%s). Report both; the "
-              "pre-registered figure is %s.\n"
+            A("> The repaired rung recovers **%d further goal(s)**, which would "
+              "take the total from %d to %d (%s). Both are reportable; the "
+              "**pre-registered figure is %s** and that is the one that belongs "
+              "beside the headline.\n"
               % (rc["recovered"], rec, rec + rc["recovered"],
                  pct(rec + rc["recovered"], n), pct(rec, n)))
+    elif rp is not None:
+        A("### 3c. Supplementary — the repairable dead rung was not measured\n")
+        A("`simp_arith` (rung 9) is deprecated on this toolchain and never saw "
+          "a goal, so the obvious follow-up is to run Lean's own named "
+          "replacement, `simp +arith +decide`, and check the dead rung was "
+          "hiding nothing. **That pass did not produce usable data.** `+decide` "
+          "asks the kernel to evaluate goals like `¬∃ a b : ℕ, …`; on the first "
+          "attempt it hung the Lean server, lean_interact killed it, the "
+          "rebuild exceeded its own 300s budget, and every sample after the "
+          "29th would have been scored `budget` for infrastructure reasons "
+          "rather than measurement. Those rows were discarded rather than "
+          "reported.\n")
+        A("So the loophole stays open and is stated rather than closed: **rung "
+          "9 tested nothing, and this audit has not established what it would "
+          "have found.** `tests/audit/tactic_oracle_repair.py` runs it at a "
+          "smaller budget with an abort guard; it has not been completed here.\n")
 
     # --------------------------------------------------- what the 4 recoveries are
     probe_path = os.path.join(_ROOT, "results", "tactic_oracle_probe.json")
