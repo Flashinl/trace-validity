@@ -25,6 +25,7 @@ import argparse
 import io
 import json
 import os
+import re
 import sys
 import time
 
@@ -35,7 +36,8 @@ for _p in (_HERE, _ROOT):
         sys.path.insert(0, _p)
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-from config import GOEDEL_LEAN4_HEADER, PROMPT_TEMPLATE, MODEL_NAME, TOP_P
+from config import (GOEDEL_LEAN4_HEADER, PROMPT_TEMPLATE, MODEL_NAME, TOP_P,
+                    LEAN4_BLOCK_PATTERN)
 from prompting import build_informal_prefix, extract_lean4_block
 from generate import git_state, environment_state, sha256_file
 
@@ -206,6 +208,23 @@ def clip_error(text):
     return head + "\n...\n" + tail, True
 
 
+# --------------------------------------------------------------------------- #
+# Extraction for the repair prompt
+# --------------------------------------------------------------------------- #
+# prompting.extract_lean4_block uses re.search, which returns the FIRST fenced
+# block. Every one-shot prompt opens exactly one fence, so first == last there
+# and it is correct. The repair prompt opens TWO: the failed attempt is quoted
+# back inside a closed fence, and the original prompt is then re-opened for the
+# retry. First-match extraction therefore recovers the FAILED PROOF, and the
+# retry is silently discarded -- which reads as "the model reproduced its own
+# proof 104/104 times" when in fact it wrote a new one every time.
+#
+# The retry is always the LAST complete block.
+def extract_last_lean4_block(prompt, completion):
+    blocks = re.findall(LEAN4_BLOCK_PATTERN, prompt + completion, re.DOTALL)
+    return blocks[-1] if blocks else None
+
+
 def build_repair_prompt(sample):
     """Assembled from the pinned constants; neither is modified.
 
@@ -309,7 +328,7 @@ def cmd_exp3(args):
             gen = prover.generate(prompt, temperature=args.temp,
                                   num_trajectories=1,
                                   seed=args.seed + i * 1000)[0]
-            full = extract_lean4_block(prompt, gen["text"])
+            full = extract_last_lean4_block(prompt, gen["text"])
             rec = {"repair_key": key(s), "set": s["set"], "pipeline": s["pipeline"],
                    "id": s["id"], "band": s.get("band"),
                    "original_outcome": s["outcome"], "label": "tactic_mismatch",

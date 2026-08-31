@@ -259,6 +259,11 @@ class LeanVerifier:
 
         project = LocalProject(directory=self.project_dir, auto_build=True)
         config = LeanREPLConfig(project=project, verbose=verbose)
+        # Kept so _restart() can respawn the server without rebuilding the
+        # config. Constructing a LeanREPLConfig re-runs the project build check
+        # -- "Already decompressed 8639 file(s) ... Build completed
+        # successfully (8656 jobs)" -- which costs minutes on Windows.
+        self._config = config
         self.server = LeanServer(config)
 
         self.base_env, self.base_env_seconds, self.base_env_source = self._base_env()
@@ -518,16 +523,36 @@ class LeanVerifier:
         return BROKEN, detail
 
     def _restart(self):
-        """A timed-out REPL is killed by lean_interact; rebuild the session."""
+        """A timed-out REPL is killed by lean_interact; rebuild the session.
+
+        Rebuilds the base environment through `_base_env()`, which unpickles the
+        Mathlib snapshot when one exists. This used to run `import Mathlib`
+        directly, so every timeout cost a full re-import -- minutes on Windows,
+        where Defender inspects each of ~8.6k .olean files. On a best-of-n run
+        at T=0.7 that dominated everything: a batch of 2,240 samples spent far
+        longer restarting after timeouts than verifying.
+
+        Performance only. `_base_env()` returns the same imported-Mathlib
+        environment either way, so no verdict changes; the unpickle path is
+        already what every process after the first uses at construction time,
+        and it falls back to a real import if the snapshot is unusable.
+        """
         try:
-            from lean_interact import Command, LeanREPLConfig, LeanServer
+            from lean_interact import LeanREPLConfig, LeanServer
             from lean_interact.project import LocalProject
 
-            project = LocalProject(directory=self.project_dir, auto_build=False)
-            self.server = LeanServer(LeanREPLConfig(project=project, verbose=False))
-            prelude = "\n".join(f"import {m}" for m in BASE_IMPORTS)
-            resp = self.server.run(Command(cmd=prelude), timeout=300)
-            self.base_env = getattr(resp, "env", None)
+            # Reuse the config built at construction time. Building a fresh one
+            # re-runs the whole project build check on every timeout, which is
+            # the dominant cost of a best-of-n verification: Stage B times out
+            # on ~2.6% of samples, and at ~460s per respawn that was hours of
+            # rebuild for minutes of verification.
+            cfg = getattr(self, "_config", None)
+            if cfg is None:
+                project = LocalProject(directory=self.project_dir, auto_build=False)
+                cfg = LeanREPLConfig(project=project, verbose=False)
+                self._config = cfg
+            self.server = LeanServer(cfg)
+            self.base_env, _, _ = self._base_env()
         except Exception as e:  # noqa: BLE001
             print(f"[verifier] restart failed: {type(e).__name__}: {e}")
             self.base_env = None
