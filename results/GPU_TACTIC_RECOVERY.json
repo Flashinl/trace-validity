@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-08-31T02:34:10Z",
+  "generated_utc": "2026-08-31T02:48:08Z",
   "run": {
     "generation commit": "2f25feb659385719112980c4b8e64f6104157fc2 (branch exp/gpu-tactic-recovery, tree clean)",
     "seed": "20260830, on every run; recorded in every run_meta.json and in every trace record",
@@ -759,9 +759,9 @@
     }
   },
   "experiment3_error_feedback_repair": {
-    "set": "the 104 `tactic_mismatch` failures the tactic oracle ran on",
+    "set": "104 `tactic_mismatch` failures the tactic oracle also ran on",
     "one_shot_baseline": {
-      "note": "0 by construction -- every row in this set is a failure of the one-shot run. Stated so the repair row is never read as an improvement on a rate it is not comparable with.",
+      "note": "Zero by construction: every row in this set is, by definition, a failure of the one-shot run. It is stated so the repair row is never read as an improvement on a rate it is not comparable with.",
       "rate": {
         "k": 0,
         "n": 104,

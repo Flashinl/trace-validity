@@ -95,7 +95,7 @@ _Verification not complete: verification incomplete: 17 of 90 problems have all 
 
 ## Experiment 3 — one error-feedback repair attempt
 
-Run on the **the 104 `tactic_mismatch` failures the tactic oracle ran on**. The retry prompt is the original prompt, the model's failed attempt, and Lean's error verbatim — no hints, no tactic suggestions. Greedy, T=0.0.
+Run on the **104 `tactic_mismatch` failures the tactic oracle also ran on**. The retry prompt is the original prompt, the model's failed attempt, and Lean's error verbatim — no hints, no tactic suggestions. Greedy, T=0.0.
 
 **One-shot and with-repair are separate rows and are not merged.**
 
@@ -108,7 +108,7 @@ Run on the **the 104 `tactic_mismatch` failures the tactic oracle ran on**. The 
 
 _This pooled denominator matches the tactic oracle's 104 so the two ceilings are like-for-like. It mixes two pipelines and must not be quoted as a validity rate for either._
 
-_0 by construction -- every row in this set is a failure of the one-shot run. Stated so the repair row is never read as an improvement on a rate it is not comparable with._
+_Zero by construction: every row in this set is, by definition, a failure of the one-shot run. It is stated so the repair row is never read as an improvement on a rate it is not comparable with._
 
 **Against the tactic oracle**, which ran the same 104 samples: substantive recoveries 3/104 = 2.9% [1.0-8.1]. Upper bound if tactic selection were perfect. Never a validity figure and never quoted alone.
 

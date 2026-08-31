@@ -433,11 +433,12 @@ def experiment3(args):
         by_pipe[r.get("pipeline") or "?"].append(r)
 
     out = {
-        "set": "the 104 `tactic_mismatch` failures the tactic oracle ran on",
+        "set": "104 `tactic_mismatch` failures the tactic oracle also ran on",
         "one_shot_baseline": {
-            "note": "0 by construction -- every row in this set is a failure of "
-                    "the one-shot run. Stated so the repair row is never read "
-                    "as an improvement on a rate it is not comparable with.",
+            "note": "Zero by construction: every row in this set is, by "
+                    "definition, a failure of the one-shot run. It is stated "
+                    "so the repair row is never read as an improvement on a "
+                    "rate it is not comparable with.",
             "rate": rate(0, n),
         },
         "with_repair_pooled": rate(len(fixed), n),
