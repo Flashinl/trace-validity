@@ -239,7 +239,18 @@ def main():
             return "no band field"
         return " ".join("%s %d/%d" % (b, band_done[b], band_total[b]) for b in bands)
 
-    aborted_problems, aborted_samples = set(), 0
+    # Seed the abort set from what is already on disk, BEFORE the loop. The
+    # decision is a property of a problem's leading samples, and on a resume
+    # those are already known -- so a problem proven abandoned by the previous
+    # run must not have one more sample re-verified (a timeout plus a respawn,
+    # ~260s) just to re-derive a verdict the prior data already carries.
+    aborted_problems = {pid for pid in prior if head_all_timeout(pid)}
+    aborted_samples = 0
+    if aborted_problems:
+        print("resuming: %d problem(s) already abandoned by the abort rule: %s"
+              % (len(aborted_problems),
+                 ", ".join(sorted(p.split("|")[-1][:36] for p in aborted_problems))),
+              flush=True)
     t0 = time.perf_counter()
     with io.open(args.out, "a", encoding="utf-8", newline="\n") as fh:
         for n, (i, r) in enumerate(todo, 1):
