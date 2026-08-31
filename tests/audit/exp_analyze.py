@@ -311,13 +311,25 @@ def experiment2(args):
             if r.get("band"):
                 band[k] = r["band"]
 
-        per = [(len(v), sum(v)) for v in by.values()]
+        # pass@k is only defined against the FULL k samples a problem was
+        # given. A problem that is half-verified would enter the estimator with
+        # a smaller n and a correspondingly biased c/n, so partial problems are
+        # excluded and counted, never silently averaged in.
+        want_k = args.k
+        complete = {k: v for k, v in by.items() if len(v) >= want_k}
+        partial = {k: v for k, v in by.items() if len(v) < want_k}
+        per = [(len(v), sum(v)) for v in complete.values()]
+        if not per:
+            out[name] = {"error": "no problem has all %d samples verified yet"
+                                  % want_k,
+                         "problems_complete": 0, "problems_partial": len(partial)}
+            continue
         curve = pass_curve(per)
 
         # Vacuity is statement-level, so a problem's k passes share one verdict.
         # The vacuous curve is the same estimator restricted to problems whose
         # goal the probe ladder closes without a proof.
-        per_vac = [(len(v), sum(v)) for k, v in by.items()
+        per_vac = [(len(v), sum(v)) for k, v in complete.items()
                    if vac.get(str(k), vac.get(k, {})).get("vacuous")]
         curve_vac = pass_curve(per_vac) if per_vac else None
 
@@ -325,7 +337,9 @@ def experiment2(args):
         mix = collections.Counter(r["outcome"] for r in rows)
 
         entry = {
-            "pipeline": pipeline, "n_problems": len(by),
+            "pipeline": pipeline, "n_problems": len(complete),
+            "problems_partial_excluded": len(partial),
+            "verification_complete": not partial,
             "samples_per_problem": sorted({len(v) for v in by.values()}),
             "total_samples": len(rows),
             "curve": curve,
@@ -344,7 +358,8 @@ def experiment2(args):
         if band:
             entry["by_band"] = {}
             for bn in sorted(set(band.values())):
-                sub = [(len(v), sum(v)) for k, v in by.items() if band.get(k) == bn]
+                sub = [(len(v), sum(v)) for k, v in complete.items()
+                   if band.get(k) == bn]
                 entry["by_band"][bn] = pass_curve(sub)
         out[name] = entry
     return out
@@ -409,14 +424,43 @@ def experiment3(args):
     return out
 
 
+# Recorded here rather than in prose so the report cannot drift from it.
+RUN = {
+    "generation commit": "2f25feb659385719112980c4b8e64f6104157fc2 "
+                         "(branch exp/gpu-tactic-recovery, tree clean)",
+    "seed": "20260830, on every run; recorded in every run_meta.json and in "
+            "every trace record",
+    "model": "Goedel-LM/Goedel-Prover-SFT, fp16, transformers 4.46.3 "
+             "(pinned), torch 2.7.0",
+    "sampling": "T=0.0 greedy for experiments 1 and 3; T=0.7 with top_p=0.95 "
+                "(unchanged) for experiment 2",
+    "generations": "2,494 total: 200 (exp 1) + 800 + 1,440 (exp 2) + 104 (exp 3)",
+    "hardware": "1x Lambda A100-SXM4-40GB, us-east-1, $1.99/h",
+    "instance launched": "2026-08-30T21:07:34Z",
+    "last generation finished": "2026-08-30T23:08:55Z",
+    "instance terminated": "2026-08-30T23:10:39Z, 1m44s after the last "
+                           "generation; confirmed by the Lambda API returning "
+                           "no running instances",
+    "GPU wall clock": "2.05 h",
+    "cost": "$4.08 of the $25 cap",
+    "verification": "local, CPU-only, pinned Lean v4.32.0 / Mathlib v4.32.0. "
+                    "Lean never ran on the GPU box, which is why the instance "
+                    "could be released the moment generation ended.",
+}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=R("results", "GPU_TACTIC_RECOVERY.json"))
+    ap.add_argument("--k", type=int, default=16,
+                    help="Samples per problem the best-of-n runs were given. A "
+                         "problem with fewer verified is excluded from pass@k.")
     args = ap.parse_args()
 
     doc = {
         "generated_utc": __import__("time").strftime("%Y-%m-%dT%H:%M:%SZ",
                                                      __import__("time").gmtime()),
+        "run": RUN,
         "experiment1_doc_comment_ablation": experiment1(args),
         "experiment2_best_of_n": experiment2(args),
         "experiment3_error_feedback_repair": experiment3(args),

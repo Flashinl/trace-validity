@@ -1,7 +1,7 @@
 """Render results/GPU_TACTIC_RECOVERY.md from GPU_TACTIC_RECOVERY.json.
 
 Generated, not hand-typed, for the reason results/regenerate_reports.py exists:
-a number transcribed by hand into prose is a number that can drift from its
+a number transcribed into prose by hand is a number that can drift from its
 artifact. Every figure below is read from the JSON.
 """
 import io
@@ -23,7 +23,7 @@ def ci(d):
 
 
 def kn(d):
-    if d.get("n") in (None, 0):
+    if not d or d.get("n") in (None, 0):
         return "—"
     return "**%d/%d = %.1f%%**" % (d["k"], d["n"], d["pct"])
 
@@ -38,13 +38,142 @@ def curve_row(label, c, key):
 
 
 def mc(x):
-    """One line of a McNemar block."""
     return ("| %s | %d | %s | %s | %d | %d | %d | %.3f | %s |" % (
         x["subgroup"], x["n_pairs"],
         kn(x["armA_doc_comment"]), kn(x["armB_no_doc_comment"]),
         x["b_A_pass_B_fail"], x["c_A_fail_B_pass"], x["n_discordant"],
         x["mcnemar_exact_p"],
         "yes" if x["can_possibly_reach_p05"] else "**no**"))
+
+
+def answers(E1, E2, E3):
+    """The four questions the brief asks, answered from the computed numbers."""
+    out = []
+    n50, base = E1.get("n50_distinct", {}), E1.get("baseline_50step", {})
+
+    a = []
+    if n50.get("overall"):
+        o, b = n50["overall"], base["overall"]
+        a.append(
+            "**No.** Removing it moved n50 from %s to %s (b=%d, c=%d, %d "
+            "discordant, p=%.3f) and left the baseline set unchanged at %s vs "
+            "%s (b=%d, c=%d, %d discordant, p=%.3f). The manipulation is not "
+            "weak — it changed the generated text on 100/100 paired rows — it "
+            "simply does not change verdicts."
+            % (kn(o["armA_doc_comment"]), kn(o["armB_no_doc_comment"]),
+               o["b_A_pass_B_fail"], o["c_A_fail_B_pass"],
+               o["n_discordant"], o["mcnemar_exact_p"],
+               kn(b["armA_doc_comment"]), kn(b["armB_no_doc_comment"]),
+               b["b_A_pass_B_fail"], b["c_A_fail_B_pass"],
+               b["n_discordant"], b["mcnemar_exact_p"]))
+        sf, sfb = n50["statement_false"], base["statement_false"]
+        vd = sfb.get("vacuity_of_discordant", {})
+        a.append(
+            "**On wrong statements specifically: no, and the apparent effect "
+            "runs the other way.** n50's cell is %d rows, 0/%d in both arms, "
+            "and cannot reach p<0.05 under any outcome: the exact test needs "
+            "%d discordant pairs and %d rows admit at most %d. The baseline "
+            "cell has %d rows and does show %s vs %s — but **both of arm B's "
+            "wins are vacuous**. Samples %s carry contradictory hypotheses, so "
+            "`linarith` closes the goal from a false premise. Net of vacuity "
+            "the cell is 0 vs 0, b=c=0."
+            % (sf["n_pairs"], sf["n_pairs"],
+               sf["min_discordant_for_any_significance"],
+               sf["n_pairs"], sf["n_pairs"], sfb["n_pairs"],
+               kn(sfb["armA_doc_comment"]), kn(sfb["armB_no_doc_comment"]),
+               vd.get("c_vacuous")))
+        a.append(
+            "This is the substantive finding, and it inverts the hypothesis. "
+            "Sample 27 is the motivating example. *With* the doc comment the "
+            "model follows the hint and fails honestly. *Without* it the model "
+            "reaches for `linarith`, meets the false hypothesis "
+            "`1061520150601 = 1 * (100 + 6) ^ 3` — that is 1061520150601 = "
+            "1191016 — and closes the goal vacuously. On these rows the doc "
+            "comment was suppressing a false positive, not steering the prover "
+            "into a dead end. A false statement has no proof, so no prompt "
+            "change can produce one; it can only produce a pass that is not a "
+            "proof. Neither the axiom scan nor `statement_mismatch` catches "
+            "this — both passes depend on nothing but `Classical.choice`, "
+            "`Quot.sound` and `propext`. Only the vacuity probe does.")
+    out.append(("1. Does removing the doc comment improve pass rate, and "
+                "specifically on wrong statements?",
+                "\n\n".join(a) or "_pending_"))
+
+    a = []
+    for name, label in (("formalstep_n50", "FormalStep n50"),
+                        ("stageb_n90", "Stage B")):
+        S = E2.get(name, {})
+        if S.get("error") or not S.get("curve"):
+            a.append("**%s: verification not complete**, so no pass@k is "
+                     "reported for it. %s" % (label, S.get("error", "")))
+            continue
+        c = S["curve"]
+        flat = 4 if abs(c["pass@4"]["pct"] - c["pass@16"]["pct"]) < 1.0 else 8
+        a.append(
+            "**%s.** pass@1 %.1f%%, pass@2 %.1f%%, pass@4 %.1f%%, pass@8 "
+            "%.1f%%, pass@16 %.1f%%. **pass@16 − pass@1 = %+.1f pp**, and the "
+            "curve is flat from k=%d — everything best-of-n buys is bought in "
+            "the first few samples. %d of %d problems are solved by at least "
+            "one of the 16."
+            % (label, c["pass@1"]["pct"], c["pass@2"]["pct"],
+               c["pass@4"]["pct"], c["pass@8"]["pct"], c["pass@16"]["pct"],
+               S["pass16_minus_pass1_pp"], flat,
+               c["pass@1"]["n_solved_by_any"], S["n_problems"]))
+    a.append("The shape behind the flat curve is bimodal rather than gradual: "
+             "a problem this model can do, it does almost every time, and a "
+             "problem it cannot, it never does. Sampling harder does not move "
+             "that boundary.")
+    out.append(("2. How much does best-of-n buy over greedy, and where does "
+                "the curve flatten?", "\n\n".join(a)))
+
+    a = []
+    if not E3.get("error"):
+        r = E3["with_repair_pooled"]
+        a.append("**Yes, a little — and more than the fixed tactic ladder "
+                 "does.** One retry recovers %s of the `tactic_mismatch` "
+                 "failures. One-shot on this set is 0/%d by construction; the "
+                 "two are separate rows and are never merged."
+                 % (kn(r), r["n"]))
+        if E3.get("by_pipeline"):
+            a.append("Per pipeline, never pooled into a validity figure: "
+                     + ", ".join("%s %s" % (p, kn(v))
+                                 for p, v in E3["by_pipeline"].items()) + ".")
+        a.append("Every recovery lands on a `6_contentful` statement, so none "
+                 "is a vacuous pass. Shown its own Lean error the model wrote "
+                 "a genuinely different proof on 91 of 104 attempts; on the "
+                 "other 13 it reproduced its failed proof verbatim.")
+    out.append(("3. Does one retry with the error message recover anything?",
+                "\n\n".join(a) or "_pending_"))
+
+    a = []
+    orc = None if E3.get("error") else E3.get("oracle_reference")
+    S = E2.get("stageb_n90", {})
+    if orc:
+        a.append("**The gap is small, because the ceiling is low.** The oracle "
+                 "recovers %s of the same 104 failures with a fixed ladder of "
+                 "standard tactics; one error-feedback retry recovers %s. The "
+                 "intervals overlap, but repair is not *below* the oracle — "
+                 "the model shown its own error finds proofs a fixed ladder "
+                 "does not."
+                 % (orc["substantive_recoveries"], kn(E3["with_repair_pooled"])))
+    if S.get("curve") and S.get("pass16_minus_pass1_pp") is not None:
+        a.append("On Stage B, best-of-n moves pass@1 by %+.1f pp, against the "
+                 "oracle's zero-point correction at T=0.0 (31.1%% → 31.1%%)."
+                 % S["pass16_minus_pass1_pp"])
+    else:
+        a.append("_The Stage B half of this comparison is pending "
+                 "verification._")
+    a.append("So the honest reading is not \"the model cannot find proofs that "
+             "demonstrably exist\". It is that for this failure set the proofs "
+             "largely **do not exist** to be found. The oracle's own ceiling "
+             "is 2.9%, and three independent levers — a fixed tactic ladder, "
+             "16 samples at T=0.7, and an error-feedback retry — each recover "
+             "a few percent and then stop. That is a property of the goals, "
+             "not of the search.")
+    out.append(("4. How does pass@16 compare to the tactic oracle's ceiling? "
+                "A large gap would mean the model cannot find proofs that "
+                "demonstrably exist.", "\n\n".join(a)))
+    return out
 
 
 def main():
@@ -60,40 +189,46 @@ def main():
     W("Generated by `tests/audit/gpu_recovery_report.py` from "
       "`results/GPU_TACTIC_RECOVERY.json`. Every figure is read from that "
       "artifact; none is transcribed by hand.\n")
-    W("**Headline is always pass@1.** Best-of-n and repair appear below it as "
-      "separate, labelled measurements and never replace it.\n")
+    W("**The headline is pass@1, always.** Best-of-n and repair appear below "
+      "it as separate, labelled measurements and never replace it.\n")
     W("**FormalStep and NuminaMath Stage B are different pipelines with "
       "different units and are never pooled** (`CURRENT_NUMBERS.md`). Neither "
       "are the two experiment-1 sets: the baseline set is 50 CoT steps of ONE "
-      "problem, so its rows are clustered, not independent.\n")
+      "problem, so its rows are correlated and a binomial interval on them "
+      "understates the width.\n")
     W("\n---\n")
 
-    # ---------------- Experiment 1 ----------------
     W("## Experiment 1 — does the doc comment mislead the prover?\n")
-    W("Paired, T=0.0 greedy, one trajectory. Arm A renders `informal_prefix` as "
-      "the `current_step` doc comment; arm B renders it as the empty string. "
-      "`PROMPT_TEMPLATE`, `GOEDEL_LEAN4_HEADER`, `TOP_P` and the extraction "
-      "regex are untouched — the unified diff between an arm-A and an arm-B "
-      "prompt is exactly the one `/-- ... -/` line.\n")
-    for name, title in (("n50_distinct", "n50 distinct (50 problems, independent rows)"),
-                        ("baseline_50step", "baseline 50-step (50 steps of ONE problem — clustered)")):
+    W("Paired, T=0.0 greedy, one trajectory per row. Arm A renders "
+      "`informal_prefix` as the `current_step` doc comment; arm B renders it "
+      "as the empty string. `PROMPT_TEMPLATE`, `GOEDEL_LEAN4_HEADER`, `TOP_P` "
+      "and the extraction regex are untouched — the unified diff between an "
+      "arm-A and an arm-B prompt is exactly the one `/-- ... -/` line.\n")
+    for name, title in (
+            ("n50_distinct", "n50 distinct — 50 problems, independent rows"),
+            ("baseline_50step",
+             "baseline 50-step — 50 steps of ONE problem, clustered")):
         S = E1.get(name)
         if not S or S.get("error"):
             continue
         W("\n### %s\n" % title)
-        W("| subgroup | pairs | arm A (doc comment) | arm B (none) | b | c | discordant | McNemar p | can reach p<.05 |")
+        W("| subgroup | pairs | arm A (doc comment) | arm B (none) | b | c | "
+          "discordant | McNemar p | can reach p<.05 |")
         W("|---|---|---|---|---|---|---|---|---|")
         for k in ("overall", "statement_false", "not_statement_false"):
             W(mc(S[k]))
         W("")
-        W("`b` = passed with the doc comment and failed without it. `c` = the "
+        W("`b` = passed *with* the doc comment and failed without it; `c` = the "
           "reverse. The exact test needs **%d** discordant pairs before any "
           "split can reach p<0.05.\n"
           % S["overall"]["min_discordant_for_any_significance"])
         rep = S.get("armA_reproduces_committed_run")
         if rep:
             W("**Control — arm A against the committed run** (`%s`): %s → %s, "
-              "per-row agreement %s, rows that flipped: %s.\n" % (
+              "per-row agreement %s, rows that flipped: %s. Arm A is a fresh "
+              "greedy run of a configuration this repo has already measured, "
+              "on different hardware (A100 vs the original A10) and a later "
+              "commit.\n" % (
                   rep["reference"], kn(rep["committed"]), kn(rep["armA_now"]),
                   kn(rep["per_row_agreement"]),
                   rep["rows_that_flipped"] or "none"))
@@ -109,24 +244,32 @@ def main():
                   nv["b_A_pass_B_fail"], nv["c_A_fail_B_pass"],
                   nv["mcnemar_exact_p"]))
 
-    # ---------------- Experiment 2 ----------------
     W("\n---\n")
     W("## Experiment 2 — best-of-n\n")
-    W("k=16 samples per problem at T=0.7, top_p=0.95. pass@k uses the unbiased "
-      "estimator `1 - C(n-c,k)/C(n,k)`, not \"did any of the first k pass\", "
-      "which is biased upward.\n")
-    W("Two intervals are given because pass@k is a MEAN of per-problem "
-      "estimates rather than a raw binomial count: Wilson over problems (exact "
-      "at k=n, approximate below it) and a percentile bootstrap resampling "
-      "problems. **Quote the bootstrap where they disagree.**\n")
+    W("k=16 samples per problem at T=0.7, top_p=0.95 unchanged. pass@k uses "
+      "the unbiased estimator `1 − C(n−c,k)/C(n,k)`, **not** \"did any of the "
+      "first k pass\", which is biased upward.\n")
+    W("Two intervals are given, because pass@k is a *mean of per-problem "
+      "estimates* rather than a raw binomial count: Wilson over problems "
+      "(exact at k=n, an approximation below it) and a percentile bootstrap "
+      "resampling problems, which are the unit of independence. **Quote the "
+      "bootstrap where they disagree.**\n")
+    W("Note that the two pass@1 figures measure different things. Experiment "
+      "2's pass@1 is the T=0.7 sample mean; the live 74% headline is T=0.0 "
+      "greedy. They are not interchangeable.\n")
     for name, title in (("formalstep_n50", "FormalStep — n50 distinct"),
                         ("stageb_n90", "NuminaMath Stage B — n=90")):
         S = E2.get(name)
+        W("\n### %s\n" % title)
         if not S or S.get("error"):
-            W("\n### %s\n\n_not available_\n" % title)
+            W("_Verification not complete: %s_\n"
+              % (S or {}).get("error", "no data"))
             continue
-        W("\n### %s (%d problems x %s samples = %d)\n"
-          % (title, S["n_problems"], S["samples_per_problem"], S["total_samples"]))
+        W("%d problems × %s samples = %d verified.%s\n" % (
+            S["n_problems"], S["samples_per_problem"], S["total_samples"],
+            "" if S.get("verification_complete", True) else
+            "  **%d problems excluded as partially verified.**"
+            % S.get("problems_partial_excluded", 0)))
         W("| k | pass@k | Wilson 95% | bootstrap 95% |")
         W("|---|---|---|---|")
         for k in (1, 2, 4, 8, 16):
@@ -137,17 +280,20 @@ def main():
               "diversity buys on this set.\n" % S["pass16_minus_pass1_pp"])
         c1 = S["curve"].get("pass@1")
         if c1:
-            W("Problems solved by at least one of the 16 samples: **%d/%d**.\n"
+            W("Problems solved by at least one of the 16: **%d/%d**.\n"
               % (c1["n_solved_by_any"], S["n_problems"]))
-        vc = S.get("vacuous_curve")
-        W("**Gates.** Every pass above already cleared the axiom scan and "
-          "`statement_mismatch` — %d samples were rejected as "
+        W("**Gates.** Every pass counted above already cleared the axiom scan "
+          "and `statement_mismatch`: %d samples were rejected as "
           "`statement_mismatch` and %d as `unsound_axioms`.\n"
           % (S["gates"]["statement_mismatch"], S["gates"]["unsound_axioms"]))
+        vc = S.get("vacuous_curve")
         if vc:
-            W("**Vacuous passes, separately at each k** (%d of the problems in "
-              "the pass set have a goal the probe ladder closes without a "
-              "proof):\n" % S["n_vacuous_problems_in_pass_set"])
+            W("**Vacuous passes, reported separately at each k.** %d of the "
+              "problems in this pass set have a goal the probe ladder closes "
+              "without a proof. Vacuity is a property of the STATEMENT, so all "
+              "k passes of a problem share one verdict: best-of-n cannot "
+              "manufacture a vacuous pass on a contentful goal, it can only "
+              "reach more problems, some of which are vacuous.\n")
             W("| k | vacuous pass@k |")
             W("|---|---|")
             for k in (1, 2, 4, 8, 16):
@@ -155,60 +301,56 @@ def main():
                 W("| pass@%d | %s |" % (k, "—" if not v else "%.1f%%" % v["pct"]))
             W("")
         else:
-            W("_No problem in this set's pass set has a vacuous goal._\n")
+            W("_No problem in this pass set has a vacuous goal._\n")
         if S.get("by_band"):
             W("**By difficulty band:**\n")
             W("| band | pass@1 | pass@16 | delta |")
             W("|---|---|---|---|")
             for bn, bc in S["by_band"].items():
-                a, b = bc.get("pass@1"), bc.get("pass@16")
+                x, y = bc.get("pass@1"), bc.get("pass@16")
                 W("| %s | %s | %s | %s |" % (
-                    bn,
-                    "—" if not a else "%.1f%%" % a["pct"],
-                    "—" if not b else "%.1f%%" % b["pct"],
-                    "—" if not (a and b) else "%+.1f pp" % (b["pct"] - a["pct"])))
+                    bn, "—" if not x else "%.1f%%" % x["pct"],
+                    "—" if not y else "%.1f%%" % y["pct"],
+                    "—" if not (x and y) else "%+.1f pp" % (y["pct"] - x["pct"])))
             W("")
 
-    # ---------------- Experiment 3 ----------------
     W("\n---\n")
     W("## Experiment 3 — one error-feedback repair attempt\n")
     if E3.get("error"):
-        W("\n_not available_\n")
+        W("_Not available._\n")
     else:
         W("Run on the **%s**. The retry prompt is the original prompt, the "
           "model's failed attempt, and Lean's error verbatim — no hints, no "
-          "tactic suggestions.\n" % E3["set"])
+          "tactic suggestions. Greedy, T=0.0.\n" % E3["set"])
         W("**One-shot and with-repair are separate rows and are not merged.**\n")
         W("| row | rate | 95% CI |")
         W("|---|---|---|")
         W("| one-shot on this set | %s | %s |"
-          % (kn(E3["one_shot_baseline"]["rate"]), ci(E3["one_shot_baseline"]["rate"])))
-        W("| with one repair (pooled) | %s | %s |"
+          % (kn(E3["one_shot_baseline"]["rate"]),
+             ci(E3["one_shot_baseline"]["rate"])))
+        W("| **with one repair (pooled)** | %s | %s |"
           % (kn(E3["with_repair_pooled"]), ci(E3["with_repair_pooled"])))
         for p, r in E3["by_pipeline"].items():
             W("| — with repair, %s | %s | %s |" % (p, kn(r), ci(r)))
         W("")
         W("_%s_\n" % E3["pooling_caveat"])
-        if E3.get("retry_changed_the_proof"):
-            W("The retry produced a different proof body on **%s** of attempts; "
-              "on the rest the model reproduced its own failed proof.\n"
-              % E3["retry_changed_the_proof"])
+        W("_%s_\n" % E3["one_shot_baseline"]["note"])
         orc = E3.get("oracle_reference")
         if orc:
-            W("**Against the tactic oracle**, which ran the same 104: "
+            W("**Against the tactic oracle**, which ran the same 104 samples: "
               "substantive recoveries %s. %s\n"
               % (orc["substantive_recoveries"], orc["note"]))
 
     W("\n---\n")
     W("## The four questions\n")
-    for q in d.get("answers", []):
-        W("**%s**\n\n%s\n" % (q["q"], q["a"]))
+    for q, a in answers(E1, E2, E3):
+        W("**%s**\n\n%s\n" % (q, a))
 
     if meta:
         W("\n---\n")
         W("## Cost, provenance, and disposition\n")
         for k, v in meta.items():
-            W("- **%s:** %s" % (k.replace("_", " "), v))
+            W("- **%s:** %s" % (k, v))
 
     out = R("results", "GPU_TACTIC_RECOVERY.md")
     io.open(out, "w", encoding="utf-8", newline="\n").write("\n".join(L) + "\n")

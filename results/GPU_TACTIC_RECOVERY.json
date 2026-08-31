@@ -1,0 +1,982 @@
+{
+  "generated_utc": "2026-08-31T02:19:24Z",
+  "run": {
+    "generation commit": "2f25feb659385719112980c4b8e64f6104157fc2 (branch exp/gpu-tactic-recovery, tree clean)",
+    "seed": "20260830, on every run; recorded in every run_meta.json and in every trace record",
+    "model": "Goedel-LM/Goedel-Prover-SFT, fp16, transformers 4.46.3 (pinned), torch 2.7.0",
+    "sampling": "T=0.0 greedy for experiments 1 and 3; T=0.7 with top_p=0.95 (unchanged) for experiment 2",
+    "generations": "2,494 total: 200 (exp 1) + 800 + 1,440 (exp 2) + 104 (exp 3)",
+    "hardware": "1x Lambda A100-SXM4-40GB, us-east-1, $1.99/h",
+    "instance launched": "2026-08-30T21:07:34Z",
+    "last generation finished": "2026-08-30T23:08:55Z",
+    "instance terminated": "2026-08-30T23:10:39Z, 1m44s after the last generation; confirmed by the Lambda API returning no running instances",
+    "GPU wall clock": "2.05 h",
+    "cost": "$4.08 of the $25 cap",
+    "verification": "local, CPU-only, pinned Lean v4.32.0 / Mathlib v4.32.0. Lean never ran on the GPU box, which is why the instance could be released the moment generation ended."
+  },
+  "experiment1_doc_comment_ablation": {
+    "n50_distinct": {
+      "note": "50 distinct problems, one CoT step each. Independent rows.",
+      "clustered": false,
+      "label_source": "results/arithmetic_provenance.json -> n50_distinct_T0.0",
+      "overall": {
+        "subgroup": "all rows",
+        "n_pairs": 50,
+        "armA_doc_comment": {
+          "k": 37,
+          "n": 50,
+          "pct": 74.0,
+          "ci": [
+            60.4,
+            84.1
+          ]
+        },
+        "armB_no_doc_comment": {
+          "k": 35,
+          "n": 50,
+          "pct": 70.0,
+          "ci": [
+            56.2,
+            80.9
+          ]
+        },
+        "b_A_pass_B_fail": 3,
+        "c_A_fail_B_pass": 1,
+        "n_discordant": 4,
+        "mcnemar_exact_p": 0.625,
+        "min_discordant_for_any_significance": 6,
+        "can_possibly_reach_p05": false,
+        "vacuity_of_discordant": {
+          "b_rows": [
+            0,
+            11,
+            28
+          ],
+          "b_vacuous": [],
+          "c_rows": [
+            35
+          ],
+          "c_vacuous": []
+        },
+        "net_of_vacuous": {
+          "n_pairs": 36,
+          "n_dropped_vacuous": 14,
+          "armA_doc_comment": {
+            "k": 23,
+            "n": 36,
+            "pct": 63.9,
+            "ci": [
+              47.6,
+              77.5
+            ]
+          },
+          "armB_no_doc_comment": {
+            "k": 21,
+            "n": 36,
+            "pct": 58.3,
+            "ci": [
+              42.2,
+              72.9
+            ]
+          },
+          "b_A_pass_B_fail": 3,
+          "c_A_fail_B_pass": 1,
+          "n_discordant": 4,
+          "mcnemar_exact_p": 0.625,
+          "can_possibly_reach_p05": false
+        },
+        "power_note": {
+          "observed_discordant_rate": 0.08,
+          "power_at_observed_split": 0.034,
+          "min_detectable_difference_80pct": null
+        }
+      },
+      "statement_false": {
+        "subgroup": "statement_false",
+        "n_pairs": 4,
+        "armA_doc_comment": {
+          "k": 0,
+          "n": 4,
+          "pct": 0.0,
+          "ci": [
+            0.0,
+            49.0
+          ]
+        },
+        "armB_no_doc_comment": {
+          "k": 0,
+          "n": 4,
+          "pct": 0.0,
+          "ci": [
+            0.0,
+            49.0
+          ]
+        },
+        "b_A_pass_B_fail": 0,
+        "c_A_fail_B_pass": 0,
+        "n_discordant": 0,
+        "mcnemar_exact_p": 1.0,
+        "min_discordant_for_any_significance": 6,
+        "can_possibly_reach_p05": false,
+        "vacuity_of_discordant": {
+          "b_rows": [],
+          "b_vacuous": [],
+          "c_rows": [],
+          "c_vacuous": []
+        },
+        "net_of_vacuous": {
+          "n_pairs": 4,
+          "n_dropped_vacuous": 0,
+          "armA_doc_comment": {
+            "k": 0,
+            "n": 4,
+            "pct": 0.0,
+            "ci": [
+              0.0,
+              49.0
+            ]
+          },
+          "armB_no_doc_comment": {
+            "k": 0,
+            "n": 4,
+            "pct": 0.0,
+            "ci": [
+              0.0,
+              49.0
+            ]
+          },
+          "b_A_pass_B_fail": 0,
+          "c_A_fail_B_pass": 0,
+          "n_discordant": 0,
+          "mcnemar_exact_p": 1.0,
+          "can_possibly_reach_p05": false
+        },
+        "power_note": {
+          "observed_discordant_rate": 0.0,
+          "power_at_observed_split": 0.0,
+          "min_detectable_difference_80pct": null
+        }
+      },
+      "not_statement_false": {
+        "subgroup": "not statement_false",
+        "n_pairs": 46,
+        "armA_doc_comment": {
+          "k": 37,
+          "n": 46,
+          "pct": 80.4,
+          "ci": [
+            66.8,
+            89.3
+          ]
+        },
+        "armB_no_doc_comment": {
+          "k": 35,
+          "n": 46,
+          "pct": 76.1,
+          "ci": [
+            62.1,
+            86.1
+          ]
+        },
+        "b_A_pass_B_fail": 3,
+        "c_A_fail_B_pass": 1,
+        "n_discordant": 4,
+        "mcnemar_exact_p": 0.625,
+        "min_discordant_for_any_significance": 6,
+        "can_possibly_reach_p05": false,
+        "vacuity_of_discordant": {
+          "b_rows": [
+            0,
+            11,
+            28
+          ],
+          "b_vacuous": [],
+          "c_rows": [
+            35
+          ],
+          "c_vacuous": []
+        },
+        "net_of_vacuous": {
+          "n_pairs": 32,
+          "n_dropped_vacuous": 14,
+          "armA_doc_comment": {
+            "k": 23,
+            "n": 32,
+            "pct": 71.9,
+            "ci": [
+              54.6,
+              84.4
+            ]
+          },
+          "armB_no_doc_comment": {
+            "k": 21,
+            "n": 32,
+            "pct": 65.6,
+            "ci": [
+              48.3,
+              79.6
+            ]
+          },
+          "b_A_pass_B_fail": 3,
+          "c_A_fail_B_pass": 1,
+          "n_discordant": 4,
+          "mcnemar_exact_p": 0.625,
+          "can_possibly_reach_p05": false
+        },
+        "power_note": {
+          "observed_discordant_rate": 0.087,
+          "power_at_observed_split": 0.034,
+          "min_detectable_difference_80pct": null
+        }
+      },
+      "vacuous_statements_in_set": [
+        2,
+        4,
+        6,
+        13,
+        15,
+        17,
+        20,
+        23,
+        25,
+        31,
+        37,
+        38,
+        42,
+        47
+      ],
+      "label_counts": {
+        "(passed / unlabelled)": 37,
+        "statement_false": 4,
+        "tactic_mismatch": 5,
+        "parse_skew": 4
+      },
+      "armA_reproduces_committed_run": {
+        "reference": "verify3_temp0.0.jsonl",
+        "committed": {
+          "k": 37,
+          "n": 50,
+          "pct": 74.0,
+          "ci": [
+            60.4,
+            84.1
+          ]
+        },
+        "armA_now": {
+          "k": 37,
+          "n": 50,
+          "pct": 74.0,
+          "ci": [
+            60.4,
+            84.1
+          ]
+        },
+        "per_row_agreement": {
+          "k": 50,
+          "n": 50,
+          "pct": 100.0,
+          "ci": [
+            92.9,
+            100.0
+          ]
+        },
+        "rows_that_flipped": []
+      }
+    },
+    "baseline_50step": {
+      "note": "50 CoT steps of ONE problem (math_train_counting_and_probability_408). Rows are correlated; a binomial interval understates the width and these figures must not be pooled with n50.",
+      "clustered": true,
+      "label_source": "results/arithmetic_provenance.json -> baseline_50step_1problem",
+      "overall": {
+        "subgroup": "all rows",
+        "n_pairs": 50,
+        "armA_doc_comment": {
+          "k": 21,
+          "n": 50,
+          "pct": 42.0,
+          "ci": [
+            29.4,
+            55.8
+          ]
+        },
+        "armB_no_doc_comment": {
+          "k": 21,
+          "n": 50,
+          "pct": 42.0,
+          "ci": [
+            29.4,
+            55.8
+          ]
+        },
+        "b_A_pass_B_fail": 5,
+        "c_A_fail_B_pass": 5,
+        "n_discordant": 10,
+        "mcnemar_exact_p": 1.0,
+        "min_discordant_for_any_significance": 6,
+        "can_possibly_reach_p05": true,
+        "vacuity_of_discordant": {
+          "b_rows": [
+            0,
+            9,
+            10,
+            22,
+            30
+          ],
+          "b_vacuous": [
+            9,
+            30
+          ],
+          "c_rows": [
+            11,
+            15,
+            19,
+            27,
+            35
+          ],
+          "c_vacuous": [
+            15,
+            27,
+            35
+          ]
+        },
+        "net_of_vacuous": {
+          "n_pairs": 37,
+          "n_dropped_vacuous": 13,
+          "armA_doc_comment": {
+            "k": 11,
+            "n": 37,
+            "pct": 29.7,
+            "ci": [
+              17.5,
+              45.8
+            ]
+          },
+          "armB_no_doc_comment": {
+            "k": 10,
+            "n": 37,
+            "pct": 27.0,
+            "ci": [
+              15.4,
+              43.0
+            ]
+          },
+          "b_A_pass_B_fail": 3,
+          "c_A_fail_B_pass": 2,
+          "n_discordant": 5,
+          "mcnemar_exact_p": 1.0,
+          "can_possibly_reach_p05": false
+        },
+        "power_note": {
+          "observed_discordant_rate": 0.2,
+          "power_at_observed_split": 0.022,
+          "min_detectable_difference_80pct": 0.17572816325009621
+        }
+      },
+      "statement_false": {
+        "subgroup": "statement_false",
+        "n_pairs": 18,
+        "armA_doc_comment": {
+          "k": 0,
+          "n": 18,
+          "pct": 0.0,
+          "ci": [
+            0.0,
+            17.6
+          ]
+        },
+        "armB_no_doc_comment": {
+          "k": 2,
+          "n": 18,
+          "pct": 11.1,
+          "ci": [
+            3.1,
+            32.8
+          ]
+        },
+        "b_A_pass_B_fail": 0,
+        "c_A_fail_B_pass": 2,
+        "n_discordant": 2,
+        "mcnemar_exact_p": 0.5,
+        "min_discordant_for_any_significance": 6,
+        "can_possibly_reach_p05": false,
+        "vacuity_of_discordant": {
+          "b_rows": [],
+          "b_vacuous": [],
+          "c_rows": [
+            27,
+            35
+          ],
+          "c_vacuous": [
+            27,
+            35
+          ]
+        },
+        "net_of_vacuous": {
+          "n_pairs": 16,
+          "n_dropped_vacuous": 2,
+          "armA_doc_comment": {
+            "k": 0,
+            "n": 16,
+            "pct": 0.0,
+            "ci": [
+              0.0,
+              19.4
+            ]
+          },
+          "armB_no_doc_comment": {
+            "k": 0,
+            "n": 16,
+            "pct": 0.0,
+            "ci": [
+              0.0,
+              19.4
+            ]
+          },
+          "b_A_pass_B_fail": 0,
+          "c_A_fail_B_pass": 0,
+          "n_discordant": 0,
+          "mcnemar_exact_p": 1.0,
+          "can_possibly_reach_p05": false
+        },
+        "power_note": {
+          "observed_discordant_rate": 0.111,
+          "power_at_observed_split": 0.011,
+          "min_detectable_difference_80pct": null
+        }
+      },
+      "not_statement_false": {
+        "subgroup": "not statement_false",
+        "n_pairs": 32,
+        "armA_doc_comment": {
+          "k": 21,
+          "n": 32,
+          "pct": 65.6,
+          "ci": [
+            48.3,
+            79.6
+          ]
+        },
+        "armB_no_doc_comment": {
+          "k": 19,
+          "n": 32,
+          "pct": 59.4,
+          "ci": [
+            42.3,
+            74.5
+          ]
+        },
+        "b_A_pass_B_fail": 5,
+        "c_A_fail_B_pass": 3,
+        "n_discordant": 8,
+        "mcnemar_exact_p": 0.7266,
+        "min_discordant_for_any_significance": 6,
+        "can_possibly_reach_p05": true,
+        "vacuity_of_discordant": {
+          "b_rows": [
+            0,
+            9,
+            10,
+            22,
+            30
+          ],
+          "b_vacuous": [
+            9,
+            30
+          ],
+          "c_rows": [
+            11,
+            15,
+            19
+          ],
+          "c_vacuous": [
+            15
+          ]
+        },
+        "net_of_vacuous": {
+          "n_pairs": 21,
+          "n_dropped_vacuous": 11,
+          "armA_doc_comment": {
+            "k": 11,
+            "n": 21,
+            "pct": 52.4,
+            "ci": [
+              32.4,
+              71.7
+            ]
+          },
+          "armB_no_doc_comment": {
+            "k": 10,
+            "n": 21,
+            "pct": 47.6,
+            "ci": [
+              28.3,
+              67.6
+            ]
+          },
+          "b_A_pass_B_fail": 3,
+          "c_A_fail_B_pass": 2,
+          "n_discordant": 5,
+          "mcnemar_exact_p": 1.0,
+          "can_possibly_reach_p05": false
+        },
+        "power_note": {
+          "observed_discordant_rate": 0.25,
+          "power_at_observed_split": 0.05,
+          "min_detectable_difference_80pct": 0.2426055628202448
+        }
+      },
+      "vacuous_statements_in_set": [
+        1,
+        5,
+        9,
+        15,
+        25,
+        26,
+        27,
+        30,
+        35,
+        40,
+        41,
+        45,
+        48
+      ],
+      "label_counts": {
+        "(passed / unlabelled)": 21,
+        "statement_false": 18,
+        "tactic_mismatch": 10,
+        "noop_tactic": 1
+      },
+      "armA_reproduces_committed_run": {
+        "reference": "verification_temp_0.jsonl",
+        "committed": {
+          "k": 21,
+          "n": 50,
+          "pct": 42.0,
+          "ci": [
+            29.4,
+            55.8
+          ]
+        },
+        "armA_now": {
+          "k": 21,
+          "n": 50,
+          "pct": 42.0,
+          "ci": [
+            29.4,
+            55.8
+          ]
+        },
+        "per_row_agreement": {
+          "k": 50,
+          "n": 50,
+          "pct": 100.0,
+          "ci": [
+            92.9,
+            100.0
+          ]
+        },
+        "rows_that_flipped": []
+      }
+    }
+  },
+  "experiment2_best_of_n": {
+    "formalstep_n50": {
+      "pipeline": "FormalStep",
+      "n_problems": 50,
+      "problems_partial_excluded": 0,
+      "verification_complete": true,
+      "samples_per_problem": [
+        16
+      ],
+      "total_samples": 800,
+      "curve": {
+        "pass@1": {
+          "pct": 71.4,
+          "n_problems": 50,
+          "wilson_ci": [
+            58.3,
+            82.5
+          ],
+          "boot_ci": [
+            59.5,
+            82.8
+          ],
+          "n_solved_by_any": 38
+        },
+        "pass@2": {
+          "pct": 74.6,
+          "n_problems": 50,
+          "wilson_ci": [
+            60.4,
+            84.1
+          ],
+          "boot_ci": [
+            63.0,
+            85.8
+          ],
+          "n_solved_by_any": 38
+        },
+        "pass@4": {
+          "pct": 75.8,
+          "n_problems": 50,
+          "wilson_ci": [
+            62.6,
+            85.7
+          ],
+          "boot_ci": [
+            63.7,
+            87.5
+          ],
+          "n_solved_by_any": 38
+        },
+        "pass@8": {
+          "pct": 76.0,
+          "n_problems": 50,
+          "wilson_ci": [
+            62.6,
+            85.7
+          ],
+          "boot_ci": [
+            64.0,
+            88.0
+          ],
+          "n_solved_by_any": 38
+        },
+        "pass@16": {
+          "pct": 76.0,
+          "n_problems": 50,
+          "wilson_ci": [
+            62.6,
+            85.7
+          ],
+          "boot_ci": [
+            64.0,
+            88.0
+          ],
+          "n_solved_by_any": 38
+        },
+        "n_problems_total": 50
+      },
+      "vacuous_curve": null,
+      "n_vacuous_problems_in_pass_set": 0,
+      "outcome_mix_all_samples": {
+        "valid": 571,
+        "compile_error": 226,
+        "timeout": 2,
+        "verifier_crash": 1
+      },
+      "gates": {
+        "statement_mismatch": 0,
+        "unsound_axioms": 0,
+        "has_sorry": 0
+      },
+      "pass16_minus_pass1_pp": 4.6
+    },
+    "stageb_n90": {
+      "pipeline": "StageB",
+      "n_problems": 17,
+      "problems_partial_excluded": 1,
+      "verification_complete": false,
+      "samples_per_problem": [
+        15,
+        16
+      ],
+      "total_samples": 287,
+      "curve": {
+        "pass@1": {
+          "pct": 44.1,
+          "n_problems": 17,
+          "wilson_ci": [
+            26.2,
+            69.0
+          ],
+          "boot_ci": [
+            27.9,
+            59.9
+          ],
+          "n_solved_by_any": 13
+        },
+        "pass@2": {
+          "pct": 58.0,
+          "n_problems": 17,
+          "wilson_ci": [
+            36.0,
+            78.4
+          ],
+          "boot_ci": [
+            39.9,
+            75.0
+          ],
+          "n_solved_by_any": 13
+        },
+        "pass@4": {
+          "pct": 68.8,
+          "n_problems": 17,
+          "wilson_ci": [
+            46.9,
+            86.7
+          ],
+          "boot_ci": [
+            49.2,
+            87.1
+          ],
+          "n_solved_by_any": 13
+        },
+        "pass@8": {
+          "pct": 74.8,
+          "n_problems": 17,
+          "wilson_ci": [
+            52.7,
+            90.4
+          ],
+          "boot_ci": [
+            52.9,
+            92.7
+          ],
+          "n_solved_by_any": 13
+        },
+        "pass@16": {
+          "pct": 76.5,
+          "n_problems": 17,
+          "wilson_ci": [
+            52.7,
+            90.4
+          ],
+          "boot_ci": [
+            52.9,
+            94.1
+          ],
+          "n_solved_by_any": 13
+        },
+        "n_problems_total": 17
+      },
+      "vacuous_curve": null,
+      "n_vacuous_problems_in_pass_set": 0,
+      "outcome_mix_all_samples": {
+        "compile_error": 157,
+        "valid": 120,
+        "timeout": 8,
+        "parse_failure": 2
+      },
+      "gates": {
+        "statement_mismatch": 0,
+        "unsound_axioms": 0,
+        "has_sorry": 0
+      },
+      "pass16_minus_pass1_pp": 32.4,
+      "by_band": {
+        "easy": {
+          "pass@1": {
+            "pct": 44.1,
+            "n_problems": 17,
+            "wilson_ci": [
+              26.2,
+              69.0
+            ],
+            "boot_ci": [
+              27.9,
+              59.9
+            ],
+            "n_solved_by_any": 13
+          },
+          "pass@2": {
+            "pct": 58.0,
+            "n_problems": 17,
+            "wilson_ci": [
+              36.0,
+              78.4
+            ],
+            "boot_ci": [
+              39.9,
+              75.0
+            ],
+            "n_solved_by_any": 13
+          },
+          "pass@4": {
+            "pct": 68.8,
+            "n_problems": 17,
+            "wilson_ci": [
+              46.9,
+              86.7
+            ],
+            "boot_ci": [
+              49.2,
+              87.1
+            ],
+            "n_solved_by_any": 13
+          },
+          "pass@8": {
+            "pct": 74.8,
+            "n_problems": 17,
+            "wilson_ci": [
+              52.7,
+              90.4
+            ],
+            "boot_ci": [
+              52.9,
+              92.7
+            ],
+            "n_solved_by_any": 13
+          },
+          "pass@16": {
+            "pct": 76.5,
+            "n_problems": 17,
+            "wilson_ci": [
+              52.7,
+              90.4
+            ],
+            "boot_ci": [
+              52.9,
+              94.1
+            ],
+            "n_solved_by_any": 13
+          },
+          "n_problems_total": 17
+        }
+      }
+    }
+  },
+  "experiment3_error_feedback_repair": {
+    "set": "the 104 `tactic_mismatch` failures the tactic oracle ran on",
+    "one_shot_baseline": {
+      "note": "0 by construction -- every row in this set is a failure of the one-shot run. Stated so the repair row is never read as an improvement on a rate it is not comparable with.",
+      "rate": {
+        "k": 0,
+        "n": 104,
+        "pct": 0.0,
+        "ci": [
+          0.0,
+          3.6
+        ]
+      }
+    },
+    "with_repair_pooled": {
+      "k": 7,
+      "n": 104,
+      "pct": 6.7,
+      "ci": [
+        3.3,
+        13.2
+      ]
+    },
+    "pooling_caveat": "This pooled denominator matches the tactic oracle's 104 so the two ceilings are like-for-like. It mixes two pipelines and must not be quoted as a validity rate for either.",
+    "by_pipeline": {
+      "FormalStep": {
+        "k": 3,
+        "n": 19,
+        "pct": 15.8,
+        "ci": [
+          5.5,
+          37.6
+        ]
+      },
+      "StageB": {
+        "k": 4,
+        "n": 85,
+        "pct": 4.7,
+        "ci": [
+          1.8,
+          11.5
+        ]
+      }
+    },
+    "by_set": {
+      "formalStep_baseline_50step_1problem": {
+        "k": 2,
+        "n": 10,
+        "pct": 20.0,
+        "ci": [
+          5.7,
+          51.0
+        ]
+      },
+      "formalStep_n50_distinct_T0.0": {
+        "k": 1,
+        "n": 5,
+        "pct": 20.0,
+        "ci": [
+          3.6,
+          62.4
+        ]
+      },
+      "formalStep_n50_distinct_T0.2": {
+        "k": 0,
+        "n": 4,
+        "pct": 0.0,
+        "ci": [
+          0.0,
+          49.0
+        ]
+      },
+      "stageB_T0.0": {
+        "k": 1,
+        "n": 40,
+        "pct": 2.5,
+        "ci": [
+          0.4,
+          12.9
+        ]
+      },
+      "stageB_T0.7": {
+        "k": 3,
+        "n": 45,
+        "pct": 6.7,
+        "ci": [
+          2.3,
+          17.9
+        ]
+      }
+    },
+    "outcome_mix": {
+      "compile_error": 96,
+      "valid": 7,
+      "timeout": 1
+    },
+    "gates": {
+      "statement_mismatch": 0,
+      "unsound_axioms": 0
+    },
+    "repaired_ids": [
+      {
+        "set": "stageB_T0.0",
+        "id": "0551bfa6-80b7-554b-afef-991c1ef522d8",
+        "lean_tactic": "(none named)"
+      },
+      {
+        "set": "stageB_T0.7",
+        "id": "04f77b5a-761d-5f60-b904-40d296227afc",
+        "lean_tactic": "omega"
+      },
+      {
+        "set": "stageB_T0.7",
+        "id": "082c0e7e-1ef1-5760-aa48-8a9e73a8a778",
+        "lean_tactic": "omega"
+      },
+      {
+        "set": "stageB_T0.7",
+        "id": "0978a628-0de7-5174-a465-1b2b6b9e8f0a",
+        "lean_tactic": "linarith"
+      },
+      {
+        "set": "formalStep_baseline_50step_1problem",
+        "id": 11,
+        "lean_tactic": "(none named)"
+      },
+      {
+        "set": "formalStep_baseline_50step_1problem",
+        "id": 19,
+        "lean_tactic": "rewrite"
+      },
+      {
+        "set": "formalStep_n50_distinct_T0.0",
+        "id": 35,
+        "lean_tactic": "linarith"
+      }
+    ],
+    "oracle_reference": {
+      "file": "results/tactic_oracle.json",
+      "substantive_recoveries": "3/104 = 2.9% [1.0-8.1]",
+      "note": "Upper bound if tactic selection were perfect. Never a validity figure and never quoted alone."
+    }
+  }
+}
