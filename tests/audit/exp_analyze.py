@@ -286,23 +286,41 @@ def experiment1(args):
 # --------------------------------------------------------------------------- #
 # Experiment 2 -- best-of-n
 # --------------------------------------------------------------------------- #
+def per_complete_enough(complete, n_expected):
+    """Every problem in the set must be fully verified before a curve is shown."""
+    return n_expected > 0 and len(complete) >= n_expected
+
+
 def experiment2(args):
     out = {}
+    # exp_vacuity.json is keyed on the sha256 of the STATEMENT, not on a
+    # problem id -- see exp_vacuity.py for why. Look each problem up by hashing
+    # its statement, taken from the trace file.
     vac = {}
-    if os.path.exists(R("results", "exp2_vacuity.json")):
-        vac = json.load(io.open(R("results", "exp2_vacuity.json"), encoding="utf-8"))
+    _vpath = R("results", "exp_vacuity.json")
+    if os.path.exists(_vpath):
+        vac = json.load(io.open(_vpath, encoding="utf-8"))
 
     runs = {
         "formalstep_n50": (R("results", "exp2_n50_k16.verified.jsonl"),
-                           "problem_unique_id", "FormalStep"),
+                           "problem_unique_id", "FormalStep",
+                           R("traces", "exp2_n50_k16", "traces.jsonl")),
         "stageb_n90": (R("results", "exp2_stageb_k16.verified.jsonl"),
-                       "uuid", "StageB"),
+                       "uuid", "StageB",
+                       R("results", "exp2_stageb_k16.jsonl")),
     }
-    for name, (path, key, pipeline) in runs.items():
+    for name, (path, key, pipeline, traces) in runs.items():
         if not os.path.exists(path):
             out[name] = {"error": "verdict file missing"}
             continue
         rows = J(path)
+        stmt_h = {}
+        if os.path.exists(traces):
+            for t in J(traces):
+                tk = t.get(key) if t.get(key) is not None else t.get("sample_index")
+                stmt_h[tk] = hashlib.sha256(
+                    (t.get("formal_statement") or "").strip().encode("utf-8")
+                ).hexdigest()
         by = collections.defaultdict(list)
         band = {}
         for r in rows:
@@ -318,20 +336,53 @@ def experiment2(args):
         want_k = args.k
         complete = {k: v for k, v in by.items() if len(v) >= want_k}
         partial = {k: v for k, v in by.items() if len(v) < want_k}
-        per = [(len(v), sum(v)) for v in complete.values()]
-        if not per:
-            out[name] = {"error": "no problem has all %d samples verified yet"
-                                  % want_k,
-                         "problems_complete": 0, "problems_partial": len(partial)}
+        n_expected = len(stmt_h) or len(by)
+        # A curve built on the problems verified SO FAR is not a curve on the
+        # set. Verification walks the trace file in order and the Stage B
+        # evalset is ordered easy(30), medium(30), hard(30) -- so a partial run
+        # is a run on the easy band, and its pass@k would overstate the set
+        # badly. Refuse to emit one until every problem is verified.
+        if not per_complete_enough(complete, n_expected):
+            out[name] = {
+                "error": "verification incomplete: %d of %d problems have all "
+                         "%d samples. No pass@k is reported, because "
+                         "verification walks the eval set in order and that "
+                         "set is ordered by difficulty band, so the verified "
+                         "prefix is not a random subset."
+                         % (len(complete), n_expected, want_k),
+                "problems_complete": len(complete),
+                "problems_expected": n_expected,
+                "bands_complete": dict(collections.Counter(
+                    band.get(k) for k in complete)) if band else None,
+            }
             continue
+        per = [(len(v), sum(v)) for v in complete.values()]
         curve = pass_curve(per)
 
         # Vacuity is statement-level, so a problem's k passes share one verdict.
         # The vacuous curve is the same estimator restricted to problems whose
         # goal the probe ladder closes without a proof.
-        per_vac = [(len(v), sum(v)) for k, v in complete.items()
-                   if vac.get(str(k), vac.get(k, {})).get("vacuous")]
-        curve_vac = pass_curve(per_vac) if per_vac else None
+        is_vac = lambda k: bool((vac.get(stmt_h.get(k)) or {}).get("vacuous"))
+        per_vac = [(len(v), sum(v)) for k, v in complete.items() if is_vac(k)]
+        per_content = [(len(v), sum(v)) for k, v in complete.items() if not is_vac(k)]
+        # Reported two ways, because "vacuous pass@k" alone is ambiguous.
+        #   expected_vacuous_problems_at_k  how much of the pass set is goals
+        #                                   the ladder closes without a proof --
+        #                                   an expected COUNT out of all problems
+        #   pass@k_contentful               the rate with those goals removed
+        # Vacuity is statement-level, so best-of-n cannot manufacture a vacuous
+        # pass on a contentful goal; it can only reach more problems, some of
+        # which are vacuous. These two lines show exactly how much of the
+        # best-of-n gain is that.
+        curve_vac = None
+        if per_vac:
+            curve_vac = {
+                "n_vacuous_problems": len(per_vac),
+                "expected_vacuous_solved": {
+                    "k=%d" % k: round(sum(pass_at_k(n, c, k) for n, c in per_vac), 2)
+                    for k in PASS_K},
+            }
+        curve_content = pass_curve(per_content) if per_content else None
 
         # Outcome mix across ALL samples, so false-positive gates are visible.
         mix = collections.Counter(r["outcome"] for r in rows)
@@ -344,6 +395,7 @@ def experiment2(args):
             "total_samples": len(rows),
             "curve": curve,
             "vacuous_curve": curve_vac,
+            "curve_contentful_only": curve_content,
             "n_vacuous_problems_in_pass_set": len(per_vac),
             "outcome_mix_all_samples": dict(mix.most_common()),
             "gates": {

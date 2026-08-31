@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-08-31T02:19:24Z",
+  "generated_utc": "2026-08-31T02:34:10Z",
   "run": {
     "generation commit": "2f25feb659385719112980c4b8e64f6104157fc2 (branch exp/gpu-tactic-recovery, tree clean)",
     "seed": "20260830, on every run; recorded in every run_meta.json and in every trace record",
@@ -657,8 +657,85 @@
         },
         "n_problems_total": 50
       },
-      "vacuous_curve": null,
-      "n_vacuous_problems_in_pass_set": 0,
+      "vacuous_curve": {
+        "n_vacuous_problems": 14,
+        "expected_vacuous_solved": {
+          "k=1": 13.69,
+          "k=2": 13.95,
+          "k=4": 14.0,
+          "k=8": 14.0,
+          "k=16": 14.0
+        }
+      },
+      "curve_contentful_only": {
+        "pass@1": {
+          "pct": 61.1,
+          "n_problems": 36,
+          "wilson_ci": [
+            44.9,
+            75.2
+          ],
+          "boot_ci": [
+            46.0,
+            75.7
+          ],
+          "n_solved_by_any": 24
+        },
+        "pass@2": {
+          "pct": 64.9,
+          "n_problems": 36,
+          "wilson_ci": [
+            47.6,
+            77.5
+          ],
+          "boot_ci": [
+            49.3,
+            79.7
+          ],
+          "n_solved_by_any": 24
+        },
+        "pass@4": {
+          "pct": 66.3,
+          "n_problems": 36,
+          "wilson_ci": [
+            50.3,
+            79.8
+          ],
+          "boot_ci": [
+            50.0,
+            80.5
+          ],
+          "n_solved_by_any": 24
+        },
+        "pass@8": {
+          "pct": 66.7,
+          "n_problems": 36,
+          "wilson_ci": [
+            50.3,
+            79.8
+          ],
+          "boot_ci": [
+            50.0,
+            80.6
+          ],
+          "n_solved_by_any": 24
+        },
+        "pass@16": {
+          "pct": 66.7,
+          "n_problems": 36,
+          "wilson_ci": [
+            50.3,
+            79.8
+          ],
+          "boot_ci": [
+            50.0,
+            80.6
+          ],
+          "n_solved_by_any": 24
+        },
+        "n_problems_total": 36
+      },
+      "n_vacuous_problems_in_pass_set": 14,
       "outcome_mix_all_samples": {
         "valid": 571,
         "compile_error": 226,
@@ -673,166 +750,11 @@
       "pass16_minus_pass1_pp": 4.6
     },
     "stageb_n90": {
-      "pipeline": "StageB",
-      "n_problems": 17,
-      "problems_partial_excluded": 1,
-      "verification_complete": false,
-      "samples_per_problem": [
-        15,
-        16
-      ],
-      "total_samples": 287,
-      "curve": {
-        "pass@1": {
-          "pct": 44.1,
-          "n_problems": 17,
-          "wilson_ci": [
-            26.2,
-            69.0
-          ],
-          "boot_ci": [
-            27.9,
-            59.9
-          ],
-          "n_solved_by_any": 13
-        },
-        "pass@2": {
-          "pct": 58.0,
-          "n_problems": 17,
-          "wilson_ci": [
-            36.0,
-            78.4
-          ],
-          "boot_ci": [
-            39.9,
-            75.0
-          ],
-          "n_solved_by_any": 13
-        },
-        "pass@4": {
-          "pct": 68.8,
-          "n_problems": 17,
-          "wilson_ci": [
-            46.9,
-            86.7
-          ],
-          "boot_ci": [
-            49.2,
-            87.1
-          ],
-          "n_solved_by_any": 13
-        },
-        "pass@8": {
-          "pct": 74.8,
-          "n_problems": 17,
-          "wilson_ci": [
-            52.7,
-            90.4
-          ],
-          "boot_ci": [
-            52.9,
-            92.7
-          ],
-          "n_solved_by_any": 13
-        },
-        "pass@16": {
-          "pct": 76.5,
-          "n_problems": 17,
-          "wilson_ci": [
-            52.7,
-            90.4
-          ],
-          "boot_ci": [
-            52.9,
-            94.1
-          ],
-          "n_solved_by_any": 13
-        },
-        "n_problems_total": 17
-      },
-      "vacuous_curve": null,
-      "n_vacuous_problems_in_pass_set": 0,
-      "outcome_mix_all_samples": {
-        "compile_error": 157,
-        "valid": 120,
-        "timeout": 8,
-        "parse_failure": 2
-      },
-      "gates": {
-        "statement_mismatch": 0,
-        "unsound_axioms": 0,
-        "has_sorry": 0
-      },
-      "pass16_minus_pass1_pp": 32.4,
-      "by_band": {
-        "easy": {
-          "pass@1": {
-            "pct": 44.1,
-            "n_problems": 17,
-            "wilson_ci": [
-              26.2,
-              69.0
-            ],
-            "boot_ci": [
-              27.9,
-              59.9
-            ],
-            "n_solved_by_any": 13
-          },
-          "pass@2": {
-            "pct": 58.0,
-            "n_problems": 17,
-            "wilson_ci": [
-              36.0,
-              78.4
-            ],
-            "boot_ci": [
-              39.9,
-              75.0
-            ],
-            "n_solved_by_any": 13
-          },
-          "pass@4": {
-            "pct": 68.8,
-            "n_problems": 17,
-            "wilson_ci": [
-              46.9,
-              86.7
-            ],
-            "boot_ci": [
-              49.2,
-              87.1
-            ],
-            "n_solved_by_any": 13
-          },
-          "pass@8": {
-            "pct": 74.8,
-            "n_problems": 17,
-            "wilson_ci": [
-              52.7,
-              90.4
-            ],
-            "boot_ci": [
-              52.9,
-              92.7
-            ],
-            "n_solved_by_any": 13
-          },
-          "pass@16": {
-            "pct": 76.5,
-            "n_problems": 17,
-            "wilson_ci": [
-              52.7,
-              90.4
-            ],
-            "boot_ci": [
-              52.9,
-              94.1
-            ],
-            "n_solved_by_any": 13
-          },
-          "n_problems_total": 17
-        }
+      "error": "verification incomplete: 17 of 90 problems have all 16 samples. No pass@k is reported, because verification walks the eval set in order and that set is ordered by difficulty band, so the verified prefix is not a random subset.",
+      "problems_complete": 17,
+      "problems_expected": 90,
+      "bands_complete": {
+        "easy": 17
       }
     }
   },

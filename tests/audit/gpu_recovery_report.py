@@ -287,19 +287,39 @@ def main():
           "`statement_mismatch` and %d as `unsound_axioms`.\n"
           % (S["gates"]["statement_mismatch"], S["gates"]["unsound_axioms"]))
         vc = S.get("vacuous_curve")
+        cc = S.get("curve_contentful_only")
         if vc:
             W("**Vacuous passes, reported separately at each k.** %d of the "
               "problems in this pass set have a goal the probe ladder closes "
               "without a proof. Vacuity is a property of the STATEMENT, so all "
               "k passes of a problem share one verdict: best-of-n cannot "
               "manufacture a vacuous pass on a contentful goal, it can only "
-              "reach more problems, some of which are vacuous.\n")
-            W("| k | vacuous pass@k |")
-            W("|---|---|")
+              "reach more problems, some of which are vacuous.\n"
+              % vc["n_vacuous_problems"])
+            W("| k | expected vacuous problems in the pass set | pass@k, "
+              "contentful goals only |")
+            W("|---|---|---|")
             for k in (1, 2, 4, 8, 16):
-                v = vc.get("pass@%d" % k)
-                W("| pass@%d | %s |" % (k, "—" if not v else "%.1f%%" % v["pct"]))
+                e = vc["expected_vacuous_solved"].get("k=%d" % k)
+                v = (cc or {}).get("pass@%d" % k)
+                W("| pass@%d | %s of %d | %s |" % (
+                    k, "—" if e is None else "%.2f" % e,
+                    vc["n_vacuous_problems"],
+                    "—" if not v else "**%.1f%%**" % v["pct"]))
             W("")
+            e1 = vc["expected_vacuous_solved"].get("k=1")
+            e16 = vc["expected_vacuous_solved"].get("k=16")
+            if e1 is not None and e16 is not None:
+                W("Best-of-n adds **%.2f** vacuous problems between k=1 and "
+                  "k=16. A goal the ladder closes without a proof is already "
+                  "found on the first sample, so sampling harder does not "
+                  "multiply this class of false positive.\n" % (e16 - e1))
+            if cc and cc.get("pass@1") and cc.get("pass@16"):
+                W("With vacuous goals removed the curve runs %.1f%% to %.1f%% "
+                  "(**%+.1f pp**), against %+.1f pp on all problems.\n"
+                  % (cc["pass@1"]["pct"], cc["pass@16"]["pct"],
+                     cc["pass@16"]["pct"] - cc["pass@1"]["pct"],
+                     S["pass16_minus_pass1_pp"]))
         else:
             W("_No problem in this pass set has a vacuous goal._\n")
         if S.get("by_band"):

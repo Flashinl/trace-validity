@@ -71,34 +71,24 @@ Problems solved by at least one of the 16: **38/50**.
 
 **Gates.** Every pass counted above already cleared the axiom scan and `statement_mismatch`: 0 samples were rejected as `statement_mismatch` and 0 as `unsound_axioms`.
 
-_No problem in this pass set has a vacuous goal._
+**Vacuous passes, reported separately at each k.** 14 of the problems in this pass set have a goal the probe ladder closes without a proof. Vacuity is a property of the STATEMENT, so all k passes of a problem share one verdict: best-of-n cannot manufacture a vacuous pass on a contentful goal, it can only reach more problems, some of which are vacuous.
+
+| k | expected vacuous problems in the pass set | pass@k, contentful goals only |
+|---|---|---|
+| pass@1 | 13.69 of 14 | **61.1%** |
+| pass@2 | 13.95 of 14 | **64.9%** |
+| pass@4 | 14.00 of 14 | **66.3%** |
+| pass@8 | 14.00 of 14 | **66.7%** |
+| pass@16 | 14.00 of 14 | **66.7%** |
+
+Best-of-n adds **0.31** vacuous problems between k=1 and k=16. A goal the ladder closes without a proof is already found on the first sample, so sampling harder does not multiply this class of false positive.
+
+With vacuous goals removed the curve runs 61.1% to 66.7% (**+5.6 pp**), against +4.6 pp on all problems.
 
 
 ### NuminaMath Stage B — n=90
 
-17 problems × [15, 16] samples = 287 verified.  **1 problems excluded as partially verified.**
-
-| k | pass@k | Wilson 95% | bootstrap 95% |
-|---|---|---|---|
-| pass@1 | **44.1%** | [26.2–69.0] | [27.9–59.9] |
-| pass@2 | **58.0%** | [36.0–78.4] | [39.9–75.0] |
-| pass@4 | **68.8%** | [46.9–86.7] | [49.2–87.1] |
-| pass@8 | **74.8%** | [52.7–90.4] | [52.9–92.7] |
-| pass@16 | **76.5%** | [52.7–90.4] | [52.9–94.1] |
-
-**pass@16 − pass@1 = +32.4 pp.** That is what tactic-selection diversity buys on this set.
-
-Problems solved by at least one of the 16: **13/17**.
-
-**Gates.** Every pass counted above already cleared the axiom scan and `statement_mismatch`: 0 samples were rejected as `statement_mismatch` and 0 as `unsound_axioms`.
-
-_No problem in this pass set has a vacuous goal._
-
-**By difficulty band:**
-
-| band | pass@1 | pass@16 | delta |
-|---|---|---|---|
-| easy | 44.1% | 76.5% | +32.4 pp |
+_Verification not complete: verification incomplete: 17 of 90 problems have all 16 samples. No pass@k is reported, because verification walks the eval set in order and that set is ordered by difficulty band, so the verified prefix is not a random subset._
 
 
 ---
@@ -139,7 +129,7 @@ This is the substantive finding, and it inverts the hypothesis. Sample 27 is the
 
 **FormalStep n50.** pass@1 71.4%, pass@2 74.6%, pass@4 75.8%, pass@8 76.0%, pass@16 76.0%. **pass@16 − pass@1 = +4.6 pp**, and the curve is flat from k=4 — everything best-of-n buys is bought in the first few samples. 38 of 50 problems are solved by at least one of the 16.
 
-**Stage B.** pass@1 44.1%, pass@2 58.0%, pass@4 68.8%, pass@8 74.8%, pass@16 76.5%. **pass@16 − pass@1 = +32.4 pp**, and the curve is flat from k=8 — everything best-of-n buys is bought in the first few samples. 13 of 17 problems are solved by at least one of the 16.
+**Stage B: verification not complete**, so no pass@k is reported for it. verification incomplete: 17 of 90 problems have all 16 samples. No pass@k is reported, because verification walks the eval set in order and that set is ordered by difficulty band, so the verified prefix is not a random subset.
 
 The shape behind the flat curve is bimodal rather than gradual: a problem this model can do, it does almost every time, and a problem it cannot, it never does. Sampling harder does not move that boundary.
 
@@ -155,7 +145,7 @@ Every recovery lands on a `6_contentful` statement, so none is a vacuous pass. S
 
 **The gap is small, because the ceiling is low.** The oracle recovers 3/104 = 2.9% [1.0-8.1] of the same 104 failures with a fixed ladder of standard tactics; one error-feedback retry recovers **7/104 = 6.7%**. The intervals overlap, but repair is not *below* the oracle — the model shown its own error finds proofs a fixed ladder does not.
 
-On Stage B, best-of-n moves pass@1 by +32.4 pp, against the oracle's zero-point correction at T=0.0 (31.1% → 31.1%).
+_The Stage B half of this comparison is pending verification._
 
 So the honest reading is not "the model cannot find proofs that demonstrably exist". It is that for this failure set the proofs largely **do not exist** to be found. The oracle's own ceiling is 2.9%, and three independent levers — a fixed tactic ladder, 16 samples at T=0.7, and an error-feedback retry — each recover a few percent and then stop. That is a property of the goals, not of the search.
 
