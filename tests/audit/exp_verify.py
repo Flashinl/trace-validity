@@ -95,10 +95,20 @@ def problem_id(rec):
     """Which PROBLEM a sample belongs to, or None if the file has no notion of
     one. Best-of-n files carry `uuid` (Stage B) or `problem_unique_id`
     (FormalStep); the repair file is one row per failure and has neither, so
-    early-abort simply never engages there."""
+    early-abort simply never engages there.
+
+    The source label must be read from BOTH spellings. A trace record carries
+    it as `_src`, but a verdict record read back from --out carries it as
+    `src_file`. Reading only `_src` keyed the resumed history as "?|uuid" while
+    the loop keyed the same problem as "exp2_stageb_k16.jsonl|uuid", so the two
+    never met: a problem already proven abandoned re-verified `abort_after`
+    fresh timeouts before the rule could fire again. Measured on 061481e9 --
+    samples 10, 11 and 12 re-run at 61s plus a respawn each.
+    """
+    src = rec.get("_src") or rec.get("src_file") or "?"
     for k in ("uuid", "problem_unique_id"):
         if rec.get(k) is not None:
-            return "%s|%s" % (rec.get("_src", "?"), rec[k])
+            return "%s|%s" % (src, rec[k])
     return None
 
 
@@ -178,12 +188,7 @@ def main():
                 continue
             d = json.loads(line)
             done.add(d["key"])
-            pid = problem_id(d) if d.get("uuid") or d.get("problem_unique_id") else None
-            if pid is None and d.get("src_file"):
-                for k in ("uuid", "problem_unique_id"):
-                    if d.get(k) is not None:
-                        pid = "%s|%s" % (d["src_file"], d[k])
-                        break
+            pid = problem_id(d)
             if pid is not None and d.get("sample_index") is not None:
                 prior[pid][d["sample_index"]] = d["outcome"]
         print("resuming: %d verdicts already present" % len(done))
