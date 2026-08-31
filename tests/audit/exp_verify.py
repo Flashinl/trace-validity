@@ -38,10 +38,27 @@ for _p in (_HERE, _ROOT):
         sys.path.insert(0, _p)
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-from verifier import (LeanVerifier, PARSE_FAILURE, COMPILE_ERROR,
+from verifier import (LeanVerifier, PARSE_FAILURE, COMPILE_ERROR, TIMEOUT,
                       STATEMENT_ERROR, STATEMENT_MISMATCH, has_declaration,
                       BROKEN, UNKNOWN)
 from verify_traces import statement_mismatch
+
+# Outcome for a sample that was never run because its PROBLEM was abandoned.
+#
+# Not a verdict on the sample. A timeout costs the full budget and then a REPL
+# respawn (`import Mathlib`, measured at ~200s on this host), and timeouts
+# cluster hard by problem: best-of-n at T=0.7 produces near-identical proofs of
+# the same goal, so when the first few samples exhaust the budget the rest
+# almost always do too. Abandoning the problem after `--abort-after` leading
+# timeouts buys back that time.
+#
+# It MUST stay distinct from compile_error and from timeout. A compile_error is
+# Lean rejecting a proof; a timeout is a sample that was tried and did not
+# finish; `all_timeout` is a sample that was never tried at all. Folding it into
+# either would turn "we stopped looking" into "we looked and it failed", and
+# would make every pass@k on that problem a silent lower bound rather than a
+# declared one.
+ALL_TIMEOUT = "all_timeout"
 
 # Fields worth carrying from the trace into the verdict record. Anything that
 # identifies the sample or the arm it belongs to; never the generated text,
@@ -72,6 +89,17 @@ def digest(code, formal_statement=""):
     h.update(b"|--formal-statement--|")
     h.update((formal_statement or "").encode("utf-8"))
     return h.hexdigest()
+
+
+def problem_id(rec):
+    """Which PROBLEM a sample belongs to, or None if the file has no notion of
+    one. Best-of-n files carry `uuid` (Stage B) or `problem_unique_id`
+    (FormalStep); the repair file is one row per failure and has neither, so
+    early-abort simply never engages there."""
+    for k in ("uuid", "problem_unique_id"):
+        if rec.get(k) is not None:
+            return "%s|%s" % (rec.get("_src", "?"), rec[k])
+    return None
 
 
 def record_key(rec, idx):
@@ -114,6 +142,15 @@ def main():
                     help="Skip the statement_is_broken re-probe on failures. "
                          "Pass/fail verdicts are unaffected; compile_error is "
                          "simply not split out into statement_error.")
+    # Early-abort. A timeout costs the 60s budget plus a REPL respawn; on the
+    # Stage B k=16 run that is ~200s of dead time each. Timeouts cluster by
+    # problem, so once the leading samples have all exhausted the budget the
+    # rest are near-certain to as well and tell us nothing new.
+    ap.add_argument("--abort-after", type=int, default=3,
+                    help="Abandon a problem once its first N samples (by "
+                         "sample_index) have ALL timed out; remaining samples "
+                         "are recorded as `all_timeout`, never as a failure. "
+                         "0 disables.")
     args = ap.parse_args()
 
     rows = []
@@ -129,11 +166,42 @@ def main():
         print("%-52s %5d traces" % (os.path.basename(path), len(rows) - n0))
 
     done = set()
+    # Outcomes already on disk, per problem, keyed by sample_index. The abort
+    # rule reads this so that a resumed run re-derives the same decision it
+    # would have made in one pass -- otherwise the very problem that motivated
+    # the abort (its leading samples already timed out, before the restart)
+    # would start again with an empty history and grind through the rest.
+    prior = collections.defaultdict(dict)
     if os.path.exists(args.out):
         for line in io.open(args.out, encoding="utf-8"):
-            if line.strip():
-                done.add(json.loads(line)["key"])
+            if not line.strip():
+                continue
+            d = json.loads(line)
+            done.add(d["key"])
+            pid = problem_id(d) if d.get("uuid") or d.get("problem_unique_id") else None
+            if pid is None and d.get("src_file"):
+                for k in ("uuid", "problem_unique_id"):
+                    if d.get(k) is not None:
+                        pid = "%s|%s" % (d["src_file"], d[k])
+                        break
+            if pid is not None and d.get("sample_index") is not None:
+                prior[pid][d["sample_index"]] = d["outcome"]
         print("resuming: %d verdicts already present" % len(done))
+
+    def head_all_timeout(pid, extra=None):
+        """Did the first `abort_after` samples of this problem all time out?
+
+        Reads by sample_index rather than by arrival order, so it gives the same
+        answer whether the problem was verified in one pass or across a resume.
+        """
+        if not args.abort_after or pid is None:
+            return False
+        seen = dict(prior.get(pid, {}))
+        if extra:
+            seen.update(extra)
+        head = sorted(seen)[: args.abort_after]
+        return (len(head) >= args.abort_after
+                and all(seen[i] == TIMEOUT for i in head))
 
     cache = {}
     if os.path.exists(args.cache):
@@ -154,13 +222,42 @@ def main():
 
     counts = collections.Counter()
     compiled = reused = 0
+    # Progress is reported PER BAND, not as one percentage. The eval set is
+    # ordered easy(30) / medium(30) / hard(30) and verification walks it in
+    # order, so "22% done" means "most of the easy band and none of the rest" --
+    # a number that hides exactly the thing that makes the prefix unlike the
+    # whole. Bands are counted over every trace, not just the todo list, so the
+    # denominator is the eval set rather than the remaining work.
+    band_total = collections.Counter(r.get("band") for r in rows if r.get("band"))
+    band_done = collections.Counter(r.get("band") for i, r in enumerate(rows)
+                                    if r.get("band") and record_key(r, i) in done)
+    bands = [b for b in ("easy", "medium", "hard") if band_total.get(b)]
+    bands += [b for b in band_total if b not in bands]
+
+    def band_line():
+        if not bands:
+            return "no band field"
+        return " ".join("%s %d/%d" % (b, band_done[b], band_total[b]) for b in bands)
+
+    aborted_problems, aborted_samples = set(), 0
     t0 = time.perf_counter()
     with io.open(args.out, "a", encoding="utf-8", newline="\n") as fh:
         for n, (i, r) in enumerate(todo, 1):
+            pid = problem_id(r)
             code = r.get("full_code") or ""
             h = digest(code, r.get("formal_statement"))
             src = "cache"
-            if not code or not has_declaration(code):
+            if pid is not None and pid in aborted_problems:
+                # The problem was abandoned; this sample is not run at all.
+                res = {"outcome": ALL_TIMEOUT, "valid": False,
+                       "errors": ["problem abandoned: its first %d samples all "
+                                  "exceeded the %ds budget" % (args.abort_after,
+                                                               args.timeout)],
+                       "warnings": [], "num_errors": 0, "num_sorries": 0,
+                       "seconds": 0.0, "mode": "none"}
+                src = "aborted"
+                aborted_samples += 1
+            elif not code or not has_declaration(code):
                 res = {"outcome": PARSE_FAILURE, "valid": False,
                        "errors": ["fence extraction produced no usable code"],
                        "warnings": [], "num_errors": 0, "num_sorries": 0,
@@ -202,17 +299,38 @@ def main():
                    "statement_probe": res.get("statement_probe"),
                    "statement_probe_run": bool(args.statement_probe),
                    "verify_seconds": res.get("seconds")}
+            if src == "aborted":
+                rec["aborted_problem"] = True
+                rec["abort_reason"] = ("first %d samples all timed out"
+                                       % args.abort_after)
             for k in CARRY:
                 if k in r:
                     rec[k] = r[k]
             fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
             fh.flush()
             counts[res["outcome"]] += 1
+            if r.get("band"):
+                band_done[r["band"]] += 1
+
+            # Decide the abort AFTER writing, so this sample's own outcome
+            # counts toward the leading run.
+            if pid is not None and pid not in aborted_problems:
+                if r.get("sample_index") is not None:
+                    prior[pid][r["sample_index"]] = res["outcome"]
+                if head_all_timeout(pid):
+                    aborted_problems.add(pid)
+                    print("  [abort] %s -- first %d samples all exceeded %ds; "
+                          "remaining samples recorded as `%s`"
+                          % (pid.split("|")[-1][:36], args.abort_after,
+                             args.timeout, ALL_TIMEOUT), flush=True)
 
             if n % 25 == 0 or n == len(todo):
                 el = time.perf_counter() - t0
-                print("  [%5d/%d] %5.0fs  compiled=%d reused=%d  %s"
+                print("  [%5d/%d] %5.0fs  compiled=%d reused=%d aborted=%dp/%ds\n"
+                      "            bands: %s\n"
+                      "            %s"
                       % (n, len(todo), el, compiled, reused,
+                         len(aborted_problems), aborted_samples, band_line(),
                          " ".join("%s=%d" % kv for kv in counts.most_common())),
                       flush=True)
                 json.dump(cache, io.open(args.cache, "w", encoding="utf-8"))
@@ -220,8 +338,18 @@ def main():
     json.dump(cache, io.open(args.cache, "w", encoding="utf-8"))
     print("\n%d verified in %.1f min (compiled %d, reused %d)"
           % (len(todo), (time.perf_counter() - t0) / 60, compiled, reused))
+    print("bands: %s" % band_line())
     for k, n in counts.most_common():
         print("  %-22s %5d" % (k, n))
+    if aborted_problems:
+        print("\n  %d problem(s) abandoned after %d leading timeouts, "
+              "%d sample(s) recorded `%s` and never run:"
+              % (len(aborted_problems), args.abort_after, aborted_samples,
+                 ALL_TIMEOUT))
+        for pid in sorted(aborted_problems):
+            print("    %s" % pid)
+        print("  These are NOT failures. pass@k on these problems is a lower "
+              "bound; exp_analyze.py reports them on their own row.")
 
 
 if __name__ == "__main__":

@@ -323,9 +323,17 @@ def experiment2(args):
                 ).hexdigest()
         by = collections.defaultdict(list)
         band = {}
+        # Problems abandoned by exp_verify's early-abort. Their unrun samples
+        # carry outcome `all_timeout`, which is NOT a verdict: the sample was
+        # never compiled. They enter pass@k as zeros because there is nothing
+        # else to enter, so pass@k on these problems is a LOWER BOUND and has to
+        # be reported as one rather than averaged in silently.
+        aborted = collections.defaultdict(int)
         for r in rows:
             k = r.get(key) if r.get(key) is not None else r.get("sample_index")
             by[k].append(bool(r.get("valid")))
+            if r.get("outcome") == "all_timeout" or r.get("aborted_problem"):
+                aborted[k] += 1
             if r.get("band"):
                 band[k] = r["band"]
 
@@ -397,6 +405,22 @@ def experiment2(args):
             "vacuous_curve": curve_vac,
             "curve_contentful_only": curve_content,
             "n_vacuous_problems_in_pass_set": len(per_vac),
+            # Its own row, never folded into compile_error. `problems` is how
+            # many were abandoned; `unrun_samples` is how many samples were
+            # never compiled as a result.
+            "early_aborted": {
+                "problems": len(aborted),
+                "unrun_samples": sum(aborted.values()),
+                "problem_ids": sorted(str(k) for k in aborted),
+                "effect_on_curve": (
+                    "none" if not aborted else
+                    "pass@k is a LOWER BOUND: %d problem(s) contributed %d "
+                    "samples that were never compiled, counted as not-passing "
+                    "because no verdict exists for them. Every one of these "
+                    "problems had its first samples time out, so the true "
+                    "pass@k can only be higher, and by at most %d problems."
+                    % (len(aborted), sum(aborted.values()), len(aborted))),
+            },
             "outcome_mix_all_samples": dict(mix.most_common()),
             "gates": {
                 "statement_mismatch": mix.get("statement_mismatch", 0),
