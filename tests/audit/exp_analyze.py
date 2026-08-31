@@ -421,6 +421,15 @@ def experiment2(args):
                     "pass@k can only be higher, and by at most %d problems."
                     % (len(aborted), sum(aborted.values()), len(aborted))),
             },
+            # How many of a problem's k samples passed. This is the SHAPE
+            # behind the curve: all mass at 0 and k means a boundary sampling
+            # cannot move, while mass spread between them means problems that
+            # greedy misses and best-of-n reaches.
+            "c_distribution": {str(cc): n for cc, n in sorted(
+                collections.Counter(c for _, c in per).items())},
+            "n_never": sum(1 for _, c in per if c == 0),
+            "n_always": sum(1 for n, c in per if c == n),
+            "n_sometimes": sum(1 for n, c in per if 0 < c < n),
             "outcome_mix_all_samples": dict(mix.most_common()),
             "gates": {
                 "statement_mismatch": mix.get("statement_mismatch", 0),

@@ -88,7 +88,33 @@ With vacuous goals removed the curve runs 61.1% to 66.7% (**+5.6 pp**), against 
 
 ### NuminaMath Stage B — n=90
 
-_Verification not complete: verification incomplete: 32 of 90 problems have all 16 samples. No pass@k is reported, because verification walks the eval set in order and that set is ordered by difficulty band, so the verified prefix is not a random subset._
+90 problems × [16] samples = 1440 verified.
+
+| k | pass@k | Wilson 95% | bootstrap 95% |
+|---|---|---|---|
+| pass@1 | **26.2%** | [18.6–36.6] | [19.2–33.7] |
+| pass@2 | **33.6%** | [24.5–43.6] | [25.1–42.2] |
+| pass@4 | **39.3%** | [29.5–49.2] | [30.0–48.6] |
+| pass@8 | **43.5%** | [33.6–53.6] | [33.6–53.3] |
+| pass@16 | **46.7%** | [36.7–56.9] | [36.7–56.7] |
+
+**pass@16 − pass@1 = +20.5 pp.** That is what tactic-selection diversity buys on this set.
+
+Problems solved by at least one of the 16: **42/90**.
+
+**Gates.** Every pass counted above already cleared the axiom scan and `statement_mismatch`: 0 samples were rejected as `statement_mismatch` and 0 as `unsound_axioms`.
+
+**Early-abort — pass@k on this set is a LOWER BOUND.** 1 problem(s) were abandoned after their leading samples all exhausted the 60s budget, leaving 3 samples never compiled. Those samples carry `all_timeout`, which is not a verdict: they enter the estimator as not-passing because no verdict for them exists. The true pass@k can therefore only be higher, and by at most 1 problem(s). Abandoned: 061481e9.
+
+_No problem in this pass set has a vacuous goal._
+
+**By difficulty band:**
+
+| band | pass@1 | pass@16 | delta |
+|---|---|---|---|
+| easy | 51.2% | 76.7% | +25.5 pp |
+| medium | 16.9% | 40.0% | +23.1 pp |
+| hard | 10.6% | 23.3% | +12.7 pp |
 
 
 ---
@@ -129,9 +155,11 @@ This is the substantive finding, and it inverts the hypothesis. Sample 27 is the
 
 **FormalStep n50.** pass@1 71.4%, pass@2 74.6%, pass@4 75.8%, pass@8 76.0%, pass@16 76.0%. **pass@16 − pass@1 = +4.6 pp**, and the curve is flat from k=4 — everything best-of-n buys is bought in the first few samples. 38 of 50 problems are solved by at least one of the 16.
 
-**Stage B: verification not complete**, so no pass@k is reported for it. verification incomplete: 32 of 90 problems have all 16 samples. No pass@k is reported, because verification walks the eval set in order and that set is ordered by difficulty band, so the verified prefix is not a random subset.
+**Stage B.** pass@1 26.2%, pass@2 33.6%, pass@4 39.3%, pass@8 43.5%, pass@16 46.7%. **pass@16 − pass@1 = +20.5 pp**, and the curve has **not** flattened by k=16: the last doubling, k=8 to k=16, is still worth +3.2 pp, so more samples would still be buying something. 42 of 90 problems are solved by at least one of the 16.
 
-The shape behind the flat curve is bimodal rather than gradual: a problem this model can do, it does almost every time, and a problem it cannot, it never does. Sampling harder does not move that boundary.
+Stage B's figure is a **lower bound**: 1 problem(s) were abandoned after their leading samples all hit the 60s budget, so 3 samples were never compiled and count as not-passing. True pass@k can only be higher, by at most 1 problem(s).
+
+The shape behind the two curves is why they differ, and it is visible in the per-problem pass counts — FormalStep: 12 never pass, 28 pass every time, only 10 ever in doubt; Stage B: 48 never pass, 5 pass every time, only 37 ever in doubt. A problem that passes on a minority of samples is invisible to greedy and reachable by best-of-n, so the more mass sits strictly between 0 and k, the more best-of-n buys. Where the mass is all at the ends, sampling harder cannot move the boundary.
 
 **3. Does one retry with the error message recover anything?**
 
@@ -143,11 +171,13 @@ Every recovery lands on a `6_contentful` statement, so none is a vacuous pass. S
 
 **4. How does pass@16 compare to the tactic oracle's ceiling? A large gap would mean the model cannot find proofs that demonstrably exist.**
 
-**The gap is small, because the ceiling is low.** The oracle recovers 3/104 = 2.9% [1.0-8.1] of the same 104 failures with a fixed ladder of standard tactics; one error-feedback retry recovers **7/104 = 6.7%**. The intervals overlap, but repair is not *below* the oracle — the model shown its own error finds proofs a fixed ladder does not.
+**pass@16 does not sit below the oracle's ceiling — it goes straight through it.** On Stage B best-of-n moves pass@1 26.2% to pass@16 46.7% (+20.5 pp). Put on the oracle's footing — share of what a single sample misses that the lever recovers — that is about 28% of the ~66 problems greedy leaves behind, against the oracle's 3/104 = 2.9% [1.0-8.1] and a repair rate of **7/104 = 6.7%**.
 
-_The Stage B half of this comparison is pending verification._
+**The denominators are different and the comparison is indicative, not exact.** The oracle ran on 104 `tactic_mismatch` failure SAMPLES pooled across two pipelines; best-of-n ran on 90 Stage B PROBLEMS. They are not the same unit and neither number may be substituted for the other. What survives the caveat is the direction and the order of magnitude, which is not close.
 
-So the honest reading is not "the model cannot find proofs that demonstrably exist". It is that for this failure set the proofs largely **do not exist** to be found. The oracle's own ceiling is 2.9%, and three independent levers — a fixed tactic ladder, 16 samples at T=0.7, and an error-feedback retry — each recover a few percent and then stop. That is a property of the goals, not of the search.
+So the answer inverts the question. A large gap was supposed to mean the model cannot find proofs that demonstrably exist. Instead the model finds proofs the oracle cannot demonstrate exist at all: the oracle closed 3/104 = 2.9% [1.0-8.1] of the failures it examined, and on Stage B the model's own sampling reaches several times that share. The oracle is an upper bound on **one fixed ladder of standard tactics**, not on the model — a ladder tries `omega`, `linarith`, `simp` and their kin on the top-level goal, while the model writes multi-step proofs with intermediate `have`s that no rung attempts.
+
+Two conclusions, and they are about different sets. On **FormalStep n50** the pass set is near-saturated: +4.6 pp, flat from k=4, and 12 problems no lever touches — there the remaining failures really do look like goals with no proof to find, which is what the oracle's near-zero correction says. On **Stage B** that reading would be wrong: proofs exist for a large share of the problems greedy misses, the model can find them, and one greedy sample simply does not. Reporting the oracle's ceiling as *the* ceiling would have understated what this model reaches.
 
 
 ---

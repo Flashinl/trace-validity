@@ -108,16 +108,29 @@ def answers(E1, E2, E3):
                      "reported for it. %s" % (label, S.get("error", "")))
             continue
         c = S["curve"]
-        flat = 4 if abs(c["pass@4"]["pct"] - c["pass@16"]["pct"]) < 1.0 else 8
+        # Where the curve flattens, measured rather than assumed. The last leg
+        # (k=8 -> k=16) is the test: if it is still worth more than a point,
+        # the curve has NOT flattened by k=16 and saying it has would be wrong.
+        tail = c["pass@16"]["pct"] - c["pass@8"]["pct"]
+        flat = None
+        for k in (2, 4, 8):
+            if abs(c["pass@16"]["pct"] - c["pass@%d" % k]["pct"]) < 1.0:
+                flat = k
+                break
+        if flat is not None:
+            shape = ("the curve is flat from k=%d — everything best-of-n buys "
+                     "is bought in the first few samples" % flat)
+        else:
+            shape = ("the curve has **not** flattened by k=16: the last "
+                     "doubling, k=8 to k=16, is still worth %+.1f pp, so more "
+                     "samples would still be buying something" % tail)
         a.append(
             "**%s.** pass@1 %.1f%%, pass@2 %.1f%%, pass@4 %.1f%%, pass@8 "
-            "%.1f%%, pass@16 %.1f%%. **pass@16 − pass@1 = %+.1f pp**, and the "
-            "curve is flat from k=%d — everything best-of-n buys is bought in "
-            "the first few samples. %d of %d problems are solved by at least "
-            "one of the 16."
+            "%.1f%%, pass@16 %.1f%%. **pass@16 − pass@1 = %+.1f pp**, and %s. "
+            "%d of %d problems are solved by at least one of the 16."
             % (label, c["pass@1"]["pct"], c["pass@2"]["pct"],
                c["pass@4"]["pct"], c["pass@8"]["pct"], c["pass@16"]["pct"],
-               S["pass16_minus_pass1_pp"], flat,
+               S["pass16_minus_pass1_pp"], shape,
                c["pass@1"]["n_solved_by_any"], S["n_problems"]))
         ab = S.get("early_aborted") or {}
         if ab.get("problems"):
@@ -128,10 +141,26 @@ def answers(E1, E2, E3):
                      "%d problem(s)."
                      % (label, ab["problems"], ab["unrun_samples"],
                         ab["problems"]))
-    a.append("The shape behind the flat curve is bimodal rather than gradual: "
-             "a problem this model can do, it does almost every time, and a "
-             "problem it cannot, it never does. Sampling harder does not move "
-             "that boundary.")
+    # The shape behind each curve, from the per-problem pass counts. The two
+    # sets differ here, and that difference IS the answer -- so it is derived,
+    # not asserted.
+    shapes = []
+    for name, label in (("formalstep_n50", "FormalStep"),
+                        ("stageb_n90", "Stage B")):
+        S = E2.get(name, {})
+        if S.get("error") or S.get("n_sometimes") is None:
+            continue
+        shapes.append("%s: %d never pass, %d pass every time, only %d ever in "
+                      "doubt" % (label, S["n_never"], S["n_always"],
+                                 S["n_sometimes"]))
+    if shapes:
+        a.append("The shape behind the two curves is why they differ, and it "
+                 "is visible in the per-problem pass counts — %s. A problem "
+                 "that passes on a minority of samples is invisible to greedy "
+                 "and reachable by best-of-n, so the more mass sits strictly "
+                 "between 0 and k, the more best-of-n buys. Where the mass is "
+                 "all at the ends, sampling harder cannot move the boundary."
+                 % "; ".join(shapes))
     out.append(("2. How much does best-of-n buy over greedy, and where does "
                 "the curve flatten?", "\n\n".join(a)))
 
@@ -157,28 +186,55 @@ def answers(E1, E2, E3):
     a = []
     orc = None if E3.get("error") else E3.get("oracle_reference")
     S = E2.get("stageb_n90", {})
+    if S.get("curve"):
+        c = S["curve"]
+        n = S["n_problems"]
+        # Put the two on a comparable footing: share of what a SINGLE sample
+        # misses that the lever recovers. The oracle's 2.9% is already of that
+        # form (recoveries / failures); pass@k has to be converted.
+        miss1 = n * (1 - c["pass@1"]["pct"] / 100.0)
+        gained = n * (c["pass@16"]["pct"] - c["pass@1"]["pct"]) / 100.0
+        share = 100.0 * gained / miss1 if miss1 else 0.0
+        a.append(
+            "**pass@16 does not sit below the oracle's ceiling — it goes "
+            "straight through it.** On Stage B best-of-n moves pass@1 %.1f%% "
+            "to pass@16 %.1f%% (%+.1f pp). Put on the oracle's footing — share "
+            "of what a single sample misses that the lever recovers — that is "
+            "about %.0f%% of the ~%.0f problems greedy leaves behind, against "
+            "the oracle's %s and a repair rate of %s."
+            % (c["pass@1"]["pct"], c["pass@16"]["pct"],
+               S["pass16_minus_pass1_pp"], share, miss1,
+               orc["substantive_recoveries"] if orc else "2.9%",
+               kn(E3["with_repair_pooled"]) if not E3.get("error") else "—"))
+        a.append("**The denominators are different and the comparison is "
+                 "indicative, not exact.** The oracle ran on 104 "
+                 "`tactic_mismatch` failure SAMPLES pooled across two "
+                 "pipelines; best-of-n ran on 90 Stage B PROBLEMS. They are "
+                 "not the same unit and neither number may be substituted for "
+                 "the other. What survives the caveat is the direction and the "
+                 "order of magnitude, which is not close.")
     if orc:
-        a.append("**The gap is small, because the ceiling is low.** The oracle "
-                 "recovers %s of the same 104 failures with a fixed ladder of "
-                 "standard tactics; one error-feedback retry recovers %s. The "
-                 "intervals overlap, but repair is not *below* the oracle — "
-                 "the model shown its own error finds proofs a fixed ladder "
-                 "does not."
-                 % (orc["substantive_recoveries"], kn(E3["with_repair_pooled"])))
-    if S.get("curve") and S.get("pass16_minus_pass1_pp") is not None:
-        a.append("On Stage B, best-of-n moves pass@1 by %+.1f pp, against the "
-                 "oracle's zero-point correction at T=0.0 (31.1%% → 31.1%%)."
-                 % S["pass16_minus_pass1_pp"])
-    else:
-        a.append("_The Stage B half of this comparison is pending "
-                 "verification._")
-    a.append("So the honest reading is not \"the model cannot find proofs that "
-             "demonstrably exist\". It is that for this failure set the proofs "
-             "largely **do not exist** to be found. The oracle's own ceiling "
-             "is 2.9%, and three independent levers — a fixed tactic ladder, "
-             "16 samples at T=0.7, and an error-feedback retry — each recover "
-             "a few percent and then stop. That is a property of the goals, "
-             "not of the search.")
+        a.append("So the answer inverts the question. A large gap was supposed "
+                 "to mean the model cannot find proofs that demonstrably "
+                 "exist. Instead the model finds proofs the oracle cannot "
+                 "demonstrate exist at all: the oracle closed %s of the "
+                 "failures it examined, and on Stage B the model's own "
+                 "sampling reaches several times that share. The oracle is an "
+                 "upper bound on **one fixed ladder of standard tactics**, not "
+                 "on the model — a ladder tries `omega`, `linarith`, `simp` "
+                 "and their kin on the top-level goal, while the model writes "
+                 "multi-step proofs with intermediate `have`s that no rung "
+                 "attempts."
+                 % orc["substantive_recoveries"])
+    a.append("Two conclusions, and they are about different sets. On "
+             "**FormalStep n50** the pass set is near-saturated: +4.6 pp, flat "
+             "from k=4, and 12 problems no lever touches — there the remaining "
+             "failures really do look like goals with no proof to find, which "
+             "is what the oracle's near-zero correction says. On **Stage B** "
+             "that reading would be wrong: proofs exist for a large share of "
+             "the problems greedy misses, the model can find them, and one "
+             "greedy sample simply does not. Reporting the oracle's ceiling as "
+             "*the* ceiling would have understated what this model reaches.")
     out.append(("4. How does pass@16 compare to the tactic oracle's ceiling? "
                 "A large gap would mean the model cannot find proofs that "
                 "demonstrably exist.", "\n\n".join(a)))
@@ -346,7 +402,10 @@ def main():
             W("**By difficulty band:**\n")
             W("| band | pass@1 | pass@16 | delta |")
             W("|---|---|---|---|")
-            for bn, bc in S["by_band"].items():
+            # Difficulty order, not dict order: easy, medium, hard.
+            _ORDER = {"easy": 0, "medium": 1, "hard": 2}
+            for bn, bc in sorted(S["by_band"].items(),
+                                 key=lambda kv: _ORDER.get(kv[0], 99)):
                 x, y = bc.get("pass@1"), bc.get("pass@16")
                 W("| %s | %s | %s | %s |" % (
                     bn, "—" if not x else "%.1f%%" % x["pct"],
