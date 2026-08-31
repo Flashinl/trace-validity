@@ -119,6 +119,15 @@ def answers(E1, E2, E3):
                c["pass@4"]["pct"], c["pass@8"]["pct"], c["pass@16"]["pct"],
                S["pass16_minus_pass1_pp"], flat,
                c["pass@1"]["n_solved_by_any"], S["n_problems"]))
+        ab = S.get("early_aborted") or {}
+        if ab.get("problems"):
+            a.append("%s's figure is a **lower bound**: %d problem(s) were "
+                     "abandoned after their leading samples all hit the 60s "
+                     "budget, so %d samples were never compiled and count as "
+                     "not-passing. True pass@k can only be higher, by at most "
+                     "%d problem(s)."
+                     % (label, ab["problems"], ab["unrun_samples"],
+                        ab["problems"]))
     a.append("The shape behind the flat curve is bimodal rather than gradual: "
              "a problem this model can do, it does almost every time, and a "
              "problem it cannot, it never does. Sampling harder does not move "
@@ -286,6 +295,17 @@ def main():
           "and `statement_mismatch`: %d samples were rejected as "
           "`statement_mismatch` and %d as `unsound_axioms`.\n"
           % (S["gates"]["statement_mismatch"], S["gates"]["unsound_axioms"]))
+        ab = S.get("early_aborted") or {}
+        if ab.get("problems"):
+            W("**Early-abort — pass@k on this set is a LOWER BOUND.** %d "
+              "problem(s) were abandoned after their leading samples all "
+              "exhausted the 60s budget, leaving %d samples never compiled. "
+              "Those samples carry `all_timeout`, which is not a verdict: they "
+              "enter the estimator as not-passing because no verdict for them "
+              "exists. The true pass@k can therefore only be higher, and by at "
+              "most %d problem(s). Abandoned: %s.\n"
+              % (ab["problems"], ab["unrun_samples"], ab["problems"],
+                 ", ".join(p[:8] for p in ab["problem_ids"])))
         vc = S.get("vacuous_curve")
         cc = S.get("curve_contentful_only")
         if vc:

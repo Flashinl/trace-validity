@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-08-31T02:48:08Z",
+  "generated_utc": "2026-08-31T04:40:11Z",
   "run": {
     "generation commit": "2f25feb659385719112980c4b8e64f6104157fc2 (branch exp/gpu-tactic-recovery, tree clean)",
     "seed": "20260830, on every run; recorded in every run_meta.json and in every trace record",
@@ -736,6 +736,12 @@
         "n_problems_total": 36
       },
       "n_vacuous_problems_in_pass_set": 14,
+      "early_aborted": {
+        "problems": 0,
+        "unrun_samples": 0,
+        "problem_ids": [],
+        "effect_on_curve": "none"
+      },
       "outcome_mix_all_samples": {
         "valid": 571,
         "compile_error": 226,
@@ -750,11 +756,12 @@
       "pass16_minus_pass1_pp": 4.6
     },
     "stageb_n90": {
-      "error": "verification incomplete: 17 of 90 problems have all 16 samples. No pass@k is reported, because verification walks the eval set in order and that set is ordered by difficulty band, so the verified prefix is not a random subset.",
-      "problems_complete": 17,
+      "error": "verification incomplete: 32 of 90 problems have all 16 samples. No pass@k is reported, because verification walks the eval set in order and that set is ordered by difficulty band, so the verified prefix is not a random subset.",
+      "problems_complete": 32,
       "problems_expected": 90,
       "bands_complete": {
-        "easy": 17
+        "easy": 30,
+        "medium": 2
       }
     }
   },

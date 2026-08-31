@@ -88,7 +88,7 @@ With vacuous goals removed the curve runs 61.1% to 66.7% (**+5.6 pp**), against 
 
 ### NuminaMath Stage B — n=90
 
-_Verification not complete: verification incomplete: 17 of 90 problems have all 16 samples. No pass@k is reported, because verification walks the eval set in order and that set is ordered by difficulty band, so the verified prefix is not a random subset._
+_Verification not complete: verification incomplete: 32 of 90 problems have all 16 samples. No pass@k is reported, because verification walks the eval set in order and that set is ordered by difficulty band, so the verified prefix is not a random subset._
 
 
 ---
@@ -129,7 +129,7 @@ This is the substantive finding, and it inverts the hypothesis. Sample 27 is the
 
 **FormalStep n50.** pass@1 71.4%, pass@2 74.6%, pass@4 75.8%, pass@8 76.0%, pass@16 76.0%. **pass@16 − pass@1 = +4.6 pp**, and the curve is flat from k=4 — everything best-of-n buys is bought in the first few samples. 38 of 50 problems are solved by at least one of the 16.
 
-**Stage B: verification not complete**, so no pass@k is reported for it. verification incomplete: 17 of 90 problems have all 16 samples. No pass@k is reported, because verification walks the eval set in order and that set is ordered by difficulty band, so the verified prefix is not a random subset.
+**Stage B: verification not complete**, so no pass@k is reported for it. verification incomplete: 32 of 90 problems have all 16 samples. No pass@k is reported, because verification walks the eval set in order and that set is ordered by difficulty band, so the verified prefix is not a random subset.
 
 The shape behind the flat curve is bimodal rather than gradual: a problem this model can do, it does almost every time, and a problem it cannot, it never does. Sampling harder does not move that boundary.
 
