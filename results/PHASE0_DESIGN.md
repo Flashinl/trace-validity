@@ -187,12 +187,18 @@ every step of every sampled trajectory:
 What this machine has:
 
 - **Lean 4 + Mathlib: built and usable.** Verification runs locally.
-- **GPU: RTX 4070 Laptop, 8 GiB.** Goedel-Prover-SFT is 7B; the committed A100
-  runs used 39 GiB. It does not fit unquantised, and quantising would change the
-  model and break comparability with every existing result in the repo.
+- **GPU: RTX 4070 Laptop, 8.19 GiB.** Goedel-Prover-SFT is 7B. The committed
+  n50 runs this pilot rests on ran on an **NVIDIA A10, 22.07 GiB total**
+  (`traces/temp0.0_n50_1each/run_meta.json`), so ~22 GiB is the *measured*
+  sufficient figure — not the 39 GiB of the k16 box, which was that machine's
+  total memory rather than its consumption. 8.19 GiB is still far short.
+  Quantising would change the model and break comparability with every existing
+  result in the repo.
 
-So **generation is not available locally**. The 23,948-step-proof full run needs
-the A100 box, which is currently held by `exp/gpu-tactic-recovery`.
+So **generation is not available locally**. It needs a box with ~22 GiB or more
+of GPU memory. (Design C, 77+78, was subsequently accepted in place of the
+200-problem design; its cost is **9,065 steps × 2 temperatures = 18,130
+step-proofs**. See `results/RUN_PLAN_200.md`.)
 
 **What is runnable now, end to end, on real data:** the committed n50 runs at
 **T=0.0 and T=0.2** — the two temperatures the supervisor specified — carry real

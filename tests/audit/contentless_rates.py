@@ -45,8 +45,9 @@ J = lambda p: [json.loads(l) for l in io.open(p, encoding="utf-8") if l.strip()]
 # Classes 1-4 assert nothing. 5 is real arithmetic with no inference and is
 # reported as its own column -- which side it falls on is the paper's call, not
 # this script's, so it is never folded into either bucket here.
-CONTENTLESS = ("1_goal_is_True", "2_hypotheses_contradictory",
-               "3_goal_restates_a_hypothesis", "4_syntactic_tautology")
+# Imported rather than restated, so a class added to the ladder cannot be
+# silently counted as contentful here (2026-09-02: 4b was added).
+from vacuity_scan import CONTENTLESS_CLASSES as CONTENTLESS  # noqa: E402
 GROUND = ("5_ground_computation",)
 
 

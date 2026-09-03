@@ -1,7 +1,7 @@
 # Phase 1 — the custom dataset
 
 Built by `tests/audit/build_custom_dataset.py`, **seed 20260902**.
-Output: `data/custom_200.jsonl` (200 rows), `results/custom_dataset.json`.
+Output: `data/custom_155.jsonl` (155 rows, Design C), `results/custom_dataset.json`.
 No Lean, no GPU, no network.
 
 ## Eligibility
@@ -73,7 +73,11 @@ problem-level shares.
 | Level 4 | 53 | 39 | 20 |
 | Level 5 | 116 | 56 | 35 |
 
-### Design A — `spec_100_100` (built, shipped as `data/custom_200.jsonl`)
+> **Design C is the accepted design and is what ships as
+> `data/custom_155.jsonl`.** Designs A and B are retained below with their
+> realised cell counts so the choice stays auditable.
+
+### Design A — `spec_100_100` (not shipped)
 
 | level | integer | fraction | total |
 |---|---|---|---|
@@ -102,7 +106,7 @@ the population, so the two arms are comparable rather than equal-sized.
 
 Fraction arm = 35% of all fractions. Fully feasible, no spill.
 
-### Design C — `balanced_77_78`
+### Design C — `balanced_77_78` — **ACCEPTED, shipped**
 
 | level | integer | fraction | total |
 |---|---|---|---|
@@ -113,13 +117,23 @@ Fraction arm = 35% of all fractions. Fully feasible, no spill.
 | Level 5 | 27 | 27 | 54 |
 | **total** | **77** | **78** | **155** |
 
-Fraction arm = 50% of all fractions. Fully feasible, no spill, and the two arms
-are the same size so an integer-vs-fraction contrast is balanced.
+Fraction arm = 50% of all fractions. Fully feasible, **no spill**, and the two
+arms are the same size so the integer-vs-fraction contrast is balanced.
 
-**Recommendation: Design C** if the integer-vs-fraction contrast is the point,
-because it is balanced and feasible without spill; **Design B** if the sample is
-meant to represent the population. Design A is shipped as specified, but its
-fraction arm should be described as a census of 64% of the stratum, not a sample.
+**Design C was accepted.** Realised composition of `data/custom_155.jsonl`:
+
+| | |
+|---|---|
+| problems | 155 (77 integer + 78 simple fraction) |
+| levels | L1 12, L2 26, L3 33, L4 30, L5 54 |
+| rows requiring the spill rule | **0** |
+| trajectories covered | **764** |
+| steps covered | **9,065** |
+| full-run cost at 2 temperatures | **18,130 step-proofs** |
+
+The last three rows are the input to `results/RUN_PLAN_200.md`. Choosing C over
+the 100+100 design cut the run cost by 24% (from 23,948 step-proofs) while
+removing the census problem and the infeasible Level 2 cell.
 
 ## Category stratification is not available
 
@@ -130,15 +144,15 @@ and is a separate task.
 
 ## Row schema
 
-Every row of `data/custom_200.jsonl`:
+Every row of `data/custom_155.jsonl`:
 
 ```json
 {"problem_unique_id": "...", "level": "Level 3", "answer_type": "integer",
  "ground_truth": "101", "ground_truth_value": "101",
  "n_trajectories": 5, "n_steps": 61,
  "selection_rule": "integer|Level 3|proportional_target_21",
- "design": "spec_100_100", "seed": 20260902}
+ "design": "balanced_77_78", "seed": 20260902}
 ```
 
 `n_trajectories` and `n_steps` are carried because they are the compute cost of
-that row: the 200-problem design covers 993 trajectories and 11,974 steps.
+that row: Design C covers 764 trajectories and 9,065 steps.

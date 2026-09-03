@@ -57,3 +57,4 @@ results/*.png
 !results/tactic_oracle.jsonl
 !results/tactic_oracle_probe.json
 !results/tactic_oracle_repair.json
+vac_run.log

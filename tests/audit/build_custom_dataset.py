@@ -15,8 +15,8 @@ Two things the spec could not know, both surfaced rather than worked around:
      exist. The script reports the shortfall per cell instead of quietly
      reallocating.
 
-Emits data/custom_200.jsonl (the spec design) plus the alternative designs with
-realised cell counts, so the choice is made from real numbers.
+Emits data/custom_155.jsonl (Design C, balanced 77+78 -- the ACCEPTED design)
+plus the alternative designs with realised cell counts, so the choice stays auditable.
 
 No Lean, no GPU, no network.
 Run: HF_HUB_OFFLINE=1 python tests/audit/build_custom_dataset.py
@@ -157,10 +157,13 @@ def main():
                 break
         return got, rule, deficit
 
+    # Design C (balanced_77_78) is the ACCEPTED design. The other two are kept
+    # and reported so the choice stays auditable, but only C is shipped.
+    CHOSEN = "balanced_77_78"
     designs = {
-        "spec_100_100": {"integer": 100, "simple_fraction": 100},
-        "proportional_100_55": {"integer": 100, "simple_fraction": 55},
         "balanced_77_78": {"integer": 77, "simple_fraction": 78},
+        "proportional_100_55": {"integer": 100, "simple_fraction": 55},
+        "spec_100_100": {"integer": 100, "simple_fraction": 100},
     }
     summary = {}
     chosen_rows = None
@@ -189,7 +192,7 @@ def main():
                     })
         summary[name] = {"sizes": sizes, "cells": cells,
                          "unplaceable": leftover, "n_rows": len(rows)}
-        if name == "spec_100_100":
+        if name == CHOSEN:
             chosen_rows = rows
 
         P(f"\n  --- design {name} (n={len(rows)}) ---")
@@ -205,15 +208,16 @@ def main():
 
     dest = os.path.join(_ROOT, "data")
     os.makedirs(dest, exist_ok=True)
-    out = os.path.join(dest, "custom_200.jsonl")
+    out = os.path.join(dest, "custom_155.jsonl")
     with open(out, "w", encoding="utf-8") as fh:
         for r in chosen_rows:
             fh.write(json.dumps(r, ensure_ascii=False) + "\n")
-    P(f"\n  wrote {out}  ({len(chosen_rows)} rows, design spec_100_100)")
+    P(f"\n  wrote {out}  ({len(chosen_rows)} rows, design {CHOSEN} -- ACCEPTED)")
 
     js = os.path.join(_ROOT, "results", "custom_dataset.json")
     with open(js, "w", encoding="utf-8") as fh:
-        json.dump({"seed": SEED, "eligible": len(pool), "arms": dict(arms),
+        json.dump({"seed": SEED, "chosen_design": CHOSEN,
+                   "eligible": len(pool), "arms": dict(arms),
                    "drops": dict(drops), "population_level_shares": shares,
                    "designs": summary}, fh, indent=2)
     P(f"  wrote {js}")

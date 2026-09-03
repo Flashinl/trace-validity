@@ -23,6 +23,7 @@ verify_traces.py     # traces -> verification JSONL (outcome taxonomy)
 verifier.py          # LeanVerifier: pinned project, shared Mathlib env, outcomes
 analyze_runs.py      # per-run report, validity rate, cross-tab, paired compare
 analysis.py          # older stats/plot helpers for `trace_valid.py run`
+answer_correctness.py # axis 2: does a trajectory's final answer match ground_truth
 tests/               # verifier control set, dataset cross-check, pipeline trace
 traces/              # one directory per run: traces.jsonl + run_meta.json
 results/             # verification JSONL, analysis JSON, plots
@@ -34,6 +35,11 @@ results/             # verification JSONL, analysis JSON, plots
 step, a glossary separating the **theorem statement** (the goal, from the
 dataset) from the **proof object / tactic block** (what the model generates),
 the exact model and Lean versions in use, and where generation actually ran.
+
+`docs/TESTING_NOTES.md` carries the standing rule for this repo: **any gate,
+classifier, probe, or extractor must be shown to fire on a negative control
+before its clean result is believed.** It lists the four gate-style defects that
+rule exists because of, and the checklist for adding a new one.
 
 ## Setup
 
