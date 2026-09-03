@@ -284,3 +284,105 @@ To be satisfied when the run happens — I cannot do these without credentials:
 3. **A decision on Scenario A vs B** (my recommendation: A, on spot).
 4. Confirmation that **`g5.2xlarge` / A10G** is accepted as the match to the
    committed A10 runs, given the 39 GiB figure was not a consumption number.
+
+---
+
+# ADDENDUM — 2026-09-03: pre-flight results. **LAUNCH BLOCKED.**
+
+All figures below are API-verified against account `540659…0775`, `us-east-1`.
+**Nothing was provisioned. No spend incurred.**
+
+## Gate 0 — identity: PASS, with a security flag
+
+`sts:GetCallerIdentity` succeeds. Credentials arrived as **environment
+variables**, not `~/.aws/credentials` (that path does not exist on this box);
+either works, env takes precedence.
+
+⚠️ **The credentials are ROOT account access keys** (`arn:aws:iam::…:root`).
+Root keys cannot be scoped, are awkward to rotate, and AWS advises against them.
+Recommend replacing with an IAM user limited to EC2 + Service Quotas + Budgets
+before this becomes routine. Not a blocker.
+
+## Gate 1 — G-instance quotas: **FAIL. This is the stop condition.**
+
+| quota | code | value | adjustable |
+|---|---|---|---|
+| Running On-Demand G and VT instances | `L-DB2E81BA` | **0** | yes |
+| All G and VT Spot Instance Requests | `L-3819A6DF` | **0** | yes |
+| Running On-Demand Standard (A,C,D,H,I,M,R,T,Z) | `L-1216C47A` | 8 | yes |
+| All Standard Spot Instance Requests | `L-34B43A08` | 8 | yes |
+
+Both G quotas are zero, so `g5.2xlarge` (8 vCPU) cannot launch on demand **or**
+on spot. **Increase requests are already filed**, both created 2026-09-03,
+both requesting 16 vCPUs, both `CASE_OPENED`:
+
+- `All G and VT Spot Instance Requests` → case `178847848300260`
+- `Running On-Demand G and VT instances` → case `178847860900707`
+
+16 vCPUs is the right ask: it covers `g5.2xlarge` (8) with headroom, or one
+`g5.4xlarge` (16) if the RSS measurement forces a larger box.
+
+## Does the Free Plan permit G launches at all?
+
+**Yes at the policy layer; the block is purely quota.**
+
+- `freetier:GetAccountPlanState` → `accountPlanType: FREE`,
+  `accountPlanStatus: ACTIVE`, **`remainingCredits: $170.65 USD`**,
+  expiry **2027-02-12** (~162 days).
+- A `RunInstances` **dry run** for `g5.2xlarge` returns
+  `DryRunOperation: Request would have succeeded` — no policy or IAM barrier to
+  the instance family.
+
+**Caveat, stated precisely:** `DryRun` validates permissions and parameters, it
+does **not** evaluate service quotas. So this proves the Free Plan does not
+forbid G instances; it does **not** prove a real launch would succeed. With the
+quota at 0 an actual launch returns `VcpuLimitExceeded`. The open cases are the
+real gate, and whether AWS grants GPU quota to a Free Plan account is a policy
+decision only the case outcome settles.
+
+## Cost corrections — spot is far less of a saving than the plan assumed
+
+| | plan assumed | **API-verified** |
+|---|---|---|
+| g5.2xlarge on-demand | $1.212/h | **$1.212/h** (Pricing API) — correct |
+| g5.2xlarge spot | ~$0.45/h ("≈63% off") | **median $0.8434/h**, range $0.7394–$1.0132 across 5 AZs, last 7d |
+
+The spot discount is ~**30%**, not 63%, and at the top of the range spot is 84%
+of on-demand.
+
+| 36 h run | cost |
+|---|---|
+| on-demand @ $1.212 | **$43.6** |
+| spot @ median $0.8434 | **$30.4** |
+| **saving from spot** | **~$13** |
+
+**This weakens the case for spot, and the decision should be revisited.** Spot
+buys $13 against a $170.65 fixed pool with no overage, in exchange for
+interruption exposure across a 36-hour window, on resume logic that has never
+been tested by an actual kill (gate 3). If resume proves sound, spot is fine. If
+gate 3 finds a defect, **on-demand at $43.6 is the safer 25% of the budget** and
+still leaves $127.
+
+## Budget guard needs raising before launch
+
+`budgets:DescribeBudgets` → one budget, **`Zero-Spend Guard`, limit $1.00
+monthly**, actual spend **$0.00**. It will trip on the first instance-hour.
+Raise to the agreed **$60** hard stop (or add a second budget) with an action
+that stops the instance, before launching.
+
+## Status of the remaining gates
+
+| gate | needs AWS? | status |
+|---|---|---|
+| 2 — RSS per Mathlib REPL | no | not yet done; **can proceed locally during the 24–48 h wait** |
+| 3 — kill-and-resume test | no (bookkeeping half) | not yet done; see below |
+
+**Gate 3 is more tractable than it looks.** `generate.py` already contains
+deliberate interruption handling — `load_done_keys()` reads existing keys and
+*tolerates a truncated last line*, a mid-line file ending is closed off before
+resume, and the code refuses to overwrite an existing trajectory file without
+`--resume`. That is the right design, but by this repo's own standing rule an
+untested recovery path is not evidence. The **bookkeeping half — partial-line
+recovery, key dedup, dropped/duplicated records — is testable with crafted files
+and no GPU**, and that is where a duplication or drop bug would live. The
+end-to-end kill still needs the model and must wait for the box.
