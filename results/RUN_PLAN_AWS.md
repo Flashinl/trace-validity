@@ -541,3 +541,168 @@ while sleep 10; do ps -o pid,rss,comm -C repl --no-headers; done   # watch to pl
 Decision rule, unchanged: if plateau RSS ≤ ~7 GB, 4 workers fit in the
 `g5.2xlarge`'s 32 GiB. If higher, drop to 2–3 workers (costs ~30 min, acceptable
 against a 36 h run) rather than resizing the instance.
+
+---
+
+# ADDENDUM 3 — 2026-09-03: vLLM evaluation. Harness written, **validation NOT yet run.**
+
+Jerome is right about the diagnosis: unbatched HF at ~7.12 s/prompt over 18,130
+distinct prompts *is* the whole 36 h. This addendum evaluates the switch, writes
+the validation, and re-costs conditionally. **The validation itself cannot run on
+this box** — no vLLM installed, no model weights cached (only 7.2 MB of config +
+tokenizer), and 8.19 GiB of VRAM against a 7B fp16 model. It runs on the
+instance, gated behind the same quota.
+
+## What was validated locally (no GPU needed): the prompt format survives
+
+`tests/audit/vllm_equivalence.py --stage preflight`, run here:
+
+    tokenizer has chat_template : True
+    prompt ends with closing fence: False  (must be False)
+    add_bos_token=True  first id=100000  bos_id=100000
+    len(plain ids)=124   len(chat-templated ids)=188   -> differ by 64 tokens
+    PRE-FLIGHT OK
+
+**The concern is real and now quantified.** This tokenizer (DeepSeek-derived)
+*does* carry a `chat_template`, and applying it would add **64 tokens**, wrapping
+a prefix-completion prompt in a conversation and destroying it. The committed
+prompt is confirmed prefix-completion: it opens a lean4 fence, ends after
+`:= by\n`, and has **no closing fence**.
+
+**vLLM is safe here provided `LLM.generate()` is used with raw strings.** That
+path does not apply a chat template; only `LLM.chat()` / `apply_chat_template`
+do. The harness asserts vLLM's token ids equal HF's before generating, so a
+template applied by any future default cannot pass silently.
+
+## A second divergence source the brief did not raise, and it would have invalidated the comparison
+
+**`config.json` declares `torch_dtype: bfloat16`. The committed baseline loads
+`dtype=torch.float16` (`model.py:66`).**
+
+vLLM's default `dtype="auto"` reads the *config*, so a naive `LLM(model=...)`
+loads **bfloat16** — a different numeric format (7-bit vs 10-bit mantissa), not
+merely different attention kernels. Any comparison run that way would be
+measuring a dtype change and attributing it to vLLM. The harness pins
+`dtype="float16"`.
+
+## A third: vLLM may not be deterministic against *itself*
+
+Continuous batching means batch composition varies between runs, and some
+kernels are not batch-invariant — so vLLM can differ from itself even at greedy.
+If that is true here, a 50/50 match against HF is luck, not a property.
+The harness therefore runs `--self-check` (two identical passes, compare text)
+and sets `enforce_eager=True` to disable CUDA graphs. Eager costs perhaps 10–20%
+throughput and buys reproducibility; on a ~2 h run that is an obviously good
+trade.
+
+## The validation protocol, as written
+
+`tests/audit/vllm_equivalence.py`, three stages, on the box:
+
+1. `--stage preflight` — chat template, fence, BOS (already passing locally)
+2. `--stage generate` — n50 set, **T=0.0 greedy**, `dtype=float16`, `seed=0`,
+   `max_tokens=2048`, raw-string `generate()`, plus the self-check pass
+3. `--stage compare` — Lean-verify the vLLM outputs on the pinned toolchain and
+   partition into exactly the three buckets asked for:
+
+| bucket | meaning |
+|---|---|
+| identical | byte-identical generated text |
+| same_verdict | different text, same Lean outcome |
+| **FLIPPED** | different Lean outcome → **stop, do not adopt** |
+
+Seeds are deliberately not compared across engines: vLLM's sampling RNG differs
+from HF's, so T>0 cannot reproduce the k16 run by construction. Greedy is the
+only fair comparison, and it is what the baseline used
+(`do_sample: false`, `greedy_deterministic: true`).
+
+### One push-back on the acceptance criterion
+
+The brief says "if verdicts match 50/50, vLLM is safe to use." **50/50 is
+necessary but weaker than it sounds:**
+
+| agreement | Wilson 95% lower bound | divergence still consistent, over 18,130 proofs |
+|---|---|---|
+| **50/50** | 92.9% | **up to ~1,293 proofs** |
+| 100/100 | 96.3% | ~670 |
+| **200/200** | 98.1% | **~341** |
+| 500/500 | 99.2% | ~138 |
+
+**And validating on more is nearly free** — that is the point. At ~205 mean
+output tokens, 500 prompts is ~100k tokens, a couple of minutes of the very
+throughput being validated. **Recommend validating on 500, not 50.** The n50 set
+remains the primary comparison because it has committed HF verdicts to compare
+against; the extra prompts can be checked engine-vs-engine and against Lean
+directly.
+
+## Re-costed, CONDITIONAL on validation passing
+
+Measured basis: mean **205** output tokens/proof (n=50 committed; median 180,
+p90 364, max 579). 18,130 proofs = **3.72M output tokens**.
+
+| aggregate throughput (A10G, 7B fp16, continuous batching) | generation |
+|---|---|
+| 400 tok/s (pessimistic, eager) | 2.59 h |
+| 600 tok/s | 1.72 h |
+| 1000 tok/s | 1.03 h |
+| 1500 tok/s | 0.69 h |
+
+**Estimated, not measured** — vLLM throughput on A10G must be confirmed by the
+smoke run before this is treated as fact. Plan on **1–2.6 h**.
+
+### This inverts the earlier bottleneck finding
+
+Addendum 1 concluded the credits should not go to CPU. That was correct for a
+36 h run and is **wrong for a 2 h one**: verification is 3.6 CPU-h serial, so
+once generation drops to ~1–2 h, **verification becomes the bottleneck**.
+
+| phase | 36 h plan | with vLLM |
+|---|---|---|
+| generation | 35.9 h | **1–2.6 h** |
+| verification (serial) | 3.6 h, hidden inside generation | **3.6 h, now dominant** |
+| verification, 4 REPL workers | — | **~0.9 h + ~8 min setup** |
+
+So **parallelising verification now matters**, and the RSS measurement (gate 2)
+moves from a nice-to-have to load-bearing: it sets how many REPL workers fit.
+
+### Revised configuration
+
+| | |
+|---|---|
+| instance | **`g5.2xlarge` unchanged** — do NOT downsize |
+| why not `g5.xlarge` | only $0.21/h cheaper, but halves vCPU and RAM, and CPU is now the bottleneck; over ~3 h that saves $0.62 and costs ~1 h |
+| optional | `g5.4xlarge` (16 vCPU, 64 GiB, ~$1.624/h) if verification proves binding — but it consumes the entire 16-vCPU quota being requested, leaving no headroom |
+| wall-clock | generation 1–2.6 h ∥ verification ~0.9 h, + setup ~0.5 h → **~2–3.5 h** |
+| **cost** | **$2.42 – $4.24** (was $43.60) |
+| watchdog | drop from T+40 h to **T+8 h** → caps spend at **$9.70** |
+
+### The spot-vs-on-demand question dissolves
+
+At ~3 h, on-demand costs ~$3.64 and spot would save ~$1.10. **On-demand,
+unambiguously.** There is no version of this where interruption exposure is
+worth a dollar.
+
+## Risks and what is still unproven
+
+1. **Equivalence is unvalidated.** Everything above is conditional. If any
+   verdict flips, the 36 h HF plan stands and the cost returns to $43.60 — still
+   well inside budget, which is why this is a cheap experiment to attempt.
+2. **Throughput is estimated, not measured.**
+3. **vLLM pins its own torch version.** Installing it can move torch under the
+   HF baseline, so "vLLM matches HF" must be validated **in the same environment
+   the run will use**, not against a differently-pinned install. Build the AMI
+   with both, and run the comparison there.
+4. **`enforce_eager` costs throughput.** If the self-check shows vLLM is
+   batch-invariant without it, drop it and regain 10–20%.
+5. n=50 bounds divergence at ~7%, not 0 — see the push-back above.
+
+## Recommendation
+
+**Attempt it, on the box, before the full run** — the validation costs minutes of
+GPU time and the payoff is 36 h → ~3 h. Sequence, all after the quota clears:
+
+1. gate 2 (RSS) → sizes verification workers
+2. `vllm_equivalence.py` preflight → generate(500) → compare
+3. if **zero flips**: adopt vLLM, run the full 155 at ~$4, watchdog T+8 h
+4. if **any flip**: stop, report, fall back to the validated 36 h HF path at
+   $43.60 — and do not adopt on a "close enough" argument
