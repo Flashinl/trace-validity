@@ -386,3 +386,123 @@ untested recovery path is not evidence. The **bookkeeping half — partial-line
 recovery, key dedup, dropped/duplicated records — is testable with crafted files
 and no GPU**, and that is where a duplication or drop bug would live. The
 end-to-end kill still needs the model and must wait for the box.
+
+---
+
+# ADDENDUM 2 — 2026-09-03: decisions applied, gate 3 complete
+
+## Decision: on-demand, not spot
+
+Accepted. $13 of saving is not worth 36 hours of interruption exposure on
+recovery logic that — as gate 3 below shows — had a real defect in it.
+
+| | |
+|---|---|
+| instance | `g5.2xlarge`, on-demand, `us-east-1` |
+| rate (Pricing API verified) | **$1.212/h** |
+| projected run | ~36 h → **$43.60** |
+| hard stop | **$60** |
+| credits | $170.65, of which this run is 26% |
+
+## Budget guard: raised to $60 — and it had a defect that would have silenced it
+
+`Zero-Spend Guard` is now **$60.00 monthly**, with notifications at
+**25 / 50 / 80 / 100 % ACTUAL** and **100 % FORECASTED**, on top of the
+pre-existing `> $0.01 ACTUAL` tripwire.
+
+**The budget could not have fired as configured.** It had
+`CostTypes.IncludeCredit = true`, which nets credits off the cost — so on a
+credit-funded account `ActualSpend` stays **$0.00** while the credit pool
+drains, and a $60 threshold is never crossed. Same failure mode as the four gate
+defects already on record: a guard reading the wrong quantity and reporting a
+reassuring zero.
+
+| field | was | now | why |
+|---|---|---|---|
+| `IncludeCredit` | `true` | **`false`** | track **gross** usage that depletes credits |
+| `IncludeRefund` | `true` | **`false`** | same reason |
+| `BudgetLimit` | $1.00 | **$60.00** | the agreed stop |
+
+**Verification step, per the standing rule:** this guard has still never fired.
+On the first billed hour, confirm `ActualSpend` becomes **non-zero**. If it stays
+at $0.00 the credit accounting is still wrong and the $60 stop is not in force —
+halt the run.
+
+## A budget action cannot be the hard stop. Here is what is.
+
+Two facts make a Budgets action the wrong thing to rely on:
+
+1. **It cannot be built yet.** A `RUN_SSM_DOCUMENTS` action targeting
+   `AWS-StopEC2Instance` needs the **instance IDs at creation time**, and there
+   is no instance. The alternative, `APPLY_IAM_POLICY`, cannot be attached to
+   the root principal these credentials belong to.
+2. **Budgets lag.** Cost budgets refresh roughly three times a day. At $1.212/h,
+   $60 is reached at **49.5 h**; an 8–12 h lag means the action could fire at
+   $70–$75. A guard that arrives 10 hours late is not a hard stop.
+
+**The real hard stop is a wall-clock watchdog on the instance:**
+
+| guard | mechanism | worst-case spend |
+|---|---|---|
+| **primary — wall-clock watchdog** | script exits and `shutdown -h now` at **T+40 h** | **$48.50** |
+| secondary | `--instance-initiated-shutdown-behavior terminate` | any shutdown becomes termination |
+| tertiary | budget notifications at 25/50/80/100% | human alert, hours late |
+| backstop | budget **action**, created after launch with the real instance ID | last resort |
+
+40 h against a ~36 h projection leaves ~11% headroom and caps spend at
+**$48.50 — below the $60 stop by construction**, not by observation.
+
+## Gate 3 — kill-and-resume: found a real bug, fixed, 23 tests
+
+`tests/test_resume_bookkeeping.py`, crafted files only, no GPU/model/Lean.
+
+**The resume bookkeeping itself is sound.** Kills at arbitrary byte offsets
+(13/37/50/76/94% through the file) all recover with **no dropped and no
+duplicated trajectories**; a complete-but-unterminated record is correctly
+counted done rather than regenerated; the two temperature arms cannot collide;
+`traj_key` is stable across `int`/`float`/`str` and float noise.
+
+**But the file resume leaves behind crashed the verifier.**
+`_repair_torn_tail` terminates a half-written record and `load_done_keys` skips
+it — correct — but the unparseable fragment **stays in the trace file
+permanently**. `verify_traces.main()` read that file with an **unguarded
+`json.loads`** (`verify_traces.py:198`), while `load_done()` in the very same
+module guarded for exactly this case.
+
+Demonstrated, not inferred:
+
+```
+file after resume:   1: {"sample_index": 0, ...}
+                     2: {"sample_index": 1, ...}
+                     3: {"sample_index": 2, ...}
+                     4: {"sample_index": 3, "trajectory_ind      <- fragment
+                     5: {"sample_index": 4, ...}
+
+verify_traces.main() loop  -> *** CRASHED: JSONDecodeError ***
+                              records read before the crash: [0, 1, 2]
+verify_traces.load_done()  -> read OK: [0, 1, 2, 4]
+```
+
+**Impact had this not been caught:** any interruption — crash, OOM, manual stop,
+instance retirement — produces traces the verifier refuses to read, failing
+*after* the GPU hours are already spent. Records after the fragment are never
+reached.
+
+**Fix:** the read loop is extracted to `_load_trace_records()` with the same
+tolerance `load_done()` already had, and it is **not silent** — it prints the
+count and line numbers of skipped lines to stderr.
+
+**The tests were shown to fail against the pre-fix code:**
+
+```
+test_downstream_verifier_can_read_a_resumed_trace_file
+   FAILED as required -> JSONDecodeError: Invalid control character ...
+test_downstream_reader_skips_only_the_garbage
+   FAILED as required -> JSONDecodeError: Invalid control character ...
+```
+
+23 gate-3 tests pass; 83 in the suite overall.
+
+**Remaining for the box:** the end-to-end kill (SIGKILL a real generation process
+mid-write, resume, re-verify) still needs the model, and should run once on the
+20-problem smoke run before the full 155.

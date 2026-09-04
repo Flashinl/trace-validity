@@ -152,6 +152,41 @@ def find_traces(explicit=None):
     raise FileNotFoundError(f"no trace file found; tried {DEFAULT_TRACES}")
 
 
+def _load_trace_records(path):
+    """Read a traces JSONL, tolerating the fragment an interrupted run leaves.
+
+    `generate.JsonlWriter._repair_torn_tail` terminates a half-written record
+    with a newline and `load_done_keys` then skips it, so the trajectory is
+    regenerated correctly -- but the unparseable fragment stays in the file
+    FOREVER. This loop used to call `json.loads` unguarded, so any resumed run
+    produced traces the verifier refused to read: it stopped at the fragment and
+    never reached the records after it. `load_done` in this same module already
+    guarded for exactly this and this path did not.
+
+    Skipping is deliberate but never silent: a corrupted trace file is worth
+    seeing, and a count on stderr is how it stays visible.
+    """
+    recs, bad = [], []
+    with open(path, encoding="utf-8") as f:
+        for lineno, line in enumerate(f, 1):
+            if not line.strip():
+                continue
+            try:
+                recs.append(json.loads(line))
+            except json.JSONDecodeError:
+                bad.append(lineno)
+    if bad:
+        shown = ", ".join(str(n) for n in bad[:10])
+        more = "" if len(bad) <= 10 else f" (+{len(bad) - 10} more)"
+        print(
+            f"[traces] {path}: skipped {len(bad)} unparseable line(s) at "
+            f"{shown}{more} — expected after an interrupted --resume run; "
+            f"kept {len(recs)} records.",
+            file=sys.stderr,
+        )
+    return recs
+
+
 def load_done(path):
     done = set()
     if not os.path.exists(path):
@@ -191,16 +226,12 @@ def main():
         )
 
     recs, seen = [], set()
-    with open(path, encoding="utf-8") as f:
-        for line in f:
-            if not line.strip():
+    for r in _load_trace_records(path):
+        if not args.all:
+            if r["sample_index"] in seen:
                 continue
-            r = json.loads(line)
-            if not args.all:
-                if r["sample_index"] in seen:
-                    continue
-                seen.add(r["sample_index"])
-            recs.append(r)
+            seen.add(r["sample_index"])
+        recs.append(r)
     if args.limit:
         recs = recs[: args.limit]
 
