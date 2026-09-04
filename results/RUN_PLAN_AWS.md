@@ -506,3 +506,38 @@ test_downstream_reader_skips_only_the_garbage
 **Remaining for the box:** the end-to-end kill (SIGKILL a real generation process
 mid-write, resume, re-verify) still needs the model, and should run once on the
 20-problem smoke run before the full 155.
+
+## Gate 2 — RSS per Mathlib REPL: **not measurable on this box. Deferred to first boot.**
+
+Attempted and timeboxed. `repl.exe` RSS sampled every 15 s while Mathlib loaded:
+
+| t | repl.exe RSS |
+|---|---|
+| +15 s | 246 MB |
+| +30 s | 258 MB |
+| +45 s | 270 MB |
+| +60 s | 282 MB |
+| +75 s | 294 MB |
+| +90 s | 306 MB |
+
+**Linear at ~48 MB/min with no sign of plateau.** At that rate a 3–5 GB
+environment needs another 60–100 minutes, which is the same I/O-bound Mathlib
+load that has failed to complete on this box three times today. Stopped rather
+than burned further, per instruction.
+
+**This is itself evidence for the plan's §5.** A REPL that grows at 48 MB/min is
+not CPU-bound — it is waiting on 8,600 small `.olean` reads. It is the Defender
+pathology in its general form and it directly corroborates the instance-store
+requirement: **put the Mathlib tree on the NVMe, never on EBS-with-default-IOPS
+and never on a network filesystem.**
+
+**Measure on first boot, before sizing worker count**, per §7 step 0:
+
+```bash
+python -c "from verifier import LeanVerifier; LeanVerifier(setup=False)" &
+while sleep 10; do ps -o pid,rss,comm -C repl --no-headers; done   # watch to plateau
+```
+
+Decision rule, unchanged: if plateau RSS ≤ ~7 GB, 4 workers fit in the
+`g5.2xlarge`'s 32 GiB. If higher, drop to 2–3 workers (costs ~30 min, acceptable
+against a 36 h run) rather than resizing the instance.
