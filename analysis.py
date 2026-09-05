@@ -81,6 +81,9 @@ def compute_stats(results):
 
     # Numerical Correctness
     num_correct = 0
+    valid_num_correct = 0
+    invalid_num_correct = 0
+
     for r in results:
         gt_val = extract_number(r.get("ground_truth", ""))
 
@@ -95,6 +98,10 @@ def compute_stats(results):
             model_val = extract_number(best_traj.get("raw_output", ""))
             if model_val is not None and abs(model_val - gt_val) < 1e-6:
                 num_correct += 1
+                if r["trace_valid"]:
+                    valid_num_correct += 1
+                else:
+                    invalid_num_correct += 1
 
     return {
         "total": len(results),
@@ -104,7 +111,11 @@ def compute_stats(results):
         "invalid_accuracy": invalid_correct / len(invalid_traces) if invalid_traces else 0.0,
         "overall_accuracy": (valid_correct + invalid_correct) / len(results) if results else 0.0,
         "numerical_accuracy": num_correct / len(results) if results else 0.0,
+        "valid_num_accuracy": valid_num_correct / len(valid_traces) if valid_traces else 0.0,
+        "invalid_num_accuracy": invalid_num_correct / len(invalid_traces) if invalid_traces else 0.0,
         "num_correct": num_correct,
+        "valid_num_correct": valid_num_correct,
+        "invalid_num_correct": invalid_num_correct,
         "valid_correct": valid_correct,
         "valid_incorrect": len(valid_traces) - valid_correct,
         "invalid_correct": invalid_correct,
@@ -120,6 +131,8 @@ def print_report(temperature, stats):
     print(f"  Valid traces:     {stats['valid_count']}  |  Invalid traces: {stats['invalid_count']}")
     print(f"  Overall accuracy: {stats['overall_accuracy']:.2%}")
     print(f"  Numerical accuracy: {stats['numerical_accuracy']:.2%} ({stats['num_correct']}/{stats['total']})")
+    print(f"    - Valid traces:   {stats['valid_num_accuracy']:.2%} ({stats['valid_num_correct']}/{stats['valid_count']})")
+    print(f"    - Invalid traces: {stats['invalid_num_accuracy']:.2%} ({stats['invalid_num_correct']}/{stats['invalid_count']})")
     print(f"  Valid trace accuracy:   {stats['valid_accuracy']:.2%}  ({stats['valid_correct']}/{stats['valid_count']})")
     print(f"  Invalid trace accuracy: {stats['invalid_accuracy']:.2%}  ({stats['invalid_correct']}/{stats['invalid_count']})")
     print(f"{'='*60}\n")
