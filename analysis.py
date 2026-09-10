@@ -3,9 +3,11 @@ import os
 import glob
 import re
 from fractions import Fraction
+from datetime import datetime
 
 import matplotlib.pyplot as plt
 
+import config
 from config import RESULTS_DIR
 
 
@@ -16,7 +18,7 @@ def load_results(temperature):
 
 
 def parse_number(s):
-    """Convert a string to a float, handling commas and simple fractions."""
+    """Convert a string to a float, for commas and fractions"""
     if not s:
         return None
     s = s.strip().replace(",", "")
@@ -29,7 +31,7 @@ def parse_number(s):
 
 
 def extract_number(text):
-    """Extract a numerical answer from text using a priority-based search."""
+    """Extract a numerical answer from text using a priority-based search"""
     if not text:
         return None
 
@@ -76,10 +78,7 @@ def compute_stats(results):
     valid_traces = [r for r in results if r["trace_valid"]]
     invalid_traces = [r for r in results if not r["trace_valid"]]
 
-    valid_correct = sum(1 for r in valid_traces if r["answer_correct"])
-    invalid_correct = sum(1 for r in invalid_traces if r["answer_correct"])
-
-    # Numerical Correctness
+    # Numerical Correctness - calculate first to use for accuracy
     num_correct = 0
     valid_num_correct = 0
     invalid_num_correct = 0
@@ -102,6 +101,11 @@ def compute_stats(results):
                     valid_num_correct += 1
                 else:
                     invalid_num_correct += 1
+
+    # Formal Correctness
+    valid_correct = sum(1 for r in valid_traces if r["answer_correct"])
+    # For invalid traces, we use numerical correctness as the measure of accuracy
+    invalid_correct = invalid_num_correct
 
     return {
         "total": len(results),
@@ -164,6 +168,45 @@ def plot_single_temperature(temperature):
     plt.close()
 
 
+def save_experiment_json(temp_stats_map):
+    """Saves the aggregated stats to a JSON file in the requested format."""
+    now = datetime.now()
+    timestamp = now.strftime("%Y%m%d_%H%M%S")
+    date_str = now.strftime("%Y-%m-%d %H:%M:%S")
+
+    exp_data = {}
+    for temp, stats in temp_stats_map.items():
+        exp_id = f"exp_{timestamp}_{temp}"
+        exp_data[exp_id] = {
+            "date_localtime": date_str,
+            "configs": {
+                "model": config.MODEL_NAME,
+                "dataset": config.DATASET_NAME,
+                "split": config.DATASET_SPLIT,
+                "num_samples": config.NUM_SAMPLES,
+                "num_trajectories": config.NUM_TRAJECTORIES,
+                "max_tokens": config.MAX_NEW_TOKENS,
+            },
+            "temp": temp,
+            "total_samples": stats["total"],
+            "correct": stats["valid_correct"] + stats["invalid_correct"],
+            "incorrect": stats["total"] - (stats["valid_correct"] + stats["invalid_correct"]),
+            "valid_trace": stats["valid_count"],
+            "invalid_trace": stats["invalid_count"],
+            "grid": {
+                "valid_correct": stats["valid_correct"],
+                "valid_incorrect": stats["valid_incorrect"],
+                "invalid_correct": stats["invalid_correct"],
+                "invalid_incorrect": stats["invalid_incorrect"],
+            }
+        }
+
+    filename = f"exp_{timestamp}.json"
+    path = os.path.join(RESULTS_DIR, filename)
+    with open(path, "w") as f:
+        json.dump(exp_data, f, indent=2)
+    print(f"Saved experiment results to {path}")
+
 def plot_temperature_sweep():
     result_files = sorted(glob.glob(os.path.join(RESULTS_DIR, "results_temp_*.json")))
     if not result_files:
@@ -175,6 +218,7 @@ def plot_temperature_sweep():
     invalid_accs = []
     overall_accs = []
     num_accs = []
+    all_stats = {}
 
     for path in result_files:
         fname = os.path.basename(path)
@@ -184,11 +228,14 @@ def plot_temperature_sweep():
         stats = compute_stats(results)
         print_report(temp, stats)
 
+        all_stats[temp] = stats
         temps.append(temp)
         valid_accs.append(stats["valid_accuracy"])
         invalid_accs.append(stats["invalid_accuracy"])
         overall_accs.append(stats["overall_accuracy"])
         num_accs.append(stats["numerical_accuracy"])
+
+    save_experiment_json(all_stats)
 
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.plot(temps, valid_accs, "o-", label="Valid Trace Accuracy", linewidth=2)

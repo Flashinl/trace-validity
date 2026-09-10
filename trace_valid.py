@@ -8,7 +8,7 @@ from data_loader import FormalStepDataset
 from model import GoedelProver
 from parser import parse_output
 from verifier import LeanVerifier
-from analysis import compute_stats, print_report, plot_single_temperature, plot_temperature_sweep
+from analysis import compute_stats, print_report, plot_single_temperature, plot_temperature_sweep, extract_number
 
 
 def run_experiment(temperature, num_samples=NUM_SAMPLES, num_trajectories=NUM_TRAJECTORIES):
@@ -76,8 +76,14 @@ def run_experiment(temperature, num_samples=NUM_SAMPLES, num_trajectories=NUM_TR
             sample_result["trajectories"][0],
         )
 
+        # Check numerical correctness for the best trajectory
+        gt_val = extract_number(ground_truth)
+        model_val = extract_number(best_traj.get("raw_output", ""))
+        is_num_correct = (gt_val is not None and model_val is not None and abs(model_val - gt_val) < 1e-6)
+
         sample_result["trace_valid"] = best_traj["trace_valid"]
-        sample_result["answer_correct"] = best_traj["trace_valid"] and not best_traj["has_sorry"]
+        # A result is considered correct if it is formally valid (no sorry) OR numerically correct
+        sample_result["answer_correct"] = (best_traj["trace_valid"] and not best_traj["has_sorry"]) or is_num_correct
         sample_result["valid_trajectory_count"] = valid_count
 
         results.append(sample_result)

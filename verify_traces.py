@@ -19,6 +19,7 @@ from collections import defaultdict
 from config import RESULTS_DIR
 from parser import parse_output
 from verifier import LeanVerifier
+import analysis
 
 
 def load_traces(path):
@@ -146,8 +147,14 @@ def run_for_temperature(records, temperature, verifier):
             sample_result["trajectories"][0] if sample_result["trajectories"] else None,
         )
 
+        # Check numerical correctness for the best trajectory
+        gt_val = analysis.extract_number(ground_truth)
+        model_val = analysis.extract_number(best_traj.get("raw_output", "") if best_traj else "")
+        is_num_correct = (gt_val is not None and model_val is not None and abs(model_val - gt_val) < 1e-6)
+
         sample_result["trace_valid"] = bool(best_traj and best_traj["trace_valid"])
-        sample_result["answer_correct"] = bool(best_traj and best_traj["trace_valid"] and not best_traj["has_sorry"])
+        # A result is considered correct if it is formally valid (no sorry) OR numerically correct
+        sample_result["answer_correct"] = bool((best_traj and best_traj["trace_valid"] and not best_traj["has_sorry"]) or is_num_correct)
         sample_result["valid_trajectory_count"] = valid_count
 
         results.append(sample_result)
