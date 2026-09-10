@@ -78,7 +78,7 @@ def compute_stats(results):
     valid_traces = [r for r in results if r["trace_valid"]]
     invalid_traces = [r for r in results if not r["trace_valid"]]
 
-    # Numerical Correctness - calculate first to use for accuracy
+    # Numerical Correctness (accuracy)
     num_correct = 0
     valid_num_correct = 0
     invalid_num_correct = 0
@@ -179,26 +179,27 @@ def save_experiment_json(temp_stats_map):
         exp_id = f"exp_{timestamp}_{temp}"
         exp_data[exp_id] = {
             "date_localtime": date_str,
-            "configs": {
-                "model": config.MODEL_NAME,
-                "dataset": config.DATASET_NAME,
-                "split": config.DATASET_SPLIT,
-                "num_samples": config.NUM_SAMPLES,
-                "num_trajectories": config.NUM_TRAJECTORIES,
-                "max_tokens": config.MAX_NEW_TOKENS,
-            },
             "temp": temp,
             "total_samples": stats["total"],
-            "correct": stats["valid_correct"] + stats["invalid_correct"],
-            "incorrect": stats["total"] - (stats["valid_correct"] + stats["invalid_correct"]),
-            "valid_trace": stats["valid_count"],
-            "invalid_trace": stats["invalid_count"],
-            "grid": {
-                "valid_correct": stats["valid_correct"],
-                "valid_incorrect": stats["valid_incorrect"],
-                "invalid_correct": stats["invalid_correct"],
-                "invalid_incorrect": stats["invalid_incorrect"],
-            }
+            "valid_traces": stats["valid_count"],
+            "invalid_traces": stats["invalid_count"],
+            "overall_accuracy": stats["overall_accuracy"],
+            "numerical_accuracy": {
+                "accuracy": stats["numerical_accuracy"],
+                "correct": stats["num_correct"],
+                "total": stats["total"]
+            },
+            "valid_num_accuracy": {
+                "accuracy": stats["valid_num_accuracy"],
+                "correct": stats["valid_num_correct"],
+                "total": stats["valid_count"]
+            },
+            "invalid_num_accuracy": {
+                "accuracy": stats["invalid_num_accuracy"],
+                "correct": stats["invalid_num_correct"],
+                "total": stats["invalid_count"]
+            },
+            "total_correct": stats["valid_correct"] + stats["invalid_correct"]
         }
 
     filename = f"exp_{timestamp}.json"
