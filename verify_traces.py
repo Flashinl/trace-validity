@@ -1,15 +1,3 @@
-"""Verify trace validity for pre-generated Goedel-Prover outputs.
-
-Reads a JSONL file where each line is one trajectory record (with fields like
-`sample_index`, `temperature`, `trajectory_index`, `raw_output`, `parsed_code`,
-`full_code`, ...) and writes a results JSON in the same shape as
-`trace_valid.run_experiment()` produces, so `analysis.py` and the
-`--analyze-only` flag work without modification.
-
-Usage:
-    python3 verify_traces.py --input traces.jsonl --temp 0
-    python3 verify_traces.py --input traces.jsonl --temp 0 0.5 1.0
-"""
 
 import argparse
 import json
@@ -140,6 +128,8 @@ def run_for_temperature(records, temperature, verifier):
                 "has_sorry": has_sorry_meta,
                 "trace_valid": verification["valid"],
                 "errors": verification["errors"],
+                "time": record.get("time", 0),
+                "tokens": record.get("tokens", 0),
             })
 
         best_traj = next(
