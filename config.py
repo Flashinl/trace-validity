@@ -1,6 +1,6 @@
 import os
 
-MODEL_NAME = "Goedel-LM/Goedel-Prover-SFT"
+MODEL_NAME = "deepseek-ai/DeepSeek-Prover-V1.5-RL"
 DATASET_NAME = "liuchengwu/FormalStep"
 DATASET_SPLIT = "train"
 NUM_SAMPLES = 50

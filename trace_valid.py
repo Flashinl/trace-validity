@@ -29,10 +29,11 @@ def run_experiment(temperature, num_samples=NUM_SAMPLES, num_trajectories=NUM_TR
         problem, ground_truth = dataset[idx]
         print(f"\n[{idx+1}/{len(dataset)}] Processing sample...")
 
+        actual_num_trajectories = 1 if temperature == 0 else num_trajectories
         trajectories = prover.generate(
             problem,
             temperature=temperature,
-            num_trajectories=num_trajectories,
+            num_trajectories=actual_num_trajectories,
         )
 
         sample_result = {
@@ -87,7 +88,7 @@ def run_experiment(temperature, num_samples=NUM_SAMPLES, num_trajectories=NUM_TR
         sample_result["valid_trajectory_count"] = valid_count
 
         results.append(sample_result)
-        print(f"  Valid trajectories: {valid_count}/{num_trajectories}")
+        print(f"  Valid trajectories: {valid_count}/{actual_num_trajectories}")
 
     output_path = os.path.join(RESULTS_DIR, f"results_temp_{temperature}.json")
     with open(output_path, "w") as f:

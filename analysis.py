@@ -2,6 +2,7 @@ import json
 import os
 import glob
 import re
+import math
 from fractions import Fraction
 from datetime import datetime
 
@@ -50,7 +51,23 @@ def extract_number(text):
         if val is not None:
             return val
 
-    # Priority 2: Keywords
+    # Priority 2: Lean Witness Tactics (use/exists)
+    # We take the FIRST occurrence because it's usually the main witness
+    witness = re.search(r"\b(?:use|exists)\s+([-0-9./]+)", text)
+    if witness:
+        val = parse_number(witness.group(1))
+        if val is not None:
+            return val
+
+    # Priority 3: Fractions \frac{a}{b} anywhere
+    frac_anywhere = re.search(r"\\frac\{([^{}]*)\}\{([^{}]*)\}", text)
+    if frac_anywhere:
+        num = parse_number(frac_anywhere.group(1))
+        den = parse_number(frac_anywhere.group(2))
+        if num is not None and den is not None and den != 0:
+            return num / den
+
+    # Priority 4: Keywords
     keywords = [
         r"the answer is\s*([-0-9./]+)",
         r"final answer\s*[:=]?\s*([-0-9./]+)",
@@ -63,7 +80,7 @@ def extract_number(text):
             if val is not None:
                 return val
 
-    # Priority 3: Last number in text
+    # Priority 5: Last number in text
     all_nums = re.findall(r"[-0-9./]+", text)
     if all_nums:
         val = parse_number(all_nums[-1])
@@ -73,6 +90,19 @@ def extract_number(text):
     return None
 
 
+
+def nCr(n, r):
+    if r < 0 or r > n:
+        return 0
+    if r == 0 or r == n:
+        return 1
+    if r > n // 2:
+        r = n - r
+
+    num = 1
+    for i in range(r):
+        num = num * (n - i) // (i + 1)
+    return num
 
 def compute_stats(results):
     valid_traces = [r for r in results if r["trace_valid"]]
@@ -87,8 +117,31 @@ def compute_stats(results):
     total_tokens = 0
     total_trajs = 0
 
+    pass_at_1_samples = []
+    pass_at_10_samples = []
+
     for r in results:
         gt_val = extract_number(r.get("ground_truth", ""))
+
+        # --- Pass@k Calculation ---
+        n = len(r["trajectories"])
+        c = 0
+        for t in r["trajectories"]:
+            model_val = extract_number(t.get("raw_output", ""))
+            if gt_val is not None and model_val is not None and abs(model_val - gt_val) < 1e-6:
+                c += 1
+
+        # pass@1 = c/n
+        pass_at_1_samples.append(c / n if n > 0 else 0)
+
+        # pass@10 = 1 - (comb(n-c, 10) / comb(n, 10))
+        if n >= 10:
+            p_at_10 = 1 - (nCr(n - c, 10) / nCr(n, 10))
+        elif c > 0:
+            p_at_10 = 1.0 # At least one correct out of <10
+        else:
+            p_at_10 = 0.0
+        pass_at_10_samples.append(p_at_10)
 
         # Find best trajectory for numerical answer
         best_traj = None
@@ -135,6 +188,8 @@ def compute_stats(results):
         "invalid_incorrect": len(invalid_traces) - invalid_correct,
         "avg_time": total_time / total_trajs if total_trajs else 0,
         "avg_tokens": total_tokens / total_trajs if total_trajs else 0,
+        "pass_at_1": sum(pass_at_1_samples) / len(pass_at_1_samples) if pass_at_1_samples else 0.0,
+        "pass_at_10": sum(pass_at_10_samples) / len(pass_at_10_samples) if pass_at_10_samples else 0.0,
     }
 
 
@@ -154,6 +209,9 @@ def print_report(temperature, stats):
 
     print(f"  Invalid traces:   {i_count}/{total} ({i_count/total:.2% if total else '0.00%'})")
     print(f"    - Numerically correct: {i_num_correct}/{i_count} ({i_num_correct/i_count:.2% if i_count else '0.00%'})")
+
+    print(f"  Pass@1:  {stats['pass_at_1']:.2%}")
+    print(f"  Pass@10: {stats['pass_at_10']:.2%}")
 
     print(f"  Average time per trace: {stats['avg_time']:.4f}s")
     print(f"  Average tokens per trace: {stats['avg_tokens']:.2f}")
